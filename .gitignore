@@ -1,0 +1,9 @@
+node_modules
+dist
+services
+qwert
+logs
+
+# Mac OS metadata file
+.DS_Store
+
