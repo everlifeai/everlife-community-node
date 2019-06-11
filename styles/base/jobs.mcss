@@ -1,0 +1,25 @@
+Jobs {
+  div.card {
+    width: 600px;
+    border-radius: 8px;
+    padding: 0.5em 2em 2em 2em;
+    margin: 2em 0;
+    box-shadow: 1px 1px 1px 1px #959eab;
+    background: linear-gradient(white, #f1f7ff);
+
+    div.desc {
+      font-weight: bold;
+    }
+    div.ever {
+      margin: 1em 0;
+    }
+    div.depo {
+      margin: 1em 0;
+      text-decoration: underline;
+    }
+    div.inst {
+      margin: 1em 0;
+      font-style: italic;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=EverlifeAI
+Icon=ai.everlife.workbench
+Exec=npm start
+Categories=Network;Chat;Feed;
