@@ -152,16 +152,24 @@ function setupAvatarComponents() {
  * partition environment variable
  */
 function setupEnvironmentVariables(args) {
-    process.env['ELIFE_INSTALL_FOLDER'] = path.resolve(process.cwd())
-    process.env['ELIFE_HOME'] = u.homeLoc()
-    let nn = "0"
-    if(args && args['node-num']) nn = args['node-num']
-    if(isNaN(parseInt(nn))) {
-        process.stdout.write(`node-num ${nn} is not a valid integer\n`)
-        process.exit(1)
+    if(!process.env['ELIFE_INSTALL_FOLDER']) {
+        process.env['ELIFE_INSTALL_FOLDER'] = path.resolve(process.cwd())
     }
-    process.env["ELIFE_NODE_NUM"] = nn
-    process.env['COTE_ENV'] = partitionParam()
+    if(!process.env['ELIFE_HOME']) {
+        process.env['ELIFE_HOME'] = u.homeLoc()
+    }
+    if(!process.env["ELIFE_NODE_NUM"]) {
+        let nn = "0"
+        if(args && args['node-num']) nn = args['node-num']
+        if(isNaN(parseInt(nn))) {
+            process.stdout.write(`node-num ${nn} is not a valid integer\n`)
+            process.exit(1)
+        }
+        process.env["ELIFE_NODE_NUM"] = nn
+    }
+    if(!process.env['COTE_ENV']) {
+        process.env['COTE_ENV'] = partitionParam()
+    }
 
     setup_port_vars_1()
 
