@@ -215,10 +215,16 @@ function partitionParam() {
  * Create the data and skill folders
  */
 function setupHomeFolders() {
+    let r = true
     try {
         fs.mkdirSync(u.dataLoc(), { recursive: true })
+    } catch(e) {
+        console.log(e)
+        r = false
+    }
+    try {
         fs.mkdirSync(u.skillLoc(), { recursive: true })
-        return true
+        return r
     } catch(e) {
         console.log(e)
         return false
