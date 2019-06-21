@@ -39,6 +39,8 @@ exports.needs = nest({
   'message.sync.root': 'first',
   'progress.html.peer': 'first',
 
+  'wallet.sheet.getPW': 'first',
+
   'feed.html.followWarning': 'first',
   'feed.html.followerWarning': 'first',
   'feed.html.rollup': 'first',
@@ -78,35 +80,43 @@ exports.create = function (api) {
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
     var contact = api.profile.obs.contact(id)
-    var everbalance = Value("")
+    var everbalance = Value("...loading...")
     var everaccid_val = Value("")
     var everaccid_disp = Value("")
 
 
     getAccountId((err, id) => {
-        if(err) console.error(err)
-        else {
-          everaccid_val.set(id)
-          everaccid_disp.set(id.substr(0,16)+"..."+id.substr(id.length-4))
-        }
+      if(err) {
+        if(err.error) console.error(err.error)
+        else console.error(err)
+      } else {
+        everaccid_val.set(id)
+        everaccid_disp.set(id.substr(0,16)+"..."+id.substr(id.length-4))
+      }
     })
 
-    function update_latest_ever_1() {
-        getAccountBalance((err, bal) => {
-            if(err) {
-                console.error(err)
-                everbalance.set("")
-            } else {
-                everbalance.set(bal.xlm) //TODO: Show bal.ever
-            }
-        })
+    function update_latest_ever_1(onNoPw) {
+      getAccountBalance((err, bal) => {
+        if(err) {
+          everbalance.set("(Wallet Not Loaded)")
+
+          if(err.error) console.error(err.error)
+          else console.error(err)
+
+          if(err.nopw && onNoPw) onNoPw()
+
+        } else {
+          if(bal.ever === null || bal.ever === undefined) everbalance.set('(Account Not Setup)')
+          else everbalance.set(bal.ever)
+        }
+      })
     }
 
-    update_latest_ever_1()
+    update_latest_ever_1(() => api.wallet.sheet.getPW(update_latest_ever_1))
 
     setInterval(() => {
       update_latest_ever_1()
-    }, 60 * 1000)
+    }, 90 * 1000)
 
     var prepend = [
       api.message.html.compose({ meta: { type: 'post' }, draftKey: 'public', placeholder: i18n('Write a public message') }),

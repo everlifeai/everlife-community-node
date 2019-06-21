@@ -34,3 +34,20 @@ Wallet {
     text-align: center;
   }
 }
+WalletPw {
+  div.main {
+    input.pw {
+      display: block;
+      padding: 2px;
+      margin: 4px;
+    }
+    div.info {
+      margin-bottom: 12px;
+      p {
+        padding: 0;
+        margin: 0;
+        margin-bottom: 6px;
+      }
+    }
+  }
+}

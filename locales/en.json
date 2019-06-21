@@ -318,5 +318,12 @@
 	"el": "el",
 	"SalesboxAI Workplace": "SalesboxAI Workplace",
 	"EVER Balance": "EVER Balance",
-	"+ Buy EVER": "+ Buy EVER"
+	"+ Buy EVER": "+ Buy EVER",
+	"Your Wallet Password": "Your Wallet Password",
+	"Ok": "Ok",
+	"Passwords do not match": "Passwords do not match",
+	"Password and confirm password do not match": "Password and confirm password do not match",
+	"Enter Your Wallet Password": "Enter Your Wallet Password",
+	"Need Password": "Need Password",
+	"Please enter the wallet password": "Please enter the wallet password"
 }
