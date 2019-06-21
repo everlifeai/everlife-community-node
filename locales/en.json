@@ -325,5 +325,7 @@
 	"Password and confirm password do not match": "Password and confirm password do not match",
 	"Enter Your Wallet Password": "Enter Your Wallet Password",
 	"Need Password": "Need Password",
-	"Please enter the wallet password": "Please enter the wallet password"
+	"Please enter the wallet password": "Please enter the wallet password",
+	"You don't have enough balance to publish a message.": "You don't have enough balance to publish a message.",
+	"You don't have enough balance to publish a message": "You don't have enough balance to publish a message"
 }
