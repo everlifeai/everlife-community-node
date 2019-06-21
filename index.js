@@ -219,9 +219,7 @@ function setupContext (appName, opts, cb) {
   redactedConfig.keys.private = null
   console.dir(redactedConfig, { depth: null })
 
-  elife.setupEnvironmentVariables()
-  elife.showInfo()
-  elife.startAvatar()
+  elife.embeddedStartup()
 
   if (opts.server === false) {
     cb && cb()

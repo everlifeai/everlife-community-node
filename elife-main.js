@@ -1,6 +1,7 @@
 'use strict'
 const shell = require('shelljs')
 const path = require('path')
+const fs = require('fs')
 const shortid = require('shortid')
 
 const pm2 = require('pm2')
@@ -16,6 +17,7 @@ module.exports = {
     removeNodeModules: removeNodeModules,
     removePackageLock: removePackageLock,
     startup: startup,
+    embeddedStartup: embeddedStartup,
     adjustSSBConfig: adjustSSBConfig,
     setupEnvironmentVariables: setupEnvironmentVariables,
     startAvatar: startAvatar,
@@ -24,11 +26,11 @@ module.exports = {
 
 function showInfo() {
     const { version } = require('./package.json')
-    shell.echo(`Avatar node (version ${version})`)
-    shell.echo(`Installed in:`)
-    shell.echo(`    ${shell.pwd()}`)
-    shell.echo(`Data stored in: (BACKUP THIS FOLDER)`)
-    shell.echo(`    ${u.dataLoc()}`)
+    console.log(`Avatar node (version ${version})`)
+    console.log(`Installed in:`)
+    console.log(`    ${shell.pwd()}`)
+    console.log(`Data stored in: (BACKUP THIS FOLDER)`)
+    console.log(`    ${u.dataLoc()}`)
 }
 
 function startup(args) {
@@ -49,6 +51,14 @@ function setup(args) {
     setupWallet()
     checkCoteConnection()
     setupUserConfig()
+}
+
+function embeddedStartup(args) {
+    setupEnvironmentVariables(args)
+    setupHomeFolders()
+    setupUserConfig()
+    showInfo()
+    startAvatar()
 }
 
 function removeNodeModules() {
@@ -205,8 +215,14 @@ function partitionParam() {
  * Create the data and skill folders
  */
 function setupHomeFolders() {
-    mkdir(u.dataLoc())
-    mkdir(u.skillLoc())
+    try {
+        fs.mkdirSync(u.dataLoc(), { recursive: true })
+        fs.mkdirSync(u.skillLoc(), { recursive: true })
+        return true
+    } catch(e) {
+        console.log(e)
+        return false
+    }
 }
 
 /*      problem/
@@ -327,10 +343,10 @@ FYI: Microservice Partition Key (for development):
  */
 function setupUserConfig() {
     let cfg = path.join(u.dataLoc(), 'cfg.env')
-    if(shell.test("-f", cfg)) return
-
-    shell.echo(`\n\nCreating configuration file...`)
-    shell.echo(`#       understand/
+    fs.access(cfg, (err) => {
+        if(!err) return
+        console.log(`\n\nCreating configuration file...`)
+        fs.writeFile(cfg, `#       understand/
 # We use environment variables to configure various skills and services.
 # In order to pass the information to the required components we need to
 # set them in this file.
@@ -344,9 +360,12 @@ MASHAPE_KEY=
 # for AI Artist Skill
 AIARTIST_HOST=
 AIARTIST_PORT=
-`).to(cfg)
-    shell.echo(`Please edit this file: ${cfg}`)
-    shell.echo(`To add your own TELEGRAM_TOKEN, etc...\n\n`)
+`, (err) => {
+    if(err) console.error(err)
+})
+        console.log(`Please edit this file: ${cfg}`)
+        console.log(`To add your own TELEGRAM_TOKEN, etc...\n\n`)
+    })
 }
 
 function mkdir(d) {
