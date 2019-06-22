@@ -10,6 +10,7 @@ function main() {
     let args = getArgs()
     if(args.help) showHelp()
     else if(args['info']) elife.showInfo()
+    else if(args['rebuild-node-modules']) elife.recreateNodeModules()
     else if(args['rm-node-modules']) elife.removeNodeModules()
     else if(args['rm-package-locks']) elife.removePackageLock()
     else elife.startup(args)
@@ -19,6 +20,7 @@ function getArgs() {
     const ops = [
         { name: 'help', alias: 'h', type: Boolean },
         { name: 'info', alias: 'i', type: Boolean },
+        { name: 'rebuild-node-modules', type: Boolean },
         { name: 'rm-node-modules', type: Boolean },
         { name: 'rm-package-locks', type: Boolean },
         { name: 'node-num', alias: 'n' },
@@ -35,6 +37,7 @@ Other functionality:
     --help, -h  : show this help
 
    (rarely required)
+    --rebuild-node-modules   : Remove all node modules
     --rm-node-modules   : Remove all node modules
     --rm-package-locks  : Remove all package-lock.json files
 

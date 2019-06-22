@@ -14,6 +14,7 @@ const dotenv = require('dotenv').config({ path : path.join(u.dataLoc(),'cfg.env'
 
 module.exports = {
     showInfo: showInfo,
+    recreateNodeModules: recreateNodeModules,
     removeNodeModules: removeNodeModules,
     removePackageLock: removePackageLock,
     startup: startup,
@@ -59,6 +60,44 @@ function embeddedStartup(args) {
     setupUserConfig()
     showInfo()
     startAvatar()
+}
+
+function recreateNodeModules() {
+    let structure = avatarStructure()
+    for(let i = 0;i < structure.length;i++) {
+        let loc
+        if(structure[i].required) loc = structure[i].required
+        if(structure[i].optional) loc = structure[i].optional
+        if(loc) do_stuff_1(loc)
+    }
+
+    function do_stuff_1(loc) {
+        let r = shell.pushd('-q', loc)
+        if(r.code) {
+            shell.echo(`Failed to change directory to: ${loc}`)
+            return false
+        }
+        let nm = 'node_modules'
+        if(shell.test("-d", nm)) {
+            shell.echo(`Removing ${loc}/${nm}`)
+            let r = shell.rm("-rf", nm)
+            if(r.code) {
+                shell.echo(`Failed to remove ${nm}`)
+                shell.popd('-q')
+                return false
+            }
+        }
+        shell.echo(`Installing ${loc}/${nm}`)
+        r = shell.exec(`npm install --no-bin-links`)
+        if(r.code) {
+            shell.echo(`Failed to npm install in: ${loc}`)
+            shell.popd('-q')
+            return false
+        }
+
+        shell.popd('-q')
+        return true
+    }
 }
 
 function removeNodeModules() {
@@ -449,7 +488,7 @@ function setupRepo(rp, postInstall) {
     }
 
     shell.echo(`Running npm install...(please wait)`)
-    r = shell.exec(`npm install`)
+    r = shell.exec(`npm install --no-bin-links`)
     if(r.code) {
         shell.echo(`Failed to npm install in: ${rp}`)
         shell.popd('-q')
