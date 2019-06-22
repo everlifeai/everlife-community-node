@@ -122,6 +122,146 @@
   "build": {
     "appId": "ai.everlife.avatar",
     "asar": false,
+    "files": [
+      {
+        "from": "services/elife-ai/brains/ebrain-aiml/node_modules",
+        "to": "services/elife-ai/brains/ebrain-aiml/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-ai/node_modules",
+        "to": "services/elife-ai/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-stellar/node_modules",
+        "to": "services/elife-stellar/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-level-db/node_modules",
+        "to": "services/elife-level-db/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-communication-mgr/node_modules",
+        "to": "services/elife-communication-mgr/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-communication-mgr/channels/elife-telegram/node_modules",
+        "to": "services/elife-communication-mgr/channels/elife-telegram/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-communication-mgr/channels/elife-qwert/node_modules",
+        "to": "services/elife-communication-mgr/channels/elife-qwert/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/node_modules",
+        "to": "services/elife-skill-mgr/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-vanity-address/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-vanity-address/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-follower/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-follower/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-about/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-about/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-kb-creator/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-kb-creator/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-direct-message/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-direct-message/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-intro/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-intro/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-alarm/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-alarm/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-ai-artist/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-ai-artist/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-nw/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-nw/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "services/elife-skill-mgr/skills/eskill-coupon/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-coupon/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
+    ],
     "mac": {
       "identity": null
     },

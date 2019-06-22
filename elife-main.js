@@ -72,12 +72,19 @@ function recreateNodeModules() {
     }
 
     function do_stuff_1(loc) {
+        let nm = 'node_modules'
+
+        shell.echo(`
+
+
+****************************************
+Recreating ${loc}/${nm}
+`)
         let r = shell.pushd('-q', loc)
         if(r.code) {
             shell.echo(`Failed to change directory to: ${loc}`)
             return false
         }
-        let nm = 'node_modules'
         if(shell.test("-d", nm)) {
             shell.echo(`Removing ${loc}/${nm}`)
             let r = shell.rm("-rf", nm)
