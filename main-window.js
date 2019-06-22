@@ -220,7 +220,7 @@ module.exports = function (config) {
         ])
       ]),
       h('span.appTitle', [
-        h('span.title', i18n('Everlife Avatar')),
+        h('span.title', i18n('Everlife Explorer')),
         api.app.html.progressNotifier()
       ]),
       h('span', [ api.app.html.search(api.app.navigate) ]),

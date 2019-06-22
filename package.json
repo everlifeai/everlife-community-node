@@ -1,8 +1,8 @@
 {
-  "name": "elife-avatar",
-  "productName": "Everlife Avatar",
+  "name": "elife-explorer",
+  "productName": "Everlife Explorer",
   "version": "1.0.0",
-  "description": "Your Everlife.AI Avatar",
+  "description": "Your Everlife.AI Explorer",
   "main": "index.js",
   "scripts": {
     "test": "standard",

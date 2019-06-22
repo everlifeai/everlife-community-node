@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
   <id>ai.everlife.workbench</id>
-  <name>EverlifeAvatar</name>
+  <name>EverlifeExplorer</name>
   <project_license>AGPL-3.0</project_license>
   <developer_name>Everlife.AI</developer_name>
   <summary>The Everlife.AI platform</summary>

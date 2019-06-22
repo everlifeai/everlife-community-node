@@ -157,7 +157,7 @@ function openMainWindow () {
       height: windowState.height,
       titleBarStyle: 'hiddenInset',
       autoHideMenuBar: true,
-      title: 'Everlife Avatar',
+      title: 'Everlife Explorer',
       show: true,
       backgroundColor: '#EEE',
       icon: icon,
