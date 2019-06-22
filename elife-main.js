@@ -4,6 +4,8 @@ const path = require('path')
 const fs = require('fs')
 const shortid = require('shortid')
 
+const fixPath = require('fix-path')
+
 const pm2 = require('pm2')
 const pkgmgr = require('elife-pkg-mgr')
 const u = require('elife-utils')
@@ -55,6 +57,7 @@ function setup(args) {
 }
 
 function embeddedStartup(args) {
+    fixPath()
     setupEnvironmentVariables(args)
     setupHomeFolders()
     setupUserConfig()
