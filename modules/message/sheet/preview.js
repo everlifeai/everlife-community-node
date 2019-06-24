@@ -37,12 +37,13 @@ exports.create = function (api) {
   const plural = api.intl.sync.i18n_n
 
   return nest('message.sheet.preview', function (msg, cb) {
-
+    
     getBalance( function(err, bal){
       if(!err) balance = parseFloat(bal.ever)
       else balance = 0
 
       api.sheet.display(function (close) {
+        
         var isPrivate = msg.value.private
         var isRoot = !msg.value.content.root
         var exists = !!msg.key
@@ -90,7 +91,7 @@ exports.create = function (api) {
                   plural('Only visible to you and %s other thread participants', recps.length)
                 ) :
                 when(
-                  balance > minimumBalance,
+                  (!msg.value.content.type === 'post') || balance > minimumBalance,
                   i18n('This message will only be visible to you'),
                   i18n("You don't have enough balance to publish a message.")
 
@@ -100,7 +101,7 @@ exports.create = function (api) {
                 when(msg.publiclyEditable,
                   i18n('This message will be public and can be edited by anyone'),
                   when(
-                    balance > minimumBalance,
+                    (!(msg.value.content.type === 'post')) || balance > minimumBalance,
                     i18n('This message will be public and cannot be edited or deleted'),
                     i18n("You don't have enough balance to publish a message")
                   )
@@ -108,11 +109,11 @@ exports.create = function (api) {
               ])
             ),
             when(
-              balance > minimumBalance,
+              (!(msg.value.content.type === 'post')) || balance > minimumBalance,
               h('button -save', { 'ev-click': publish }, i18n('Confirm')),
             ),
             when(
-              balance > minimumBalance,
+              (!(msg.value.content.type === 'post')) || balance > minimumBalance,
               h('button -cancel', { 'ev-click': cancel }, i18n('Cancel')),
               h('button -cancel', { 'ev-click': cancel }, i18n('Close'))
             )
@@ -122,10 +123,15 @@ exports.create = function (api) {
         function publish () {
 
           close()
-          stellarClient.send({type:'pay-ever',amt:costPerMsg},(err) =>{
-            if(err) cb(null, false)
-            else cb(null, true)
-          })
+          if(msg.value.content.type === 'post'){
+            stellarClient.send({type:'pay-ever',amt:costPerMsg},(err) =>{
+              if(err) cb(null, false)
+              else cb(null, true)
+            })
+          }else {
+            cb(null, true)
+          }
+          
         }
 
         function cancel () {
