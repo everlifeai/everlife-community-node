@@ -20,7 +20,7 @@ module.exports = {
     removeNodeModules: removeNodeModules,
     removePackageLock: removePackageLock,
     startup: startup,
-    embeddedStartup: embeddedStartup,
+    embeddedSetup: embeddedSetup,
     adjustSSBConfig: adjustSSBConfig,
     setupEnvironmentVariables: setupEnvironmentVariables,
     startAvatar: startAvatar,
@@ -56,13 +56,12 @@ function setup(args) {
     setupUserConfig()
 }
 
-function embeddedStartup(args) {
+function embeddedSetup(args) {
     fixPath()
     setupEnvironmentVariables(args)
     setupHomeFolders()
     setupUserConfig()
     showInfo()
-    startAvatar()
 }
 
 function recreateNodeModules() {

@@ -219,7 +219,7 @@ function setupContext (appName, opts, cb) {
   redactedConfig.keys.private = null
   console.dir(redactedConfig, { depth: null })
 
-  elife.embeddedStartup()
+  elife.embeddedSetup()
 
   if (opts.server === false) {
     cb && cb()
@@ -227,6 +227,9 @@ function setupContext (appName, opts, cb) {
     electron.ipcMain.once('server-started', function (ev, config) {
       ssbConfig = config
       cb && cb()
+      setTimeout(() => {
+        elife.startAvatar()
+      }, 20 * 1000)
     })
     windows.background = openWindow(ssbConfig, Path.join(__dirname, 'server-process.js'), {
       connect: false,
