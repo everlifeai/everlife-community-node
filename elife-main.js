@@ -268,15 +268,19 @@ function setupHomeFolders() {
     try {
         fs.mkdirSync(u.dataLoc(), { recursive: true })
     } catch(e) {
-        console.log(e)
-        r = false
+        if(e.code != 'EEXIST') {
+            console.log(e)
+            r = false
+        }
     }
     try {
         fs.mkdirSync(u.skillLoc(), { recursive: true })
         return r
     } catch(e) {
-        console.log(e)
-        return false
+        if(e.code != 'EEXIST') {
+            console.log(e)
+            return false
+        }
     }
 }
 
