@@ -41,6 +41,15 @@ WalletPw {
       padding: 2px;
       margin: 4px;
     }
+    input.secret {
+      display: block;
+      padding: 2px;
+      margin: 4px;
+      background: white;
+      color: black;
+      height: 24px;
+      width: 256px;
+    }
     div.info {
       margin-bottom: 12px;
       p {

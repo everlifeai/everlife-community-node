@@ -40,6 +40,7 @@ exports.needs = nest({
   'progress.html.peer': 'first',
 
   'wallet.sheet.getPW': 'first',
+  'wallet.sheet.getSecret': 'first',
 
   'feed.html.followWarning': 'first',
   'feed.html.followerWarning': 'first',
@@ -85,15 +86,18 @@ exports.create = function (api) {
     var everaccid_disp = Value("")
 
 
-    getAccountId((err, id) => {
-      if(err) {
-        if(err.error) console.error(err.error)
-        else console.error(err)
-      } else {
-        everaccid_val.set(id)
-        everaccid_disp.set(id.substr(0,16)+"..."+id.substr(id.length-4))
-      }
-    })
+    function update_account_id_1() {
+      getAccountId((err, id) => {
+        if(err) {
+          if(err.error) console.error(err.error)
+          else console.error(err)
+        } else {
+          everaccid_val.set(id)
+          everaccid_disp.set(id.substr(0,16)+"..."+id.substr(id.length-4))
+        }
+      })
+    }
+    update_account_id_1()
 
     function update_latest_ever_1(onNoPw) {
       getAccountBalance((err, bal) => {
@@ -117,6 +121,16 @@ exports.create = function (api) {
     setInterval(() => {
       update_latest_ever_1()
     }, 90 * 1000)
+
+    function importNewWallet() {
+      api.wallet.sheet.getSecret(() => {
+        everbalance.set("...loading...")
+        everaccid_val.set("")
+        everaccid_disp.set("")
+        update_account_id_1()
+        update_latest_ever_1()
+      })
+    }
 
     var prepend = [
       api.message.html.compose({ meta: { type: 'post' }, draftKey: 'public', placeholder: i18n('Write a public message') }),
@@ -179,6 +193,9 @@ exports.create = function (api) {
               h('a.btn', {
                   'href': 'https://stellarport.io/exchange/alphanum4/EVER/GDRCJ5OJTTIL4VUQZ52PCZYAUINEH2CUSP5NC2R6D6WQ47JBLG6DF5TE/native/XLM/Stellar'
               }, i18n('+ Buy EVER')),
+              h('a.btn', {
+                  'ev-click': importNewWallet,
+              }, i18n('Import Wallet')),
           ]),
 
         h('button -pub -full', {
