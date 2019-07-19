@@ -18,6 +18,10 @@ function getAccountId(cb) {
   client.send({ type: 'account-id' }, cb)
 }
 
+function setTrustline(cb) {
+  client.send({ type: 'setup-ever-trustline' }, cb)
+}
+
 exports.needs = nest({
   sbot: {
     obs: {
@@ -84,6 +88,8 @@ exports.create = function (api) {
     var everbalance = Value("...loading...")
     var everaccid_val = Value("")
     var everaccid_disp = Value("")
+    var prev_trustline_attempt = 0
+    var attempt_trustline_every = 3 * 60 * 1000
 
 
     function update_account_id_1() {
@@ -110,13 +116,36 @@ exports.create = function (api) {
           if(err.nopw && onNoPw) onNoPw()
 
         } else {
-          if(bal.ever === null || bal.ever === undefined) everbalance.set('(Account Not Setup)')
-          else everbalance.set(bal.ever)
+
+          if(bal.ever || bal.ever === 0) {
+            everbalance.set(bal.ever)
+            return
+          }
+
+          if(bal.xlm === null || bal.xlm === undefined) {
+            everbalance.set('(Account Not Setup)')
+            return
+          }
+
+          everbalance.set('(Account Needs Trustline)')
+
+          let diff = Date.now() - prev_trustline_attempt
+          if(diff > attempt_trustline_every) {
+            everbalance.set('(Setting Trustline...)')
+            prev_trustline_attempt = Date.now()
+            setTrustline((err) => {
+              if(err) u.showErr(err)
+              else update_latest_ever_1(onNoPw)
+            })
+          }
         }
       })
     }
 
-    update_latest_ever_1(() => api.wallet.sheet.getPW(update_latest_ever_1))
+    update_latest_ever_1(() => api.wallet.sheet.getPW(() => {
+      update_account_id_1()
+      update_latest_ever_1()
+    }))
 
     setInterval(() => {
       update_latest_ever_1()
