@@ -327,5 +327,16 @@
 	"Need Password": "Need Password",
 	"Please enter the wallet password": "Please enter the wallet password",
 	"You don't have enough balance to publish a message.": "You don't have enough balance to publish a message.",
-	"You don't have enough balance to publish a message": "You don't have enough balance to publish a message"
+	"You don't have enough balance to publish a message": "You don't have enough balance to publish a message",
+	"Everlife Explorer": "Everlife Explorer",
+	"Import Wallet": "Import Wallet",
+	"Enter Your Stellar Wallet Secret": "Enter Your Stellar Wallet Secret",
+	"Backup Your Profile & Wallet": "Backup Your Profile & Wallet",
+	"Backup Done": "Backup Done",
+	"Backup saved to XXX": "Backup saved to XXX",
+	"Please keep the backup safe and secure. It contains your secret keys.": "Please keep the backup safe and secure. It contains your secret keys.",
+	"Backup saved to Desktop": "Backup saved to Desktop",
+	"Please keep the backup safe and secure (it contains your secret keys!)": "Please keep the backup safe and secure (it contains your secret keys!)",
+	"Backup": "Backup",
+	"Error during backup": "Error during backup"
 }
