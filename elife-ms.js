@@ -3,6 +3,7 @@ const cote = require('cote')({statusLogsEnabled:false})
 const pull = require('pull-stream')
 const fs = require('fs')
 const toPull = require('stream-to-pull-stream')
+const ssbkeys = require('ssb-keys');
 
 
 /*      understand/
@@ -53,6 +54,7 @@ function start(sbot_) {
     sbotSvc.on('blob-save-file', saveFileAsBlob)
     sbotSvc.on('blob-save-array', saveArrayAsBlob)
     sbotSvc.on('blob-load', loadBlob)
+    sbotSvc.on('everlie-service-auth', generateServiceAuth)
 }
 
 function handleNewMsg(req, cb) {
@@ -334,4 +336,13 @@ function loadBlob(req, cb){
     } catch(e) {
         cb(e)
     }
+}
+
+function generateServiceAuth(req, cb){
+    const challenge = process.env.EVERLIFE_SERVICE_CHALLENGE
+    if(challenge){
+        const signedChallenge = ssbkeys.signObj(sbot.keys,{challenge:challenge})
+        cb(null,{key:sbot.keys.public,signed:signedChallenge.signature} )
+    }else 
+        cb('Everlife service challenge is not configured.')
 }
