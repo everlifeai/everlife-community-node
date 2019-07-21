@@ -5,6 +5,7 @@ const fs = require('fs')
 const shortid = require('shortid')
 
 const fixPath = require('fix-path')
+const archiver = require('archiver')
 
 const pm2 = require('pm2')
 const pkgmgr = require('elife-pkg-mgr')
@@ -25,6 +26,7 @@ module.exports = {
     setupEnvironmentVariables: setupEnvironmentVariables,
     startAvatar: startAvatar,
     stopChildProcesses: stopChildProcesses,
+    backup: backup,
 }
 
 function showInfo() {
@@ -701,4 +703,52 @@ function stopChildProcesses(cb2) {
             }
         })
     })
+}
+
+/*    outcome/
+ * Backup the data directory to the desktop
+ */
+function backup(loc, cb) {
+    let n = path.join(loc, `Everlife-Backup-${date_now_1()}.zip`)
+    let o = fs.createWriteStream(n)
+    let bk = archiver('zip')
+    let has_err = false
+
+    o.on('close', () => {
+        if(!has_err) cb(null, n)
+    })
+    o.on('warning', (err) => {
+        u.showErr(err)
+    })
+    o.on('error', (err) => {
+        has_err = true
+        cb(err)
+    })
+
+    bk.pipe(o)
+    bk.directory(u.dataLoc(), false)
+    bk.finalize()
+
+    function date_now_1() {
+        let dt = new Date()
+        return dt.getFullYear() +
+            '-' +
+            pad2(dt.getMonth() + 1) +
+            '-' +
+            pad2(dt.getDate()) +
+            'T' +
+            pad2(dt.getHours()) +
+            ':' +
+            pad2(dt.getMinutes()) +
+            ':' +
+            pad2(dt.getSeconds()) +
+            '.' +
+            dt.getMilliseconds()
+    }
+
+    function pad2(n) {
+        if(n < 10) return '0' + n
+        else return '' + n
+    }
+
 }

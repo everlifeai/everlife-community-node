@@ -1,6 +1,7 @@
+var path = require('path')
 var nest = require('depnest')
 var ref = require('ssb-ref')
-var { h, when, computed, map, send, dictToCollection, resolve, onceTrue } = require('mutant')
+var { h, when, Value, computed, map, send, dictToCollection, resolve, onceTrue } = require('mutant')
 
 exports.needs = nest({
   'about.obs': {
@@ -37,6 +38,7 @@ exports.gives = nest('page.html.render')
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   const plural = api.intl.sync.i18n_n
+  var backingup = Value(false)
   return nest('page.html.render', function profile (id) {
     if (!ref.isFeed(id)) return
     var yourId = api.keys.sync.id()
@@ -148,7 +150,13 @@ exports.create = function (api) {
           h('h1', [name]),
           h('div.meta', [
             when(id === yourId, [
-              h('button', { 'ev-click': api.profile.sheet.edit }, i18n('Edit Your Profile'))
+              h('button', { 'ev-click': api.profile.sheet.edit }, i18n('Edit Your Profile')),
+              h('div', { style: { 'margin-top' : '10px' } }, [
+                h('button', {
+                  'ev-click': backup,
+                  'disabled': backingup
+                }, i18n('Backup Your Avatar')),
+              ]),
             ], api.contact.html.followToggle(id))
           ])
         ]),
@@ -417,6 +425,33 @@ exports.create = function (api) {
     return computed([prefix, items], (prefix, names) => {
       return (prefix ? (prefix + '\n') : '') + names.map((n) => `- ${n}`).join('\n')
     })
+  }
+
+  function backup() {
+    if(backingup()) return
+    backingup.set(true)
+
+    var electron = require('electron')
+    var elife = require('../../../../elife-main')
+
+    var desktop = electron.remote.app.getPath('desktop')
+
+    elife.backup(desktop, (err, loc) => {
+      backingup.set(false)
+      if(err) show_1(i18n('Error during backup'), err + '')
+      else show_1(i18n('Backup saved to Desktop'),
+                  i18n('Please keep the backup safe and secure (it contains your secret keys!)'))
+    })
+
+    function show_1(msg, det) {
+      electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), {
+        type: 'info',
+        title: i18n('Backup'),
+        buttons: [i18n('OK')],
+        message: msg,
+        detail: det,
+      })
+    }
   }
 }
 

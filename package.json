@@ -17,6 +17,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "app-root-path": "^2.2.1",
+    "archiver": "^3.0.3",
     "async": "^2.6.2",
     "bulk-require": "^1.0.1",
     "color-hash": "^1.0.3",
