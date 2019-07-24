@@ -107,53 +107,6 @@ module.exports = function (config) {
     },
     electron.remote.getCurrentWindow().getNativeWindowHandle())
   }
-
-  var qwertChat = document.createElement('script')
-  qwertChat.type = 'text/javascript'
-  var qwertport = process.env["QWERT_PORT"]
-  var code = document.createTextNode(`
-            window.everlifeId =3121345
-            window.everlifeServer = 'http://localhost:${qwertport}/'
-            window.everlifeAvatar = 'http://localhost:${qwertport}/'
-            window.intergramCustomizations = {
-                introMessage: 'welcome',
-                closeStyle: 'button'
-            }
-            loadScript('http://localhost:${qwertport}/js/widget.js')
-
-            function loadScript(src) {
-                check_load_1(src, (err) => {
-                    if(err) {
-                        console.error('Failed to get qwert widget...trying again')
-                        setTimeout(() => {
-                            loadScript(src)
-                        }, 2000)
-                    } else {
-                      console.log('Successfully loaded qwert widget')
-                      let qwertloader = document.createElement('script')
-                      qwertloader.src = src
-                      document.body.appendChild(qwertloader)
-                    }
-                })
-            }
-
-            function check_load_1(src, cb) {
-                let xhr = new XMLHttpRequest()
-                xhr.onreadystatechange = function() {
-                    if(xhr.readyState !== XMLHttpRequest.DONE) return
-                    if(xhr.status !== 200) cb(xhr)
-                    else cb(null, xhr)
-                }
-                xhr.open('GET', src)
-                xhr.send()
-            }
-`)
-  qwertChat.appendChild(code)
-
-  document.head.appendChild(
-    qwertChat
-  )
-
   document.head.appendChild(
     h('style', {
       innerHTML: computed(api.settings.obs.get('patchwork.theme', 'light'), themeName => {

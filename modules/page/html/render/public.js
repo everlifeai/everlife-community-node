@@ -1,6 +1,7 @@
 var nest = require('depnest')
 var { h, send, Value, when, computed, map, onceTrue } = require('mutant')
 var {clipboard} = require('electron')
+var chatwidget = require('./chatwidget')
 
 const cote = require('cote')({statusLogsEnabled:false})
 
@@ -190,7 +191,8 @@ exports.create = function (api) {
       h('div.side', [
         getSidebar()
       ]),
-      h('div.main', feedView)
+      h('div.main', feedView),
+      chatwidget.getChatWidget
     ])
 
     result.pendingUpdates = feedView.pendingUpdates

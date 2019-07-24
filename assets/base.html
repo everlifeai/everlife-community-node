@@ -1,6 +1,95 @@
 <!DOCTYPE html>
 <html>
-  <head></head>
+  <head>
+    <style>
+      #chat-output {
+        position: inherit;
+        width: 100%;
+        height: 97%;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        left: 3%;
+      }
+      .usrmsgrow {
+        margin-top: 24px;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: flex-end;
+      }
+      .usrmsg {
+        text-align: center;
+        position: relative;
+        max-width: 80%;
+        background: white;
+        padding: 8px 12px;
+        margin: 0;
+        margin-right: 10px;
+        border-radius: 12px;
+        box-shadow: 1px 1px 2px #636363;
+      }
+      .usrmsg:after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 50%;
+        width: 0;
+        height: 0;
+        border: 12px solid transparent;
+        border-left-color: white;
+        border-right: 0;
+        border-top: 0;
+        margin-top: -6px;
+        margin-right: -10px;
+      }
+      .msgtxt {
+        overflow: scroll;
+        padding:'5px'
+      }
+      .botmsg {
+        position: relative;
+        text-align: left;
+        max-width: 80%;
+        background: white;
+        padding: 8px 12px;
+        margin: 0;
+        margin-left: 10px;
+        border-radius: 12px;
+        box-shadow: 1px 1px 2px #636363;
+      }
+      .botmsg:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 0;
+        height: 0;
+        border: 12px solid transparent;
+        border-right-color: white;
+        border-left: 0;
+        border-top: 0;
+        margin-top: -6px;
+        margin-left: -10px;
+      }
+      .botmsgrow {
+        margin-top: 24px;
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: flex-start;
+      }
+      p.br {
+        height: 0.1em;
+        margin-top: 1px;
+      }
+    </style>
+    <script>
+      function usrCmd(cmd) {
+        let ui = document.getElementById('userinput')
+        if(ui.value) ui.value = `${cmd} ${ui.value}`
+        else ui.value = cmd
+        ui.focus()
+    }
+    </script>
+  </head>
   <body>
     <script>
       // redirect console to main process
