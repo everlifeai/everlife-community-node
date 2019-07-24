@@ -3,6 +3,7 @@ dist
 services
 qwert
 logs
+.env
 
 # Mac OS metadata file
 .DS_Store
