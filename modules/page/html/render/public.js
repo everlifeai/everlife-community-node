@@ -135,7 +135,7 @@ exports.create = function (api) {
             everbalance.set('(Setting Trustline...)')
             prev_trustline_attempt = Date.now()
             setTrustline((err) => {
-              if(err) u.showErr(err)
+              if(err) console.error(err)
               else update_latest_ever_1(onNoPw)
             })
           }
