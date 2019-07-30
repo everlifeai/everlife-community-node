@@ -183,6 +183,13 @@
         ]
       },
       {
+        "from": "services/elife-skill-mgr/skills/eskill-worker/node_modules",
+        "to": "services/elife-skill-mgr/skills/eskill-worker/node_modules",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
         "from": "services/elife-skill-mgr/skills/eskill-vanity-address/node_modules",
         "to": "services/elife-skill-mgr/skills/eskill-vanity-address/node_modules",
         "filter": [

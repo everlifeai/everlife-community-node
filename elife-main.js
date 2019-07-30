@@ -186,6 +186,7 @@ function avatarStructure() {
         { optional: "services/elife-skill-mgr/skills/eskill-ai-artist" },
         { optional: "services/elife-skill-mgr/skills/eskill-coupon" },
         { optional: "services/elife-skill-mgr/skills/eskill-alarm" },
+        { optional: "services/elife-skill-mgr/skills/eskill-worker" }
     ]
 }
 

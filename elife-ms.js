@@ -54,7 +54,7 @@ function start(sbot_) {
     sbotSvc.on('blob-save-file', saveFileAsBlob)
     sbotSvc.on('blob-save-array', saveArrayAsBlob)
     sbotSvc.on('blob-load', loadBlob)
-    sbotSvc.on('everlie-service-auth', generateServiceAuth)
+    sbotSvc.on('everlife-service-auth', generateServiceAuth)
 }
 
 function handleNewMsg(req, cb) {
@@ -339,7 +339,8 @@ function loadBlob(req, cb){
 }
 
 function generateServiceAuth(req, cb){
-    const challenge = process.env.EVERLIFE_SERVICE_CHALLENGE
+    let challenge = process.env.EVERLIFE_SERVICE_CHALLENGE
+    if(!challenge) challenge = "O3parF2LRWVcfVvmrLZHZ7Qg4D7WnZOkjVD1QNdAYbM"
     if(challenge){
         const signedChallenge = ssbkeys.signObj(sbot.keys,{challenge:challenge})
         cb(null,{key:sbot.keys.public,signed:signedChallenge.signature} )
