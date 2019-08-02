@@ -11,7 +11,7 @@ const pm2 = require('pm2')
 const pkgmgr = require('elife-pkg-mgr')
 const u = require('elife-utils')
 var psTree = require('ps-tree')
-
+var os = require('os');
 
 const dotenv = require('dotenv').config({ path : path.join(u.dataLoc(),'cfg.env')})
 
@@ -711,6 +711,7 @@ function stopChildProcesses(cb2) {
  */
 function backup(loc, cb) {
     let n = path.join(loc, `Everlife-Backup-${date_now_1()}.zip`)
+
     let o = fs.createWriteStream(n)
     let bk = archiver('zip')
     let has_err = false
@@ -727,7 +728,8 @@ function backup(loc, cb) {
     })
 
     bk.pipe(o)
-    bk.directory(u.dataLoc(), false)
+    if(os.platform()=='win32') backupForWindows(bk)
+    else bk.directory(u.dataLoc(), false)
     bk.finalize()
 
     function date_now_1() {
@@ -739,12 +741,24 @@ function backup(loc, cb) {
             pad2(dt.getDate()) +
             'T' +
             pad2(dt.getHours()) +
-            ':' +
+            '-' +
             pad2(dt.getMinutes()) +
-            ':' +
+            '-' +
             pad2(dt.getSeconds()) +
             '.' +
             dt.getMilliseconds()
+    }
+
+    /*      understand/
+     * Windows is locking some directories so we are going to backup
+     * only the wallet and the ssb
+     */
+    function backupForWindows(bk){
+        const secretFilePath = path.join(u.dataLoc() , "__ssb/secret")
+        const luminatepw = path.join(u.dataLoc(), ".luminate-pw")
+        bk.append(fs.createReadStream(secretFilePath), { name: 'secret' })
+        bk.append(fs.createReadStream(luminatepw), { name: '.luminate-pw' })
+        bk.directory(path.join(u.dataLoc(), 'stellar'), false)
     }
 
     function pad2(n) {
