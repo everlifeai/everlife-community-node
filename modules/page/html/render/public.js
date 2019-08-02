@@ -192,7 +192,7 @@ exports.create = function (api) {
         getSidebar()
       ]),
       h('div.main', feedView),
-      chatwidget.getChatWidget
+      chatwidget.getChatWidget(i18n)
     ])
 
     result.pendingUpdates = feedView.pendingUpdates

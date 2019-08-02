@@ -1,6 +1,29 @@
-let { h, send, Value, when, computed, map, onceTrue } = require('mutant')
+let store = require('store')
+let { h } = require('mutant')
+let path = require('path')
+let fs = require('fs')
 
 let cfg = loadConfig()
+let msgs = []
+
+
+function setMsgs(){
+    let msgList = getMsgs();
+    if(!msgList || msgList.length < 1){
+        onboardUser()
+        return;
+    }
+    if(msgList.length > 0) msgs = msgList
+    
+    for(let i=0; i < msgs.length; i++){
+        let msg = msgs[i]
+        showMsg(msg.msg, msg.from, msg.addl, false)
+    }
+}
+
+function onboardUser() {
+    userSays(cfg, '/start')
+}
 
 function pollForMsgs(cfg) {
     getBotMsg(cfg, (err, msg, addl) => {
@@ -55,6 +78,19 @@ function gotMsg(cfg) {
     POLLING_INTERVAL = 1
     pollAgain(cfg)
 }
+
+function writeMsg(msg){
+    if(msg) {
+        msgs.push(msg)
+        store.set('msgs', msgs)
+    }
+}
+function getMsgs(){
+    let msgs = store.get('msgs')
+    console.log(msgs)
+    return msgs;
+}
+
 /*      outcome/
  * Send the message to the server and show it in our chat list
  */
@@ -64,10 +100,10 @@ function userSays(cfg, msg, addl) {
     sendUsrMsg(cfg, msg, (err) => {
         if(err) {
             console.error(err)
-            showMsg(`Error! Failed to send message to avatar!`, 'err')
+            showMsg(`Error! Failed to send message to avatar!`, 'err', null, true)
         }
     }, addl)
-    showMsg(msg, 'usr', addl)
+    showMsg(msg, 'usr', addl, true)
 }
 
 /*      outcome/
@@ -77,11 +113,11 @@ function userSays(cfg, msg, addl) {
 function botSays(cfg, msg, addl) {
     if(isEmpty(msg) && isEmpty(addl)) return
     gotMsg(cfg)
-    showMsg(msg, 'bot', addl)
+    showMsg(msg, 'bot', addl, true)
     if(!isEmpty(addl)) doAddl(addl)
 }
 
-function showMsg(msg, from, addl) {
+function showMsg(msg, from, addl, isLocalStoreMsg) {
     if(!msg && (!addl || addl.type != 'say')) return
 
     let msgs = document.getElementById("chat-output");
@@ -111,7 +147,8 @@ function showMsg(msg, from, addl) {
 
     rowdiv.appendChild(msgdiv)
     msgs.appendChild(rowdiv)
-
+    if(isLocalStoreMsg)
+        writeMsg({from:from,msg:msg,addl:addl})
     msgs.scrollTop = msgs.scrollHeight;
 }
 function sendUsrMsg(cfg, msg, cb, addl) {
@@ -165,14 +202,35 @@ function toMsgHml(msg) {
                 .replace(/[\r\n]/g, '<p class=br>&nbsp;</p>')
 }
 
-exports.getChatWidget = function(){
+exports.getChatWidget = function(i18n){
+
     let chatWidget = h('div.side.-right',
-        [
+        [h('div',{style:{
+                    display:"None"
+                },
+                id:'loader',
+                classList:"animate-bottom"
+            }),
+            h('div',{id:'chatwidget',
+                style:{
+                    height:"98%",
+                    display:"None"
+                }
+            },[
             h('div',{
                 style:{
                     height:'95%'
                 }
-            },h('div',{id:'chat-output',classList:['chat-output']})),
+            },[
+                h('h2',{
+                    style:{
+                        'text-align': 'center',
+                        color: '#ff00a1'
+                    }
+                    
+                },i18n('Everlife Avatar Chat')),
+                h('hr'),
+                h('div',{id:'chat-output',classList:['chat-output']})]),
             h('div',{
                 style:{
                     height:'5%'
@@ -190,13 +248,14 @@ exports.getChatWidget = function(){
                         'font-size': '120%',
                         'padding-right': '20%'                    
                     },
-                    'ev-keydown':keyPress
-
+                    'ev-keydown':keyPress,
                 })
                 
+            )]
             )
         ]
     );
+    
     function keyPress(e){
         if(e.key == 'Enter'){
             let msg = document.getElementById('userinput').value
@@ -206,5 +265,41 @@ exports.getChatWidget = function(){
         }
     }
 
+function enable_when_ready() {
+    check_connection_1((err) => {
+        console.log(err)
+        if(err) {
+            setTimeout(() => {
+                enable_when_ready()
+            }, 3000)
+        } else {
+            setTimeout(()=>{
+                showPage()
+                setMsgs()
+            },3000)
+        }
+    })
+}
+
+function check_connection_1(cb) {
+    let xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = function() {
+        if(xhr.readyState !== XMLHttpRequest.DONE) return
+        console.log(xhr.status)
+        if(xhr.status !== 200) cb(xhr)
+        else cb(null)
+    }
+    xhr.open('GET', `http://localhost:${cfg.PORT}/bot`)
+    xhr.send()
+}
+
+function showPage() {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("chatwidget").style.display = "block";
+}
+    setTimeout(()=>{
+        enable_when_ready()
+        
+    },2000)
     return chatWidget
 }

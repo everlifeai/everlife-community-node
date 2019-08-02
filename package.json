@@ -1,7 +1,7 @@
 {
   "name": "elife-explorer",
   "productName": "Everlife Explorer",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Your Everlife.AI Explorer",
   "main": "index.js",
   "scripts": {
@@ -107,6 +107,7 @@
     "ssb-uri": "^1.0.1",
     "ssb-ws": "6.0.0",
     "standard": "^12.0.1",
+    "store": "^2.0.12",
     "suggest-box": "github:mmckegg/suggest-box#scroll-selection-into-view",
     "text-node-searcher": "^1.1.1",
     "xtend": "^4.0.1"
