@@ -233,13 +233,6 @@
         ]
       },
       {
-        "from": "services/elife-skill-mgr/skills/eskill-alarm/node_modules",
-        "to": "services/elife-skill-mgr/skills/eskill-alarm/node_modules",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
         "from": "services/elife-skill-mgr/skills/eskill-ai-artist/node_modules",
         "to": "services/elife-skill-mgr/skills/eskill-ai-artist/node_modules",
         "filter": [

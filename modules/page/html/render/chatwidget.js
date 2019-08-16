@@ -14,7 +14,7 @@ function setMsgs(){
         return;
     }
     if(msgList.length > 0) msgs = msgList
-    
+
     for(let i=0; i < msgs.length; i++){
         let msg = msgs[i]
         showMsg(msg.msg, msg.from, msg.addl, false)
@@ -87,7 +87,6 @@ function writeMsg(msg){
 }
 function getMsgs(){
     let msgs = store.get('msgs')
-    console.log(msgs)
     return msgs;
 }
 
@@ -144,13 +143,36 @@ function showMsg(msg, from, addl, isLocalStoreMsg) {
             msgdiv.appendChild(sounddiv)
         }
     }
+    if(from=='bot'){
+        setAvatarIcon(rowdiv,from)
+        rowdiv.appendChild(msgdiv)
+        msgs.appendChild(rowdiv)
+    }else if(from=='usr'){
+        rowdiv.appendChild(msgdiv)
+        msgs.appendChild(rowdiv)
+        setAvatarIcon(rowdiv,from)
+    }
 
-    rowdiv.appendChild(msgdiv)
-    msgs.appendChild(rowdiv)
     if(isLocalStoreMsg)
         writeMsg({from:from,msg:msg,addl:addl})
     msgs.scrollTop = msgs.scrollHeight;
 }
+
+function setAvatarIcon(msgDiv, from){
+    if(!from || from =='err') return
+    let user_icon = '..//..//..//../assets/user.jpg'
+    let avatar_icon = '..//..//..//../assets/icon.png'
+
+    let avatarImg = document.createElement('img')
+    if(from=='bot') avatarImg.src = avatar_icon
+    else avatarImg.src = user_icon
+    avatarImg.style.backgroundRepeat='no-repeat'
+    avatarImg.style.width='12%'
+    avatarImg.style.height='11%'
+    avatarImg.style.borderRadius='57%';
+    msgDiv.appendChild(avatarImg)
+}
+
 function sendUsrMsg(cfg, msg, cb, addl) {
     if(!msg && !addl) return cb(`No message to send!`)
     let url_ = `http://localhost:${cfg.PORT}/msg`
@@ -206,11 +228,22 @@ exports.getChatWidget = function(i18n){
 
     let chatWidget = h('div.side.-right',
         [h('div',{style:{
-                    display:"None"
+                    height:'100%'
                 },
                 id:'loader',
                 classList:"animate-bottom"
-            }),
+            },[h('div', {
+                style: {
+                    color: 'grey'
+                }
+                }, 'Connecting to avatar...'),
+                h('img',{
+                src:"..//..//..//../assets/loading-gif-transparent-25.gif",
+                style:{
+                    'margin-top':'70%',
+                    'width':'100%'
+                }
+            })]),
             h('div',{id:'chatwidget',
                 style:{
                     height:"98%",
@@ -267,7 +300,6 @@ exports.getChatWidget = function(i18n){
 
 function enable_when_ready() {
     check_connection_1((err) => {
-        console.log(err)
         if(err) {
             setTimeout(() => {
                 enable_when_ready()
@@ -285,7 +317,6 @@ function check_connection_1(cb) {
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
         if(xhr.readyState !== XMLHttpRequest.DONE) return
-        console.log(xhr.status)
         if(xhr.status !== 200) cb(xhr)
         else cb(null)
     }
@@ -302,4 +333,5 @@ function showPage() {
         
     },2000)
     return chatWidget
+    
 }
