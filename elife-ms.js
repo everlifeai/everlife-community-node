@@ -3,7 +3,9 @@ const cote = require('cote')({statusLogsEnabled:false})
 const pull = require('pull-stream')
 const fs = require('fs')
 const toPull = require('stream-to-pull-stream')
-const ssbkeys = require('ssb-keys');
+const ssbkeys = require('ssb-keys')
+const ref = require('ssb-ref')
+const flat = require('flat')
 
 
 /*      understand/
@@ -55,6 +57,10 @@ function start(sbot_) {
     sbotSvc.on('blob-save-array', saveArrayAsBlob)
     sbotSvc.on('blob-load', loadBlob)
     sbotSvc.on('everlife-service-auth', generateServiceAuth)
+
+
+    sbotSvc.on('post-msg', handlePostMsg)
+    sbotSvc.on('pvt-post-msg', handlePvtPostMsg)
 }
 
 function handleNewMsg(req, cb) {
@@ -346,4 +352,27 @@ function generateServiceAuth(req, cb){
         cb(null,{key:sbot.keys.public,signed:signedChallenge.signature} )
     }else 
         cb('Everlife service challenge is not configured.')
+}
+
+function handlePostMsg(req, cb) {
+    let content = req.msg
+    let flatContent = flat(content)
+    Object.keys(flatContent).forEach(key => {
+        var val = flatContent[key]
+        if (ref.isBlob(val)) {
+            sbot.blobs.push(val, err => {
+                if (err) console.error(err)
+            })
+        }
+    })
+    sbot.publish(content, cb)
+}
+
+function handlePvtPostMsg(req, cb) {
+    let content = req.msg
+    if(!content.recps) return cb(`Message recipients (.recps) not set!`)
+    content = ssbkeys.box(content, content.recps.map(e => {
+        return ref.isFeed(e) ? e : e.link
+    }))
+    sbot.publish(content, msg)
 }
