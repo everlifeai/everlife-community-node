@@ -1,8 +1,20 @@
-var { h , Array: MutantArray, map } = require('mutant')
+var { h , Value, Array: MutantArray, map } = require('mutant')
 var nest = require('depnest')
 var packageInfo = require('../../../../package.json')
 
 var themeNames = Object.keys(require('../../../../styles'))
+
+const cote = require('cote')({statusLogsEnabled:false})
+
+let stellarClient = new cote.Requester({
+    name: `Job Page -> Stellar`,
+    key: 'everlife-stellar-svc',
+})
+
+let jobsClient = new cote.Requester({
+    name: `Job Page -> Worker`,
+    key: 'everlife-work',
+})
 
 exports.needs = nest({
   'intl.sync.i18n': 'first',
@@ -11,22 +23,20 @@ exports.needs = nest({
 exports.gives = nest('page.html.render')
 
 var jobs = MutantArray([])
+var spinner = Value('(...fetching...)')
 
 var fs = require('fs')
 var path_ = require('path')
 
 function getLatestJobs() {
-    // TODO: read from marketplace
-    let fname = path_.join(__dirname, '../../../../services/elife-job-mgr/jobs.json')
-    fs.readFile(fname, "utf8", (err, data) => {
-        if(err) console.error(err)
+    jobsClient.send({ type: 'joblist' }, (err, data) => {
+        if(err) {
+            setTimeout(getLatestJobs, 5000)
+        }
         else {
-            try {
-                jobs.set(JSON.parse(data))
-            } catch(e) {
-                console.error("Failed to load jobs...")
-                console.error(err)
-            }
+            spinner.set('')
+            jobs.set(data.groups)
+            setTimeout(getLatestJobs, 60 * 60 * 1000)
         }
     })
 }
@@ -40,9 +50,10 @@ exports.create = function (api) {
 
     var prepend = [
       h('PageHeading', [
+        h('div', [ spinner ]),
         h('h1', [
           h('strong', i18n('Jobs'))
-        ])
+        ]),
       ])
     ]
 
@@ -55,14 +66,10 @@ exports.create = function (api) {
 
 
     function to_card_1(job) {
+      let inst = job.enrolled ? "Already Enrolled" : `Enroll ${job.id}`
       return h('.card', [
-        h('h2', job.title),
-        h('.desc', job.desc),
-        h('.ever', job.ever),
-        h('.depo', job.depo),
-        h('a.down', job.down),
-        h('.inst', job.inst),
-        h('.requ', job.requ)
+        h('h2', job.name),
+        h('.inst', inst),
       ])
     }
 
