@@ -1,25 +1,50 @@
+PageHeading {
+  border-bottom: 1px solid #b3b3b3;
+  padding: 12px;
+  margin: 0;
+}
 Jobs {
   div.card {
-    width: 600px;
+    width: 300px;
     border-radius: 8px;
     padding: 0.5em 2em 2em 2em;
     margin: 2em 0;
     box-shadow: 1px 1px 1px 1px #959eab;
     background: linear-gradient(white, #f1f7ff);
 
-    div.desc {
-      font-weight: bold;
-    }
-    div.ever {
-      margin: 1em 0;
-    }
-    div.depo {
-      margin: 1em 0;
-      text-decoration: underline;
-    }
     div.inst {
       margin: 1em 0;
       font-style: italic;
+    }
+  }
+}
+Txns {
+  div.list {
+    div.item {
+      margin: 2em 0;
+      div.on {
+        font-weight: bold;
+        color: green;
+        display: inline-block;
+      }
+      div.txnid {
+        font-style: italic;
+        color: #b3b3b3;
+        padding-left: 2em;
+        display: inline-block;
+      }
+      div.op {
+        white-space: pre;
+      }
+      div.payingout {
+        color: red;
+      }
+      div.gotpaid {
+        color: #286bc3;
+      }
+      div.sourceacc {
+        margin-top: 4px;
+      }
     }
   }
 }
