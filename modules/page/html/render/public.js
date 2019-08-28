@@ -23,6 +23,25 @@ function setTrustline(cb) {
   client.send({ type: 'setup-ever-trustline' }, cb)
 }
 
+const commMgrClient = new cote.Requester({
+  name: 'Public Page -> CommMgr',
+  key: 'everlife-communication-svc',
+})
+
+function sendNotification(msg) {
+  let req = {
+    type: 'reply',
+    msg: msg,
+    USELASTCHAN: true,
+  }
+  commMgrClient.send(req, (err) => {
+    if(err){
+      u.showErr('Public Page')
+      u.showErr(err)
+    }
+  })
+}
+
 exports.needs = nest({
   sbot: {
     obs: {
@@ -91,6 +110,7 @@ exports.create = function (api) {
     var everaccid_disp = Value("")
     var prev_trustline_attempt = 0
     var attempt_trustline_every = 3 * 60 * 1000
+    var everbalance_set = false
 
 
     function update_account_id_1() {
@@ -119,7 +139,13 @@ exports.create = function (api) {
         } else {
 
           if(bal.ever || bal.ever === 0) {
+            if(everbalance_set && everbalance() != bal.ever) {
+              // TODO: Check if paid or lost cash. Maybe use transaction
+              // history instead
+              sendNotification(`Yipee! Looks like we just got paid!`)
+            }
             everbalance.set(bal.ever)
+            everbalance_set = true
             return
           }
 
