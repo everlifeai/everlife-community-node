@@ -58,6 +58,8 @@ function start(sbot_) {
     sbotSvc.on('blob-load', loadBlob)
     sbotSvc.on('everlife-service-auth', generateServiceAuth)
 
+    sbotSvc.on('encrypt-text', encryptText)
+    sbotSvc.on('decrypt-text', decryptText)
 
     sbotSvc.on('post-msg', handlePostMsg)
     sbotSvc.on('pvt-post-msg', handlePvtPostMsg)
@@ -352,6 +354,35 @@ function generateServiceAuth(req, cb){
         cb(null,{key:sbot.keys.public,signed:signedChallenge.signature} )
     }else 
         cb('Everlife service challenge is not configured.')
+}
+
+/**
+ *      /outcome
+ * Get the encrypted text based on given text using avatar key
+ * If encryption failed return same text
+ * @param {*} msg - plain text
+ * @param {*} cb
+ */
+function encryptText(req, cb){
+    if(!req.text) return cb('Plain text is missing')
+    let encryptMsg = ssbkeys.box(req.text, [sbot.keys.public])
+    if(encryptMsg) cb(null, encryptMsg)
+    else cb(null, req.text)
+}
+
+/**
+ *      /outcome
+ * Get the decrypted text based on given encrypted text using avatar key
+ * If decryption failed return same text
+ * @param {*} msg - encrypted text based on avatar key
+ * @param {*} cb
+ */
+
+function decryptText(req, cb) {
+    if(!req.text) return cb('Encrypted text is missing')
+    let decryptMsg = ssbkeys.unbox(req.text, sbot.keys)
+    if(decryptMsg) cb(null, decryptMsg)
+    else cb(null, req.text)
 }
 
 function handlePostMsg(req, cb) {
