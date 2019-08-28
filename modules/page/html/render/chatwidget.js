@@ -224,7 +224,7 @@ function toMsgHml(msg) {
                 .replace(/[\r\n]/g, '<p class=br>&nbsp;</p>')
 }
 
-exports.getChatWidget = function(i18n){
+exports.getChatWidget = function(i18n) {
 
     let chatWidget = h('div.side.-right',
         [h('div',{style:{
@@ -260,7 +260,7 @@ exports.getChatWidget = function(i18n){
                         'text-align': 'center',
                         color: '#ff00a1'
                     }
-                    
+
                 },i18n('Everlife Avatar Chat')),
                 h('hr'),
                 h('div',{id:'chat-output',classList:['chat-output']})]),
@@ -279,16 +279,16 @@ exports.getChatWidget = function(i18n){
                         display: 'inline-block',
                         border: '1px solid #ccc',
                         'font-size': '120%',
-                        'padding-right': '20%'                    
+                        'padding-right': '20%'
                     },
                     'ev-keydown':keyPress,
                 })
-                
+
             )]
             )
         ]
     );
-    
+
     function keyPress(e){
         if(e.key == 'Enter'){
             let msg = document.getElementById('userinput').value
@@ -308,6 +308,7 @@ function enable_when_ready() {
             setTimeout(()=>{
                 showPage()
                 setMsgs()
+                gotMsg(cfg)
             },3000)
         }
     })
@@ -320,7 +321,7 @@ function check_connection_1(cb) {
         if(xhr.status !== 200) cb(xhr)
         else cb(null)
     }
-    xhr.open('GET', `http://localhost:${cfg.PORT}/bot`)
+    xhr.open('GET', `http://localhost:${cfg.PORT}/ping`)
     xhr.send()
 }
 
@@ -330,8 +331,8 @@ function showPage() {
 }
     setTimeout(()=>{
         enable_when_ready()
-        
+
     },2000)
     return chatWidget
-    
+
 }
