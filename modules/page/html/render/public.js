@@ -130,6 +130,7 @@ exports.create = function (api) {
       getAccountBalance((err, bal) => {
         if(err) {
           everbalance.set("(Wallet Not Loaded)")
+          everbalance_set = false
 
           if(err.error) console.error(err.error)
           else console.error(err)
@@ -151,14 +152,17 @@ exports.create = function (api) {
 
           if(bal.xlm === null || bal.xlm === undefined) {
             everbalance.set('(Account Not Setup)')
+            everbalance_set = false
             return
           }
 
           everbalance.set('(Account Needs Trustline)')
+          everbalance_set = false
 
           let diff = Date.now() - prev_trustline_attempt
           if(diff > attempt_trustline_every) {
             everbalance.set('(Setting Trustline...)')
+            everbalance_set = false
             prev_trustline_attempt = Date.now()
             setTrustline((err) => {
               if(err) console.error(err)
