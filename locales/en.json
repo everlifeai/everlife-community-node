@@ -76,5 +76,47 @@
 	"self assigned a description": "self assigned a description",
 	"Hide details": "Hide details",
 	"Show details": "Show details",
-	"Payment History": "Payment History"
+	"(ignored)": "(ignored)",
+	"KB": "KB",
+	"(listening)": "(listening)",
+	"Public key for this profile": "Public key for this profile",
+	"This is you.": "This is you.",
+	"This person is blocked by %s of your friends.": {
+		"one": "This person is blocked by %s of your friends.",
+		"other": "This person is blocked by %s of your friends."
+	},
+	"This person does not follow anyone that follows you": "This person does not follow anyone that follows you",
+	"You don't follow anyone who follows this person": "You don't follow anyone who follows this person",
+	"Mutual Friends": "Mutual Friends",
+	"You share %s mutual friends with this person.": {
+		"one": "You share %s mutual friends with this person.",
+		"other": "You share %s mutual friends with this person."
+	},
+	"Followed by": "Followed by",
+	"You follow %s people that follow this person.": {
+		"one": "You follow %s people that follow this person.",
+		"other": "You follow %s people that follow this person."
+	},
+	"Payment History": "Payment History",
+	"Edit Your Profile": "Edit Your Profile",
+	"Backup Your Avatar": "Backup Your Avatar",
+	"You have chosen to publicly block this person.": "You have chosen to publicly block this person.",
+	"You have chosen to privately ignore this person.": "You have chosen to privately ignore this person.",
+	"No new messages will be downloaded. Existing messages will be hidden.": "No new messages will be downloaded. Existing messages will be hidden.",
+	"You might not be seeing their latest messages. You could try joining a pub that they are a member of.": "You might not be seeing their latest messages. You could try joining a pub that they are a member of.",
+	"However, since they follow someone that follows you, they should be able to see your posts.": "However, since they follow someone that follows you, they should be able to see your posts.",
+	"They might not be able to see your posts either.": "They might not be able to see your posts either.",
+	"They might not receive your private messages or replies. You could try joining a pub that they are a member of.": "They might not receive your private messages or replies. You could try joining a pub that they are a member of.",
+	"However, since you follow someone that follows them, you should be able to see their latest posts.": "However, since you follow someone that follows them, you should be able to see their latest posts.",
+	"Send Private Message": "Send Private Message",
+	"Friends": "Friends",
+	"Followers": "Followers",
+	"Following": "Following",
+	"Blocked by": "Blocked by",
+	"Self Assigned": "Self Assigned",
+	"Assigned By": "Assigned By",
+	"External Link": "External Link",
+	"Save": "Save",
+	"Cancel": "Cancel",
+	"Knowledge Base": "Knowledge Base"
 }

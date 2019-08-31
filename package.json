@@ -1,7 +1,7 @@
 {
   "name": "elife-explorer",
   "productName": "Everlife Explorer",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Your Everlife.AI Explorer",
   "main": "index.js",
   "scripts": {
