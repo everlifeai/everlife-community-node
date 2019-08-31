@@ -184,7 +184,8 @@ module.exports = function (config) {
         }),
         tab(i18n('Mentions'), '/mentions'),
         tab(i18n('Jobs'), '/jobs'),
-        tab(i18n('Skills'), '/skills')
+        tab(i18n('Skills'), '/skills'),
+        tab(i18n('KB'), '/kb')
       ])
     ]),
     views.html
