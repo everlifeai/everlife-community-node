@@ -128,7 +128,9 @@ exports.create = function (api) {
             h("img", { src: skill.pic }),
             h("span", "")
           ),
-          skill.name
+          h('a',{
+            'href':`https://github.com/everlifeai/${skill.name}`
+          },skill.name)
         ]),
         h(".desc", skill.desc),
         h(".version", [
