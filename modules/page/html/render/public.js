@@ -29,6 +29,10 @@ const commMgrClient = new cote.Requester({
 })
 
 function sendNotification(msg) {
+  new Notification('Everlife Explorer', {
+    body: msg,
+    icon:"icon.png"
+  })
   let req = {
     type: 'reply',
     msg: msg,
@@ -242,7 +246,7 @@ exports.create = function (api) {
           h('div', {
               classList: 'Wallet',
           }, [
-              h('.balance', everbalance),
+              h('.balance', h('a',{href:'/wallet','style':{'color':'#008000'}},everbalance)),
               h('.id', {
                 'ev-click': () => {
                   let v = everaccid_disp()

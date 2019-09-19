@@ -161,6 +161,7 @@ module.exports = function (config) {
         tab(i18n('Private'), '/private'),
         dropTab(i18n('More'), [
           getSubscribedChannelMenu,
+          [i18n('Profile'), id],
           subMenu(i18n('Participating'), [
             [i18n('All Threads'), '/participating'],
             [i18n('Threads Started By You'), '/your-posts']
@@ -168,6 +169,8 @@ module.exports = function (config) {
           [i18n('Gatherings'), '/gatherings'],
           [i18n('Tags'), `/tags/all/${encodeURIComponent(id)}`],
           [i18n('Extended Network'), '/all'],
+          { separator: true },
+          [i18n('Knowledge Base'), '/kb'],
           { separator: true },
           [i18n('Settings'), '/settings']
         ])
@@ -178,14 +181,13 @@ module.exports = function (config) {
       ]),
       h('span', [ api.app.html.search(api.app.navigate) ]),
       h('span.nav', [
-        tab(i18n('Profile'), id),
+        tab(i18n('Wallet'), '/wallet'),
+        tab(i18n('Jobs'), '/jobs'),
+        tab(i18n('Skills'), '/skills'),
+        tab(i18n('Mentions'), '/mentions'),
         computed(includeParticipating, (includeParticipating) => {
           if (includeParticipating) return tab(i18n('Participating'), '/participating')
         }),
-        tab(i18n('Mentions'), '/mentions'),
-        tab(i18n('Jobs'), '/jobs'),
-        tab(i18n('Skills'), '/skills'),
-        tab(i18n('KB'), '/kb')
       ])
     ]),
     views.html
