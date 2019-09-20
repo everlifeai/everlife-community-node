@@ -41,25 +41,22 @@ function getAccountId(cb) {
 }
 
 function getLatestTxns() {
-    stellarClient.send({ type: 'txns', from: txns_arr.length }, (err, resp, acc_) => {
-        if(err) {
-          console.error(err)
-          txns_arr = []
-          txns.set(txns_arr.reverse())
-        } else {
-          acc = acc_
-          if(resp && resp.length) {
-            txns_arr = txns_arr.concat(resp)
-            txns.set(txns_arr.reverse())
-          } else {
-            if(!state.txnsloaded) {
-              state.txnsloaded = true
-              if(state.txnsloaded) spinner.set('')
-            }
-          }
-        }
-      setTimeout(getLatestTxns, state.txnsloaded ? 20 * 60 * 1000 : 5000)
-    })
+  stellarClient.send({ type: 'txns' }, (err, resp, acc_) => {
+    if(err) {
+      console.error(err)
+      txns_arr = []
+      txns.set(txns_arr.reverse())
+    } else {
+      acc = acc_
+      state.txnsloaded = true
+      spinner.set('')
+      if(resp) {
+        txns_arr = resp
+        txns.set(txns_arr.reverse())
+      }
+    }
+    setTimeout(getLatestTxns, state.txnsloaded ? 20 * 60 * 1000 : 5000)
+  })
 }
 
 getLatestTxns()
