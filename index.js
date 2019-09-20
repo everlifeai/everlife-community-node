@@ -101,8 +101,12 @@ electron.app.on('ready', () => {
     var help = menu.find(x => x.label === 'Help')
     help.submenu = [
       {
-        label: 'Learn More',
-        click () { require('electron').shell.openExternal('https://scuttlebutt.nz') }
+        label: 'Learn about Your Node',
+        click () { require('electron').shell.openExternal('https://everlifeai.github.io/') }
+      },
+      {
+        label: 'The Everlife Project',
+        click () { require('electron').shell.openExternal('http://everlife.ai') }
       }
     ]
     if (process.platform === 'darwin') {
