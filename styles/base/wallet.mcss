@@ -1,4 +1,13 @@
 Wallet {
+  div.wallet-link {
+    text-transform: uppercase;
+    text-align: center;
+    padding-top: 0.5em;
+    padding-bottom: 2.5em;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.75em;
+  }
   div.id {
     text-transform: uppercase;
     text-align: center;

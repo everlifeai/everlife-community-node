@@ -22,6 +22,7 @@ exports.gives = {
             },
             setup: {
                 onNoPw: true,
+                onNewPayments: true,
                 reload: true,
             }
         }
@@ -48,7 +49,10 @@ exports.create = function(api) {
             failed: false,
         }
     }
-    let onNoPwHandler
+    let HANDLER = {
+        onNoPw: null,
+        onNewPayments: null,
+    }
 
     let accid = {
         val: Value(STARTVAL.accid),
@@ -139,7 +143,7 @@ exports.create = function(api) {
          * done next - handling errors, events, and refreshing.
          */
         function runs_completed_1() {
-            if(RUNNING.hadNoPwd && onNoPwHandler) return onNoPwHandler()
+            if(RUNNING.hadNoPwd && HANDLER.onNoPw) return HANDLER.onNoPw()
             let refreshTime = 20 * 60 * 1000
             if(RUNNING.haderr) refreshTime = 5 * 1000
             RUNNING.timer = setTimeout(loader, refreshTime)
@@ -186,8 +190,27 @@ exports.create = function(api) {
         }
 
         function handle_acctxns_1(txns) {
+            handle_any_new_payments_1(acctxns, txns)
             if(txns.length != acctxns.val().length) acctxns.val.set(txns.reverse())
             if(!acctxns.valid()) acctxns.valid.set(true)
+        }
+
+        function handle_any_new_payments_1(acctxns, txns) {
+            if(!HANDLER.onNewPayments) return
+            if(!acctxns.valid()) return
+            if(txns.length <= acctxns.val().length) return
+            let r = []
+            for(let i = acctxns.val().length;i < txns.length;i++) {
+                let txn = txns[i].envelope_xdr.tx
+                for(let i = 0;i < txn.operations.length;i++) {
+                    let op = txn.operations[i].body
+                    if(op && op.type == 'payment') r.push({
+                        memo: txn.memo,
+                        payment: op.paymentOp
+                    })
+                }
+            }
+            HANDLER.onNewPayments(r)
         }
 
         /*      outcome/
@@ -222,7 +245,8 @@ exports.create = function(api) {
                     obsAccTxns: () => acctxns,
                 },
                 setup: {
-                    onNoPw: (handler) => onNoPwHandler = handler,
+                    onNoPw: (handler) => HANDLER.onNoPw = handler,
+                    onNewPayments: (handler) => HANDLER.onNewPayments = handler,
                     reload: reload,
                 }
             }

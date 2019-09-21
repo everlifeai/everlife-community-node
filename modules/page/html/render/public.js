@@ -3,6 +3,31 @@ var { h, send, Value, when, computed, map, onceTrue } = require('mutant')
 var {clipboard} = require('electron')
 var chatwidget = require('./chatwidget')
 
+const cote = require('cote')({statusLogsEnabled:false})
+
+const commMgrClient = new cote.Requester({
+  name: 'Public Page -> CommMgr',
+  key: 'everlife-communication-svc',
+})
+
+function sendNotification(msg) {
+  new Notification('Everlife Explorer', {
+    body: msg,
+    icon:"icon.png"
+  })
+  let req = {
+    type: 'reply',
+    msg: msg,
+    USELASTCHAN: true,
+  }
+  commMgrClient.send(req, (err) => {
+    if(err){
+      console.error('Public Page')
+      console.error(err)
+    }
+  })
+}
+
 exports.needs = nest({
   sbot: {
     obs: {
@@ -27,6 +52,7 @@ exports.needs = nest({
   'wallet.sheet.getPW': 'first',
   'wallet.handler.fetch.obsAccBal': 'first',
   'wallet.handler.setup.onNoPw': 'first',
+  'wallet.handler.setup.onNewPayments': 'first',
   'wallet.handler.setup.reload': 'first',
 
   'feed.html.followWarning': 'first',
@@ -72,6 +98,16 @@ exports.create = function (api) {
     let accbal = api.wallet.handler.fetch.obsAccBal()
     api.wallet.handler.setup.onNoPw(() => {
       api.wallet.sheet.getPW(api.wallet.handler.setup.reload)
+    })
+    api.wallet.handler.setup.onNewPayments((payments) => {
+      for(let i = 0;i < payments.length;i++) {
+        let p = payments[i].payment
+        let memo = payments[i].memo
+        if(!memo || memo == 'memoNone') memo = ''
+        if(p.asset && p.asset.alphaNum4 && p.asset.alphaNum4.assetCode == 'EVER') {
+          sendNotification(`Yipee! We got paid ${p.amount.value} EVER ${memo}`)
+        }
+      }
     })
 
     var prepend = [
@@ -125,7 +161,7 @@ exports.create = function (api) {
               classList: 'Wallet',
           }, [
               h('.balance', h('a',{href:'/wallet','style':{'color':'#008000'}}, accbal.val)),
-              h('.id', h('a',{href:'/wallet','style':{'color':'#008000'}}, "Wallet")),
+              h('.wallet-link', h('a',{href:'/wallet'}, "Your Wallet")),
           ]),
 
         h('button -pub -full', {
