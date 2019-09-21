@@ -1,4 +1,4 @@
-var { h , Value, when, map } = require('mutant')
+var { h , Value, map } = require('mutant')
 var nest = require('depnest')
 var {clipboard} = require('electron')
 
@@ -112,8 +112,7 @@ exports.create = function (api) {
                 'font-size': '41px',
                 'color': '#444750'
               }
-            },
-              when(accbal.valid, accbal.val, "...fetching..."))
+            }, accbal.val)
           ]),
         ]),
         h('br'),
@@ -135,8 +134,7 @@ exports.create = function (api) {
               accid.val.set('(Copied)')
               setTimeout(()=> accid.val.set(id),1000)
             }
-          },
-            when(accid.valid, accid.val, "...fetching..."))
+          }, accid.val)
         ]),
         h('section', [
           h('table',{
@@ -175,9 +173,7 @@ exports.create = function (api) {
     ])
 
     function importNewWallet() {
-      api.wallet.sheet.getSecret(() => {
-        api.wallet.handler.setup.reload()
-      })
+      api.wallet.sheet.getSecret(api.wallet.handler.setup.reload)
     }
 
     function to_list_1(txn) {

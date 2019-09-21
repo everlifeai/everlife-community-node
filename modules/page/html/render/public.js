@@ -3,49 +3,6 @@ var { h, send, Value, when, computed, map, onceTrue } = require('mutant')
 var {clipboard} = require('electron')
 var chatwidget = require('./chatwidget')
 
-const cote = require('cote')({statusLogsEnabled:false})
-
-let client = new cote.Requester({
-    name: `Public Page -> Stellar`,
-    key: 'everlife-stellar-svc',
-})
-
-
-function getAccountBalance(cb) {
-  client.send({ type: 'balance' }, cb)
-}
-
-function getAccountId(cb) {
-  client.send({ type: 'account-id' }, cb)
-}
-
-function setTrustline(cb) {
-  client.send({ type: 'setup-ever-trustline' }, cb)
-}
-
-const commMgrClient = new cote.Requester({
-  name: 'Public Page -> CommMgr',
-  key: 'everlife-communication-svc',
-})
-
-function sendNotification(msg) {
-  new Notification('Everlife Explorer', {
-    body: msg,
-    icon:"icon.png"
-  })
-  let req = {
-    type: 'reply',
-    msg: msg,
-    USELASTCHAN: true,
-  }
-  commMgrClient.send(req, (err) => {
-    if(err){
-      u.showErr('Public Page')
-      u.showErr(err)
-    }
-  })
-}
-
 exports.needs = nest({
   sbot: {
     obs: {
@@ -68,7 +25,9 @@ exports.needs = nest({
   'progress.html.peer': 'first',
 
   'wallet.sheet.getPW': 'first',
-  'wallet.sheet.getSecret': 'first',
+  'wallet.handler.fetch.obsAccBal': 'first',
+  'wallet.handler.setup.onNoPw': 'first',
+  'wallet.handler.setup.reload': 'first',
 
   'feed.html.followWarning': 'first',
   'feed.html.followerWarning': 'first',
@@ -109,92 +68,11 @@ exports.create = function (api) {
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
     var contact = api.profile.obs.contact(id)
-    var everbalance = Value("...loading...")
-    var everaccid_val = Value("")
-    var everaccid_disp = Value("")
-    var prev_trustline_attempt = 0
-    var attempt_trustline_every = 3 * 60 * 1000
-    var everbalance_set = false
 
-
-    function update_account_id_1() {
-      getAccountId((err, id) => {
-        if(err) {
-          if(err.error) console.error(err.error)
-          else console.error(err)
-        } else {
-          everaccid_val.set(id)
-          everaccid_disp.set(id.substr(0,16)+"..."+id.substr(id.length-4))
-        }
-      })
-    }
-    update_account_id_1()
-
-    function update_latest_ever_1(onNoPw) {
-      getAccountBalance((err, bal) => {
-        if(err) {
-          everbalance.set("(Wallet Not Loaded)")
-          everbalance_set = false
-
-          if(err.error) console.error(err.error)
-          else console.error(err)
-
-          if(err.nopw && onNoPw) onNoPw()
-
-        } else {
-
-          if(bal.ever || bal.ever === 0) {
-            if(everbalance_set && everbalance() != bal.ever) {
-              // TODO: Check if paid or lost cash. Maybe use transaction
-              // history instead
-              sendNotification(`Yipee! Looks like we just got paid!`)
-            }
-            everbalance.set(bal.ever)
-            everbalance_set = true
-            return
-          }
-
-          if(bal.xlm === null || bal.xlm === undefined) {
-            everbalance.set('(Account Not Setup)')
-            everbalance_set = false
-            return
-          }
-
-          everbalance.set('(Account Needs Trustline)')
-          everbalance_set = false
-
-          let diff = Date.now() - prev_trustline_attempt
-          if(diff > attempt_trustline_every) {
-            everbalance.set('(Setting Trustline...)')
-            everbalance_set = false
-            prev_trustline_attempt = Date.now()
-            setTrustline((err) => {
-              if(err) console.error(err)
-              else update_latest_ever_1(onNoPw)
-            })
-          }
-        }
-      })
-    }
-
-    update_latest_ever_1(() => api.wallet.sheet.getPW(() => {
-      update_account_id_1()
-      update_latest_ever_1()
-    }))
-
-    setInterval(() => {
-      update_latest_ever_1()
-    }, 90 * 1000)
-
-    function importNewWallet() {
-      api.wallet.sheet.getSecret(() => {
-        everbalance.set("...loading...")
-        everaccid_val.set("")
-        everaccid_disp.set("")
-        update_account_id_1()
-        update_latest_ever_1()
-      })
-    }
+    let accbal = api.wallet.handler.fetch.obsAccBal()
+    api.wallet.handler.setup.onNoPw(() => {
+      api.wallet.sheet.getPW(api.wallet.handler.setup.reload)
+    })
 
     var prepend = [
       api.message.html.compose({ meta: { type: 'post' }, draftKey: 'public', placeholder: i18n('Write a public message') }),
@@ -246,21 +124,8 @@ exports.create = function (api) {
           h('div', {
               classList: 'Wallet',
           }, [
-              h('.balance', h('a',{href:'/wallet','style':{'color':'#008000'}},everbalance)),
-              h('.id', {
-                'ev-click': () => {
-                  let v = everaccid_disp()
-                  everaccid_disp.set('(Copied)')
-                  setTimeout(() => everaccid_disp.set(v), 500)
-                  clipboard.writeText(everaccid_val())
-                },
-              }, everaccid_disp),
-              h('a.btn', {
-                  'href': 'https://stellarport.io/exchange/alphanum4/EVER/GDRCJ5OJTTIL4VUQZ52PCZYAUINEH2CUSP5NC2R6D6WQ47JBLG6DF5TE/native/XLM/Stellar'
-              }, i18n('+ Buy EVER')),
-              h('a.btn', {
-                  'ev-click': importNewWallet,
-              }, i18n('Import Wallet')),
+              h('.balance', h('a',{href:'/wallet','style':{'color':'#008000'}}, accbal.val)),
+              h('.id', h('a',{href:'/wallet','style':{'color':'#008000'}}, "Wallet")),
           ]),
 
         h('button -pub -full', {

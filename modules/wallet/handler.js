@@ -31,16 +31,24 @@ exports.gives = {
 exports.create = function(api) {
     const STARTVAL = {
         accid: '',
-        accbal: -1,
+        accbal: '(Wallet Not Loaded)',
         acctxns: [],
     }
 
     let RUNNING = {
         ongoing: 0,
         haderr: false,
+        hadNoPwd: false,
         timer: null,
         ondone: null,
+
+        trustline: {
+            needed: false,
+            ongoing: false,
+            failed: false,
+        }
     }
+    let onNoPwHandler
 
     let accid = {
         val: Value(STARTVAL.accid),
@@ -68,8 +76,10 @@ exports.create = function(api) {
      * run ask it to call us back when the run is done.
      */
     function reload() {
-        if(RUNNING.timer) {
-            clearTimeout(RUNNING.timer)
+        if(RUNNING.ongoing) {
+            RUNNING.ondone = reload
+        } else {
+            if(RUNNING.timer) clearTimeout(RUNNING.timer)
             accid.val.set(STARTVAL.accid)
             accid.valid.set(false)
             accbal.val.set(STARTVAL.accbal)
@@ -77,73 +87,59 @@ exports.create = function(api) {
             acctxns.val.set(STARTVAL.acctxns)
             acctxns.valid.set(false)
             loader()
-        } else {
-            RUNNING.ondone = reload
         }
     }
 
     /*      outcome/
-     * Load the account parameters and - once all are loaded - refresh
-     * periodically.
+     * Load the account parameters, handling each case if needed.  Once
+     * all are loaded - refresh periodically.
      */
     function loader() {
         RUNNING.timer = null
         RUNNING.haderr = false
+        RUNNING.hadNoPwd = false
+        RUNNING.trustline.needed = false
 
-        RUNNING.ongoing++
-        get_account_id_1((err, id) => {
-            RUNNING.ongoing--
+        load_1('account-id', handle_accid_1)
+        load_1('balance', handle_accbal_1)
+        load_1('txns', handle_acctxns_1)
 
-            if(err) {
-                console.log(err)
-                RUNNING.haderr = true
-            } else {
-                if(id != accid.val()) accid.val.set(id)
-                if(!accid.valid()) accid.valid.set(true)
-            }
-
-            refresh_1()
-        })
-
-        RUNNING.ongoing++
-        get_account_bal_1((err, bal) => {
-            RUNNING.ongoing--
-
-            if(err) {
-                console.log(err)
-                RUNNING.haderr = true
-            } else {
-                if(bal.ever != accbal.val()) accbal.val.set(bal.ever)
-                if(!accbal.valid()) accbal.valid.set(true)
-            }
-
-            refresh_1()
-        })
-
-        RUNNING.ongoing++
-        get_account_txns_1((err, txns) => {
-            RUNNING.ongoing--
-
-            if(err) {
-                console.log(err)
-                RUNNING.haderr = true
-            } else {
-                if(txns.length != acctxns.val().length) acctxns.val.set(txns.reverse())
-                if(!acctxns.valid()) acctxns.valid.set(true)
-            }
-
-            refresh_1()
-        })
 
         /*      outcome/
-         * If all running processes are done, we set a timeout to
-         * refresh the data. If there was an error we try to refresh
-         * quicker otherwise we can afford to wait. If there is an
-         * 'ondone' function, we call that too - this is to trigger the
-         * 'reload' functionality if the wallet changes.
+         * Get the required values, checking the error return for a
+         * 'No Password Found' callback. Also keep track of the number
+         * of running loads so we can call the completion handler once
+         * all the runs are finished.
          */
-        function refresh_1() {
-            if(RUNNING.ongoing) return
+        function load_1(type_, handler_) {
+            RUNNING.ongoing++
+            stellarClient.send({ type: type_ }, (err, val) => {
+                RUNNING.ongoing--
+
+                if(err) {
+                    RUNNING.haderr = true
+
+                    if(err.error) console.error(err.error)
+                    else console.error(err)
+
+                    if(err.nopw) RUNNING.hadNoPwd = true
+
+                } else {
+
+                    handler_(val)
+
+                }
+
+                if(!RUNNING.ongoing) runs_completed_1()
+            })
+        }
+
+        /*      outcome/
+         * The run has completed so we do the things that need to be
+         * done next - handling errors, events, and refreshing.
+         */
+        function runs_completed_1() {
+            if(RUNNING.hadNoPwd && onNoPwHandler) return onNoPwHandler()
             let refreshTime = 20 * 60 * 1000
             if(RUNNING.haderr) refreshTime = 5 * 1000
             RUNNING.timer = setTimeout(loader, refreshTime)
@@ -152,11 +148,68 @@ exports.create = function(api) {
                 RUNNING.ondone = null
                 ondone()
             }
+            if(RUNNING.trustline.needed) {
+                setup_account_trustline_1()
+            }
         }
 
-        function get_account_id_1(cb) { stellarClient.send({ type: 'account-id' }, cb) }
-        function get_account_bal_1(cb) { stellarClient.send({ type: 'balance' }, cb) }
-        function get_account_txns_1(cb) { stellarClient.send({ type: 'txns' }, cb) }
+        function handle_accid_1(id) {
+            if(id != accid.val()) accid.val.set(id)
+            if(!accid.valid()) accid.valid.set(true)
+        }
+
+        /*      outcome/
+         * Set the balance to see if we have one, otherwise set the
+         * balance text to reflect the error and - if we need a
+         * trustline - try to set that up.
+         */
+        function handle_accbal_1(bal) {
+            if(bal.ever || bal.ever === 0) {
+
+                if(bal.ever != accbal.val()) accbal.val.set(bal.ever)
+                if(!accbal.valid()) accbal.valid.set(true)
+
+            } else if(bal.xlm === null || bal.xlm === undefined) {
+
+                accbal.val.set('(Account Not Setup)')
+
+            } else {
+
+                RUNNING.trustline.needed = true
+
+                if(RUNNING.trustline.ongoing) {
+                    accbal.val.set('(Setting Trustline...)')
+                } else {
+                    accbal.val.set('(Account Needs Trustline)')
+                }
+            }
+        }
+
+        function handle_acctxns_1(txns) {
+            if(txns.length != acctxns.val().length) acctxns.val.set(txns.reverse())
+            if(!acctxns.valid()) acctxns.valid.set(true)
+        }
+
+        /*      outcome/
+         * Try to set the account trustline, reloading info if
+         * successful.
+         */
+        function setup_account_trustline_1() {
+            RUNNING.trustline.failed = false
+            RUNNING.trustline.ongoing = true
+            stellarClient.send({ type: 'setup-ever-trustline' }, (err) => {
+                RUNNING.trustline.ongoing = false
+
+                if(err) {
+                    console.error(err)
+                    RUNNING.trustline.failed = true
+                } else {
+                    reload()
+                }
+
+            })
+        }
+
     }
 
 
@@ -169,7 +222,7 @@ exports.create = function(api) {
                     obsAccTxns: () => acctxns,
                 },
                 setup: {
-                    onNoPw: () => accid, // TODO
+                    onNoPw: (handler) => onNoPwHandler = handler,
                     reload: reload,
                 }
             }
