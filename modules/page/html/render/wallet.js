@@ -1,71 +1,28 @@
-var { h , Value, Array: MutantArray, map, when } = require('mutant')
+var { h , Value, when, map } = require('mutant')
 var nest = require('depnest')
-var packageInfo = require('../../../../package.json')
-
-var themeNames = Object.keys(require('../../../../styles'))
-
-const cote = require('cote')({statusLogsEnabled:false})
-
-let balance = Value(0)
-let stellarClient = new cote.Requester({
-    name: `Job Page -> Stellar`,
-    key: 'everlife-stellar-svc',
-})
-
-function getAccountBalance() {
-  stellarClient.send({ type: 'balance' }, (err,bal)=>{
-    if(err) console.log(err)
-    else balance.set(bal.ever)
-  })
-}
-getAccountBalance()
+var {clipboard} = require('electron')
 
 exports.needs = nest({
   'intl.sync.i18n': 'first',
   'wallet.sheet.getSecret': 'first',
+
+  'wallet.handler.fetch.obsAccId': 'first',
+  'wallet.handler.fetch.obsAccBal': 'first',
+  'wallet.handler.fetch.obsAccTxns': 'first',
+
+  'wallet.handler.setup.reload': 'first',
 })
 
 exports.gives = nest('page.html.render')
-
-var spinner = Value('(...fetching...)')
-var txns = MutantArray([])
-var txns_arr = []
-var acc
-
-var state = {
-    txnsloaded: false,
-}
-
-function getAccountId(cb) {
-  stellarClient.send({ type: 'account-id' }, cb)
-}
-
-function getLatestTxns() {
-  stellarClient.send({ type: 'txns' }, (err, resp, acc_) => {
-    if(err) {
-      console.error(err)
-      txns_arr = []
-      txns.set(txns_arr.reverse())
-    } else {
-      acc = acc_
-      state.txnsloaded = true
-      spinner.set('')
-      if(resp) {
-        txns_arr = resp
-        txns.set(txns_arr.reverse())
-      }
-    }
-    setTimeout(getLatestTxns, state.txnsloaded ? 20 * 60 * 1000 : 5000)
-  })
-}
-
-getLatestTxns()
 
 exports.create = function (api) {
   return nest('page.html.render', function channel (path) {
     if (path !== '/wallet') return
     const i18n = api.intl.sync.i18n
 
+    let accid = api.wallet.handler.fetch.obsAccId()
+    let accbal = api.wallet.handler.fetch.obsAccBal()
+    let acctxns = api.wallet.handler.fetch.obsAccTxns()
 
     return h('Scroller', {
         style: { overflow: 'auto' } }, [
@@ -118,6 +75,7 @@ exports.create = function (api) {
             'ev-click': importNewWallet,
           }, h('span',{style:{'font-weight': 'bold','font-size':'18px'}},i18n('Import Wallet'))),
           ]),
+
           h('section',{
             style:{
               'text-align':'center',
@@ -154,11 +112,32 @@ exports.create = function (api) {
                 'font-size': '41px',
                 'color': '#444750'
               }
-            },balance)
+            },
+              when(accbal.valid, accbal.val, "...fetching..."))
           ]),
         ]),
         h('br'),
-
+        h('div',[
+          h('div',{
+            style:{
+              'text-align': 'center',
+              'background-color': 'rgb(149, 158, 169)',
+              'color': 'white',
+              'text-size':'16px',
+              'padding':'10px',
+              'cursor': 'pointer',
+              'font-weight':'bold'
+            },
+            'ev-click': () => {
+              if(!accid.valid()) return
+              let id = accid.val()
+              clipboard.writeText(id)
+              accid.val.set('(Copied)')
+              setTimeout(()=> accid.val.set(id),1000)
+            }
+          },
+            when(accid.valid, accid.val, "...fetching..."))
+        ]),
         h('section', [
           h('table',{
             style:{
@@ -189,7 +168,7 @@ exports.create = function (api) {
                   }
                 },i18n('Details'))
               ]),
-            map(txns,to_list_1)
+            map(acctxns.val,to_list_1)
           ])
         ]),
       ]))
@@ -197,13 +176,13 @@ exports.create = function (api) {
 
     function importNewWallet() {
       api.wallet.sheet.getSecret(() => {
-        getAccountBalance()
-        getLatestTxns()
+        api.wallet.handler.setup.reload()
       })
     }
+
     function to_list_1(txn) {
-      txn = simplifyTxn(txn)
-      let details = getTransctionDetails(txn)
+      txn = simplifyTxn(accid.val(), txn)
+      let details = getTxnDetails(accid.val(), txn)
       return [
         h('tr',[
           h('td',{
@@ -219,9 +198,15 @@ exports.create = function (api) {
               'border': '1px solid #dddddd',
               'padding': '8px'
             }
-          }, details),
-        ])
-
+          }, [details,
+              h('div', {
+                  style: {
+                      'font-weight': 'bold',
+                      'color': '#aaa',
+                      'padding-top': '4px',
+                  }
+              },txn.memo?txn.memo:'')]),
+        ]),
       ]
     }
   })
@@ -232,7 +217,8 @@ exports.create = function (api) {
  * by people - getting rid of most of the data and making the types
  * easier to read
  */
-function simplifyTxn(txn) {
+function simplifyTxn(acc, txn) {
+
     let r = {}
     r.id = txn.id
     r.on = txn.created_at
@@ -244,7 +230,7 @@ function simplifyTxn(txn) {
       if(sa != acc) r.sourceAccount = sa
     }
 
-    if(data.memo != 'memoNone') r.memo = data.memo
+    if(txn.memo) r.memo = txn.memo
 
     r.operations = []
     for(let i = 0;i < data.operations.length;i++) {
@@ -290,35 +276,46 @@ function simplifyTxn(txn) {
     }
 }
 
-function getTransctionDetails(txn){
-  let operations = txn.operations
-  let details = ''
-  let isCredited = false
-  for(let i=0; i < operations.length; i++){
-    let data = operations[i];
-    if(data.type === 'payment'){
-      if(data.destination === acc){
-        isCredited = true
-        details = `Credited with ${data.amount} ${data.asset.assetCode ? data.asset.assetCode : 'XLM'}`
-                  +` Received from ${txn.sourceAccount} ${data.memo?'('+data.memo+')':''}`
-      } else
-        details = `Debited with ${data.amount} ${data.asset.assetCode ? data.asset.assetCode : 'XLM'}`
-                  +` Sent to ${data.destination} ${data.memo?'('+data.memo+')':''}`
-    } else if(data.type === 'changeTrust'){
-      details = `New trustline limit of ${data.limit} for asset ${data.line.assetCode} issued by ${data.line.issuer} `
-    } else if(data.type === 'createAccount'){
-      details = `Wallet created with initial balance of ${data.startingBalance} XLM`
-    } else {
-      details = JSON.stringify(operations)
-    }
 
-
+/*    outcome/
+ * Returns the transaction details as html depending on the type of
+ * operation.
+ */
+function getTxnDetails(acc, txn){
+  let m = {
+    payment: payment_details_1,
+    changeTrust: changeTrust_details_1,
+    createAccount: createAccount_details_1,
   }
-  return when(isCredited,
-    h('span',{
-      style:{
-        'color':'green'
+
+  let r = []
+  for(let i = 0;i < txn.operations.length;i++) {
+    let op = txn.operations[i]
+    let fn = m[op.type]
+    if(fn) r.push(fn(op))
+    else r.push(JSON.stringify(op))
+  }
+
+  return h('span', r)
+
+  function payment_details_1(op) {
+      let assetcode = op.asset.assetCode ? op.asset.assetCode : 'XLM'
+      if(op.destination === acc) {
+        return h('span', {
+            style: {
+                color: 'green',
+            }
+        }, `Credited with ${op.amount} ${assetcode} from ${txn.sourceAccount}`)
+      } else {
+        return `Debited with ${op.amount} ${assetcode} to ${data.destination}s`
       }
-    },details),
-    h('span',details) )
+  }
+
+  function changeTrust_details_1(op) {
+      return `New trustline limit of ${op.limit} for asset ${op.line.assetCode} issued by ${op.line.issuer} `
+  }
+
+  function createAccount_details_1(op) {
+      return `Wallet created with initial balance of ${op.startingBalance} XLM`
+  }
 }
