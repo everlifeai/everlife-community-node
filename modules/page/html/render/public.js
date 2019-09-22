@@ -56,6 +56,8 @@ exports.needs = nest({
   'wallet.handler.setup.onNewPayments': 'first',
   'wallet.handler.setup.reload': 'first',
 
+  'skills.loadMetaInfo': 'first',
+
   'feed.html.followWarning': 'first',
   'feed.html.followerWarning': 'first',
   'feed.html.rollup': 'first',
@@ -108,6 +110,21 @@ exports.create = function (api) {
         if(p.asset && p.asset.alphaNum4 && p.asset.alphaNum4.assetCode == 'EVER') {
           sendNotification(`Yipee! We got paid ${p.amount.value} EVER ${memo}`)
         }
+      }
+    })
+
+    /*    problem/
+     * If the user has asked us to install a skill, we need to refresh
+     * the skill pane.
+     *
+     *    way/
+     * We give the skill a couple of seconds to download then ask the
+     * pane to refresh the skill meta info. This should hopefully cause
+     * it to reload. (TODO: Is there a better way to do this?)
+     */
+    chatwidget.addUserMsgHandler((msg) => {
+      if(msg.startsWith('/install')){
+        setTimeout(api.skills.loadMetaInfo, 10 * 1000)
       }
     })
 
