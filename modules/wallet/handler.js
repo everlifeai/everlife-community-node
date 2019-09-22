@@ -202,10 +202,11 @@ exports.create = function(api) {
             let r = []
             for(let i = acctxns.val().length;i < txns.length;i++) {
                 let txn = txns[i].envelope_xdr.tx
+                let memo = txns[i].memo
                 for(let i = 0;i < txn.operations.length;i++) {
                     let op = txn.operations[i].body
                     if(op && op.type == 'payment') r.push({
-                        memo: txn.memo,
+                        memo: memo,
                         payment: op.paymentOp
                     })
                 }
