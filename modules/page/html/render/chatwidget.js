@@ -2,7 +2,6 @@ let store = require('store')
 let { h } = require('mutant')
 let path = require('path')
 let fs = require('fs')
-
 let cfg = loadConfig()
 let msgs = []
 
@@ -90,8 +89,14 @@ function getMsgs(){
     return msgs;
 }
 
+let USERMSGHANDLERS = []
+exports.addUserMsgHandler = (handler) => {
+  USERMSGHANDLERS.push(handler)
+}
+
 /*      outcome/
- * Send the message to the server and show it in our chat list
+ * Send the message to the server and show it in our chat list and
+ * trigger any handlers that want to know what the user said.
  */
 function userSays(cfg, msg, addl) {
     if(isEmpty(msg) && isEmpty(addl)) return
@@ -103,6 +108,7 @@ function userSays(cfg, msg, addl) {
         }
     }, addl)
     showMsg(msg, 'usr', addl, true)
+    for(let i = 0;i < USERMSGHANDLERS.length;i++) USERMSGHANDLERS[i](msg)
 }
 
 /*      outcome/
@@ -292,7 +298,6 @@ exports.getChatWidget = function(i18n) {
     function keyPress(e){
         if(e.key == 'Enter'){
             let msg = document.getElementById('userinput').value
-            //addUserMsg(msg)
             userSays(cfg, msg)
             document.getElementById('userinput').value =''
         }
