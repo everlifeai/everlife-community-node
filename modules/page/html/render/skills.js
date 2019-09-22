@@ -24,9 +24,20 @@ exports.create = function (api) {
 
     var prepend = h('div.PageHeading', [ h('h1', i18n('Skills')) ])
 
+    var instructions = h('div.instructions', [
+      h('span', 'Your avatar node comes installed with several core skills. '),
+      h('span', 'You can develop or install additional skills to extend the abilities of your avatar. '),
+      h('span', 'To develop skills, check the developer resource section in '),
+      h('a', { href: 'https://everlifeai.github.io/' }, 'https://everlifeai.github.io/'),
+      h('span', 'while installing skills is a simple matter of running the '),
+      h('span', { style: { 'font-family': 'monospace' } }, '/install <skill-name>'),
+      h('span', ' command. '),
+    ])
+
     return h('Scroller', { style: { overflow: 'auto' } }, [
       h('div.wrapper', [
         h('section.prepend', prepend),
+        h('section.instructions', instructions),
         h('section.Skills', map(skillInfo, to_card_1)),
       ])
     ])
