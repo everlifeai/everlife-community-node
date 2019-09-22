@@ -2,6 +2,7 @@ var nest = require('depnest')
 var { h, send, Value, when, computed, map, onceTrue } = require('mutant')
 var {clipboard} = require('electron')
 var chatwidget = require('./chatwidget')
+var path_ = require('path')
 
 const cote = require('cote')({statusLogsEnabled:false})
 
@@ -13,7 +14,7 @@ const commMgrClient = new cote.Requester({
 function sendNotification(msg) {
   new Notification('Everlife Explorer', {
     body: msg,
-    icon:"icon.png"
+    icon: path_.join(__dirname, "notif-icon.png"),
   })
   let req = {
     type: 'reply',
@@ -161,7 +162,30 @@ exports.create = function (api) {
               classList: 'Wallet',
           }, [
               h('.balance', h('a',{href:'/wallet','style':{'color':'#008000'}}, accbal.val)),
-              h('.wallet-link', h('a',{href:'/wallet'}, "Your Wallet")),
+              h('.wallet-link',
+                  h('a',{ href:'/wallet',
+                    style: {
+                      display: 'inline-block',
+                      'line-height': '40px',
+                    }
+                  },
+                    [
+                      h('img', {
+                          src: path_.join(__dirname, 'wallet-icon.png'),
+                          style: {
+                              height: "40px",
+                              padding: "0 4px",
+                              'vertical-align': "middle",
+                          }
+                      }),
+                      h('span', {
+                          style: {
+                              "font-size": "10px",
+                              "font-weight": "bold",
+                          }
+                      }, "EVER Wallet")
+                  ])
+              ),
           ]),
 
         h('button -pub -full', {
