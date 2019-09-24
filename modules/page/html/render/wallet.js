@@ -303,7 +303,7 @@ function getTxnDetails(acc, txn){
             }
         }, `Credited with ${op.amount} ${assetcode} from ${txn.sourceAccount}`)
       } else {
-        return `Debited with ${op.amount} ${assetcode} to ${data.destination}s`
+        return `Debited with ${op.amount} ${assetcode} to ${op.destination}s`
       }
   }
 
