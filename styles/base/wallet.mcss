@@ -1,6 +1,5 @@
 Wallet {
   div.wallet-link {
-    text-transform: uppercase;
     text-align: center;
     padding-top: 0.5em;
     padding-bottom: 2.5em;

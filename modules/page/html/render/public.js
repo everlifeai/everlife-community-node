@@ -184,6 +184,7 @@ exports.create = function (api) {
                     style: {
                       display: 'inline-block',
                       'line-height': '40px',
+                      'user-select': 'none',
                     }
                   },
                     [
@@ -199,6 +200,7 @@ exports.create = function (api) {
                           style: {
                               "font-size": "10px",
                               "font-weight": "bold",
+                              "color": "#5d5d5d",
                           }
                       }, "EVER Wallet")
                   ])
