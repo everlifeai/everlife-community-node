@@ -16,42 +16,46 @@ const ssbClient = new cote.Requester({
 })
 
 const levelClient = new cote.Requester({
-  name: 'level DB Client',
+  name: 'SavePasswd -> level DB Client',
   key: 'everlife-db-svc',
 })
 
 exports.create = function (api) {
   const i18n = api.intl.sync.i18n
   return nest('pwd.savepwd', function (opts) {
-    var username = Value('')
-    var pwd = Value('')
-    var saving = Value(false)
-    var disablepwbtn = computed([saving,username,pwd], () => {
-      return saving() || !(username() && pwd())
-    })
-    api.sheet.display(close => {
-      return {
-        content: h('div', {
+    loadAuthCredentials(opts, (err, creds) => {
+      var username = Value('')
+      var pwd = Value('')
+      var saving = Value(false)
+      var disablepwbtn = computed([saving,username,pwd], () => {
+        return saving() || !(username() && pwd())
+      })
+      if(err) console.error(err)
+      else username.set(creds.username)
+
+      api.sheet.display(close => {
+        return {
+          content: h('div', {
             style: {
-                padding: '20px',
+              padding: '20px',
             }
-        }, [
+          }, [
             h('h2',{style:{'margin-left':'20px'}}, i18n(opts.metaData.msg)),
             h('div.main', [
-                h('input', {
-                  type: 'text',
-                  style:{
-                    "background-color":"#fff",
-                    'font-size': '100%',
-                    'width':'70%',
-                    'color':'#333',
-                    'margin-top':'20px',
-                    'margin-left':'20px',
-                    'height':'30px'
-                  },
-                  placeholder: 'Username',
-                  hooks: [ ValueHook(username), FocusHook() ],
-                }),h('br'),
+              h('input', {
+                type: 'text',
+                style:{
+                  "background-color":"#fff",
+                  'font-size': '100%',
+                  'width':'70%',
+                  'color':'#333',
+                  'margin-top':'20px',
+                  'margin-left':'20px',
+                  'height':'30px'
+                },
+                placeholder: 'Username',
+                hooks: [ ValueHook(username), FocusHook() ],
+              }),h('br'),
               h('input', {
                 style:{
                   "background-color":"#fff",
@@ -67,39 +71,41 @@ exports.create = function (api) {
                 hooks: [ ValueHook(pwd) ],
               }),
             ])
-        ]),
-        footer: [
-          h('button -save', {
-            'ev-click': save
-          }, i18n('Save')),
-          h('button -cancel', {
-            'ev-click': cancel
-          }, i18n('Cancel'))
-        ],
-      }
+          ]),
+          footer: [
+            h('button -save', {
+              'ev-click': save
+            }, i18n('Save')),
+            h('button -cancel', {
+              'ev-click': cancel
+            }, i18n('Cancel'))
+          ],
+        }
 
-      function cancel(){
-        close()
-      }
+        function cancel(){
+          close()
+        }
 
-      function save() {
-        if(saving()) return
-        saving.set(true)
-        opts.auth = {username:username(),password:pwd()}
-        saveAuthCrediential(opts)
-        close()
-      }
+        function save() {
+          if(saving()) return
+          saving.set(true)
+          opts.auth = {username:username(),password:pwd()}
+          saveAuthCrediential(opts)
+          close()
+        }
 
-      function showErr(msg, detail) {
-        var electron = require('electron')
-        electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), {
-          type: 'error',
-          title: 'Cannot save Password',
-          buttons: [i18n('Ok')],
-          message: msg,
-          detail: detail,
-        })
-      }
+        function showErr(msg, detail) {
+          var electron = require('electron')
+          electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), {
+            type: 'error',
+            title: 'Cannot save Password',
+            buttons: [i18n('Ok')],
+            message: msg,
+            detail: detail,
+          })
+        }
+
+      })
 
     })
   })
@@ -124,16 +130,34 @@ function ValueHook (obs) {
 }
 
 function saveAuthCrediential(opts){
-    getEncryptText(JSON.stringify(opts.auth), (err, encryptedText) => {
-      levelClient.send({ type: 'put', key: opts.name, val: encryptedText }, (err) => {
-        if(err) console.log(err)
-      })
+  getEncryptText(JSON.stringify(opts.auth), (err, encryptedText) => {
+    levelClient.send({ type: 'put', key: opts.name, val: encryptedText }, (err) => {
+      if(err) console.log(err)
     })
+  })
 }
 
 function getEncryptText(text, cb){
   ssbClient.send({ type: 'encrypt-text', text: text }, (err, encryptedText) => {
     if(err) u.showErr(err)
     else cb(null, encryptedText)
+  })
+}
+
+function loadAuthCredentials(opts, cb) {
+  levelClient.send({type:'get',  key: opts.name},(err, data) => {
+    if(err) cb(err)
+    else {
+      ssbClient.send({type: 'decrypt-text', text: data },(err, data) => {
+        if(err) cb(err)
+        else {
+          try {
+            cb(null, JSON.parse(data))
+          } catch (e) {
+            cb(e)
+          }
+        }
+      })
+    }
   })
 }
