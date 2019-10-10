@@ -17,10 +17,7 @@ const dotenv = require('dotenv').config({ path : path.join(u.dataLoc(),'cfg.env'
 
 module.exports = {
     showInfo: showInfo,
-    recreateNodeModules: recreateNodeModules,
-    removeNodeModules: removeNodeModules,
-    removePackageLock: removePackageLock,
-    startup: startup,
+    serverStart: serverStart,
     embeddedSetup: embeddedSetup,
     adjustSSBConfig: adjustSSBConfig,
     setupEnvironmentVariables: setupEnvironmentVariables,
@@ -36,23 +33,18 @@ function showInfo() {
     console.log(`    ${shell.pwd()}`)
     console.log(`Data stored in: (BACKUP THIS FOLDER)`)
     console.log(`    ${u.dataLoc()}`)
+    console.log(`Microservice Partition Key (for developers)`)
+    console.log(`    COTE_ENV=${process.env.COTE_ENV}`)
 }
 
-function startup(args) {
-    setup(args)
-    showCotePartition()
-    startRichGUI(args)
+function serverStart(args) {
+    serverSetup(args)
+    startSSB(startAvatar)
 }
 
-function startRichGUI(args) {
-    shell.exec(`npm start`)
-}
-
-function setup(args) {
-    setupAvatarComponents()
+function serverSetup(args) {
     setupEnvironmentVariables(args)
     setupHomeFolders()
-    migrateOldData()
     setupWallet()
     checkCoteConnection()
     setupUserConfig()
@@ -65,147 +57,6 @@ function embeddedSetup(args) {
     setupUserConfig()
     showInfo()
 }
-
-function recreateNodeModules() {
-    let structure = avatarStructure()
-    for(let i = 0;i < structure.length;i++) {
-        let loc
-        if(structure[i].required) loc = structure[i].required
-        if(structure[i].optional) loc = structure[i].optional
-        if(loc) do_stuff_1(loc)
-    }
-
-    function do_stuff_1(loc) {
-        let nm = 'node_modules'
-
-        shell.echo(`
-
-
-****************************************
-Recreating ${loc}/${nm}
-`)
-        let r = shell.pushd('-q', loc)
-        if(r.code) {
-            shell.echo(`Failed to change directory to: ${loc}`)
-            return false
-        }
-        if(shell.test("-d", nm)) {
-            shell.echo(`Removing ${loc}/${nm}`)
-            let r = shell.rm("-rf", nm)
-            if(r.code) {
-                shell.echo(`Failed to remove ${nm}`)
-                shell.popd('-q')
-                return false
-            }
-        }
-        shell.echo(`Installing ${loc}/${nm}`)
-        r = shell.exec(`npm install --no-bin-links`)
-        if(r.code) {
-            shell.echo(`Failed to npm install in: ${loc}`)
-            shell.popd('-q')
-            return false
-        }
-
-        shell.popd('-q')
-        return true
-    }
-}
-
-function removeNodeModules() {
-    let structure = avatarStructure()
-    for(let i = 0;i < structure.length;i++) {
-        let loc
-        if(structure[i].required) loc = structure[i].required
-        if(structure[i].optional) loc = structure[i].optional
-        if(loc) {
-            let nm = path.join(loc, 'node_modules')
-            if(shell.test("-d", nm)) {
-                shell.echo(`Removing ${nm}`)
-                let r = shell.rm("-rf", nm)
-                if(r.code) shell.echo(`Failed to remove ${nm}`)
-            }
-        }
-    }
-    shell.echo(`Remember to remove './node_modules' manually (needed for this script to run)`)
-}
-
-function removePackageLock() {
-    let structure = avatarStructure()
-    for(let i = 0;i < structure.length;i++) {
-        let loc
-        if(structure[i].required) loc = structure[i].required
-        if(structure[i].optional) loc = structure[i].optional
-        if(loc) {
-            let yl = path.join(loc, 'package-lock.json')
-            if(shell.test("-f", yl)) {
-                shell.echo(`Removing ${yl}`)
-                let r = shell.rm(yl)
-                if(r.code) shell.echo(`Failed to remove ${yl}`)
-            }
-        }
-    }
-    shell.rm('package-lock.json')
-}
-
-/*      outcome/
- * The structure of the avatar node - required repos, additional
- * directories, and optional repos.
- */
-function avatarStructure() {
-    return [
-        //{ required: "qwert" },
-
-        { dir: "services" },
-
-        { required: "services/elife-ai" },
-        { dir: "services/elife-ai/brains" },
-        { required: "services/elife-ai/brains/ebrain-aiml" },
-        { required: "services/elife-ai/brains/ebrain-aiml/aiml" },
-
-        { required: "services/elife-level-db" },
-
-        { required: "services/elife-stellar" },
-
-        //{ required: "services/elife-sbot", postInstall: "node fixAppKey" },
-
-        { required: "services/elife-communication-mgr" },
-        { dir: "services/elife-communication-mgr/channels" },
-        { required: "services/elife-communication-mgr/channels/elife-telegram" },
-        { required: "services/elife-communication-mgr/channels/elife-qwert" },
-
-        { required: "services/elife-skill-mgr" },
-        { dir: "services/elife-skill-mgr/skills" },
-        { required: "services/elife-skill-mgr/skills/eskill-intro" },
-        { required: "services/elife-skill-mgr/skills/eskill-about" },
-        { required: "services/elife-skill-mgr/skills/eskill-follower" },
-        { required: "services/elife-skill-mgr/skills/eskill-nw" },
-
-        { optional: "services/elife-skill-mgr/skills/eskill-vanity-address" },
-        { optional: "services/elife-skill-mgr/skills/eskill-kb-creator" },
-        { optional: "services/elife-skill-mgr/skills/eskill-direct-message" },
-        { optional: "services/elife-skill-mgr/skills/eskill-ai-artist" },
-        { optional: "services/elife-skill-mgr/skills/eskill-coupon" },
-        { optional: "services/elife-skill-mgr/skills/eskill-alarm" },
-        { optional: "services/elife-skill-mgr/skills/eskill-worker" }
-    ]
-}
-
-/*      outcome/
- * Set up the various avatar components needed (required and optional)
- * in the correct directory structures.
- */
-function setupAvatarComponents() {
-    let structure = avatarStructure()
-    for(let i = 0;i < structure.length;i++) {
-        let s = structure[i]
-        if(s.required) if(!install(s)) return false
-        if(s.dir) if(!mkdir(s.dir)) return false
-        if(s.optional) install(s)
-    }
-
-    return true
-}
-
 
 /*      outcome/
  * Set up the environment variables so all the sub-components can access
@@ -286,53 +137,6 @@ function setupHomeFolders() {
     }
 }
 
-/*      problem/
- * The current data folders are 'better' located but for those that have
- * already installed the avatar's they have their data in different
- * locations and should be able to continue to use them.
- *
- *      way/
- * If the new data folder is empty we look into the old data folder:
- *      ../elife.data
- *      OR
- *      /data
- * and we move all the existing data (__ssb/, kb/, stellar/, level.db/,
- * .luminate-pw, cfg.env) to the new folder.
- */
-function migrateOldData() {
-    let dl = u.dataLoc()
-    let existing = shell.ls(dl)
-    if(shell.error()) {
-        shell.echo(`Failed checking data directory for migration: ${dl}`)
-        shell.exit(1)
-    }
-    if(existing.length > 0) return
-
-    let old = find_old_data_dir_1()
-    if(!old) return
-
-
-    shell.echo(`\n\nMigrating from: ${old} to: ${dl}`)
-    let datalist = [
-        '__ssb', 'kb', 'stellar', 'level.db', '.luminate-pw', 'cfg.env',
-    ]
-    for(let i = 0;i < datalist.length;i++) {
-        let from = path.join(old, datalist[i])
-        if(shell.test("-e", from)) {
-            shell.echo(`Moving: ${from} to: ${dl}`)
-            shell.mv(from, dl)
-        }
-    }
-    shell.echo(`Migration of existing data done...\n\n`)
-
-
-    function find_old_data_dir_1() {
-        if(shell.test("-d",'/data')) return '/data'
-        let d = path.join(shell.pwd().toString(),'../elife.data')
-        if(shell.test("-d",d)) return d
-    }
-}
-
 /*      outcome/
  * If we don't have a luminate password saved, get the user to add one
  * now.
@@ -392,10 +196,6 @@ function checkCoteConnection() {
  * Show the CoteJS partition parameter
  */
 function showCotePartition() {
-    console.log(`
-FYI: Microservice Partition Key (for development):
-    COTE_ENV=${process.env.COTE_ENV}
-`)
 }
 
 /*      outcome/
@@ -532,6 +332,118 @@ function setupRepo(rp, postInstall) {
 }
 
 /*      outcome/
+ * Start the SSB server and keep it as similar to the SSB process in the
+ * Avatar as possible so we don't have a problem with different
+ * configurations producing different results.
+ *  (Refer: index.js/setupContext(), server-process.js)
+ */
+function startSSB(cb) {
+  const extend = require('xtend')
+  const ssbKeys = require('ssb-keys')
+  const Path = require('path')
+  const spawn = require('child_process').spawn
+
+  let appName = process.env.ssb_appname || 'ssb'
+  let opts = {}
+
+  adjustSSBConfig(opts)
+
+  let ssbConfig = require('ssb-config/inject')(appName, extend({
+    port: 8008,
+    blobsPort: 8989, // matches ssb-ws
+    friends: { // not using ssb-friends (sbot/contacts fixes hops at 2, so this setting won't do anything)
+      dunbar: 150,
+      hops: 2 // down from 3
+    }
+    // connections: { // to support DHT invites
+    //   incoming: {
+    //     dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
+    //   },
+    //   outgoing: {
+    //     dht: [{ transform: 'shs' }]
+    //   }
+    // }
+  }, opts))
+
+  // disable gossip auto-population from {type: 'pub'} messages as we handle this manually in sbot/index.js
+  if (!ssbConfig.gossip) ssbConfig.gossip = {}
+  ssbConfig.gossip.autoPopulate = false
+
+  ssbConfig.keys = ssbKeys.loadOrCreateSync(Path.join(ssbConfig.path, 'secret'))
+
+  const keys = ssbConfig.keys
+  const pubkey = keys.id.slice(1).replace(`.${keys.curve}`, '')
+
+  if (process.platform === 'win32') {
+    // fix offline on windows by specifying 127.0.0.1 instead of localhost (default)
+    ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${pubkey}`
+  } else {
+    const socketPath = Path.join(ssbConfig.path, 'socket')
+    ssbConfig.connections.incoming.unix = [{ 'scope': 'device', 'transform': 'noauth' }]
+    ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
+  }
+
+  const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
+  redactedConfig.keys.private = null
+  console.dir(redactedConfig, { depth: null })
+
+  let msSbot = require('./elife-ms')
+
+  let createSbot = require('secret-stack')()
+  .use(require('ssb-db'))
+  .use(require('ssb-master'))
+  .use(require('ssb-gossip'))
+  .use(require('ssb-replicate'))
+  .use(require('ssb-no-auth'))
+  .use(require('ssb-unix-socket'))
+  .use(require('ssb-friends'))
+  .use(require('ssb-blobs'))
+  .use(require('ssb-backlinks'))
+  .use(require('ssb-about'))
+  .use(require('ssb-private'))
+  // .use(require('ssb-dht-invite')) // this one must come before dhtTransport
+  // .use(dhtTransport)
+  .use(require('ssb-invite'))
+  .use(require('ssb-local'))
+  .use(require('ssb-logging'))
+  .use(require('ssb-query'))
+  .use(require('ssb-search'))
+  .use(require('ssb-ws'))
+  .use(require('ssb-tags'))
+  .use(require('ssb-identities'))
+  // .use(require('ssb-ebt')) // enable at your own risk!
+  // .use(require('./sbot'))  // for patchwork instead of the 'friends' plugin
+
+  var context = {
+    sbot: createSbot(ssbConfig),
+    config: ssbConfig
+  }
+  ssbConfig.manifest = context.sbot.getManifest()
+  fs.writeFileSync(Path.join(ssbConfig.path, 'manifest.json'), JSON.stringify(ssbConfig.manifest))
+
+  msSbot.start(context.sbot)
+
+  // start dht invite support
+  // context.sbot.dhtInvite.start()
+
+  // check if we are using a custom ssb path (which would break git-ssb-web)
+  if (!ssbConfig.customPath) {
+    // attempt to run git-ssb if it is installed and in path
+    var gitSsb = spawn('git-ssb', [ 'web' ], {
+      stdio: 'inherit'
+    })
+    gitSsb.on('error', () => {
+      console.log('git-ssb is not installed, or not available in path')
+    })
+    process.on('exit', () => {
+      gitSsb.kill()
+    })
+  }
+
+  cb && cb()
+}
+
+/*      outcome/
  * Load any configuration information and start the core processes
  */
 function startAvatar() {
@@ -560,6 +472,7 @@ function loadConfig() {
  *
  * These core processes include:
  * 1. The Scuttlebot Immortal Feed and Replication
+ *    (embedded in the patchwork client and so started separately)
  * 2. A Database for storing working data
  * 3. A Skill Manager for installing, running, and managing skills
  *      - Infrastructure Skills (as hub/as host/...)

@@ -7,6 +7,7 @@
   "scripts": {
     "test": "standard",
     "start": "electron index.js",
+    "server": "node svr.js",
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "npm run rebuild",
     "rebuild": "electron-builder install-app-deps",
@@ -85,6 +86,7 @@
     "ssb-client": "^4.7.5",
     "ssb-config": "github:ssbc/ssb-config#auto-config-incoming",
     "ssb-db": "^19.2.0",
+    "ssb-friends": "^4.1.4",
     "ssb-gossip": "^1.0.9",
     "ssb-identities": "ssbc/ssb-identities",
     "ssb-invite": "^2.1.3",
