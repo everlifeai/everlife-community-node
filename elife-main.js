@@ -44,6 +44,7 @@ function serverStart(args) {
 
 function serverSetup(args) {
     setupEnvironmentVariables(args)
+    setupNodeModules()
     setupHomeFolders()
     setupWallet()
     checkCoteConnection()
@@ -91,6 +92,41 @@ function setupEnvironmentVariables(args) {
         process.env["QWERT_PORT"]       = u.adjustPort(8193)
         process.env["EBRAIN_AIML_PORT"] = u.adjustPort(8194)
         process.env["AIARTIST_PORT"]    = u.adjustPort(8195)
+    }
+}
+
+/*      problem/
+ * While most of the modules are shared across our services, certain
+ * services and skills need their own, additional, packages. These need
+ * to be downloaded and created for each OS and it's hard to remember
+ * which ones they are and do it correctly.
+ *
+ *      way/
+ * Every time we start we will look for the node_modules in the required
+ * paths. If they are not present, we will create them.
+ */
+function setupNodeModules() {
+    let requiredrepos = [
+        "services/elife-ai/brains/ebrain-aiml",
+        "services/elife-stellar",
+        "services/elife-level-db",
+        "services/elife-communication-mgr/channels/elife-telegram",
+        "services/elife-skill-mgr/skills/eskill-vanity-address",
+        "services/elife-skill-mgr/skills/eskill-worker",
+    ]
+
+    for(let i = 0;i < requiredrepos.length;i++) {
+        let loc = requiredrepos[i]
+        let r = shell.pushd('-q', loc)
+        if(r.code) shell.echo(`Failed to change directory to: ${loc}`)
+        else {
+            if(!shell.test("-d", "node_modules")) {
+                shell.echo(`****************************************\nInstalling ${loc}/node_modules`)
+                r = shell.exec(`npm install --no-bin-links`)
+                if(r.code) shell.echo(`Failed to npm install in: ${loc}`)
+            }
+            shell.popd('-q')
+        }
     }
 }
 
