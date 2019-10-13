@@ -624,6 +624,10 @@ function adjustSSBConfig(opts) {
         opts.SSB_HOST = process.env.SSB_HOST
     }
     opts.allowPrivate = true
+
+    opts.blobs = {
+        sympathy: 1
+    }
 }
 
 
