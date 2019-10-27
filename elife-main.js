@@ -8,8 +8,8 @@ const fixPath = require('fix-path')
 const archiver = require('archiver')
 
 const pm2 = require('pm2')
-const pkgmgr = require('elife-pkg-mgr')
-const u = require('elife-utils')
+const pkgmgr = require('@elife/pkg-mgr')
+const u = require('@elife/utils')
 var psTree = require('ps-tree')
 var os = require('os');
 

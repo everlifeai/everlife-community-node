@@ -2,7 +2,7 @@ var { h, Array: MutantArray, map, when } = require('mutant')
 var nest = require('depnest')
 var packageInfo = require('../../../../package.json')
 const cote = require('cote')({statusLogsEnabled:false})
-var u = require('elife-utils');
+var u = require('@elife/utils');
 
 var themeNames = Object.keys(require('../../../../styles'))
 

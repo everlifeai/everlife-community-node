@@ -1,5 +1,5 @@
 var { Value, Array: MutantArray } = require('mutant')
-var u = require('elife-utils')
+var u = require('@elife/utils')
 var fs = require('fs')
 var path_ = require('path')
 
