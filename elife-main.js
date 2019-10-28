@@ -7,7 +7,7 @@ const shortid = require('shortid')
 const fixPath = require('fix-path')
 const archiver = require('archiver')
 
-const pm2 = require('pm2')
+const pm2 = require('@elife/pm2')
 const pkgmgr = require('@elife/pkg-mgr')
 const u = require('@elife/utils')
 var psTree = require('ps-tree')
@@ -569,10 +569,7 @@ function startCoreProcesses(cfg) {
     }
 
     function start_processes_1(cb) {
-        pm2.connect(true, (err) => {
-            if(err) cb(err)
-            else start_procs_1(0, cb)
-        })
+        start_procs_1(0, cb)
     }
 
     function start_procs_1(ndx, cb) {
@@ -637,25 +634,22 @@ function adjustSSBConfig(opts) {
  * for the python AIML server. This prevents future restarts.
  *
  *      way/
- * We ask pm2 to stop all processes then we look for all spawned
- * processes and try to kill them ourselves.
+ * We look for all spawned processes and try to kill them ourselves.
  */
 let STOPPED
 function stopChildProcesses(cb2) {
     if(STOPPED) return cb2()
     STOPPED = true
-    pm2.delete('all', () => {
-        psTree(process.pid, (err, children) => {
-            if(err) cb2(err)
-            else {
-                children.map(c => {
-                    process.kill(c.PID)
-                })
-                setTimeout(() => {
-                    cb2()
-                }, 1000)
-            }
-        })
+    psTree(process.pid, (err, children) => {
+        if(err) cb2(err)
+        else {
+            children.map(c => {
+                process.kill(c.PID)
+            })
+            setTimeout(() => {
+                cb2()
+            }, 1000)
+        }
     })
 }
 
