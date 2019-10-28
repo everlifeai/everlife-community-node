@@ -18,7 +18,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "@elife/pkg-mgr": "^3.1.1",
-    "@elife/pm2": "^2.2.0",
+    "@elife/pm2": "^2.3.0",
     "@elife/utils": "^2.1.1",
     "app-root-path": "^2.2.1",
     "archiver": "^3.0.3",
