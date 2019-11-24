@@ -59,8 +59,9 @@ exports.create = function(api) {
             if(ndx >= files.length) return cb(null, skills)
 
             let f = files[ndx]
-            if(!f.isDirectory()) return load_skill_ndx_1(loc, files, ndx+1)
-            else load_skill_info_1(path_.join(loc, f.name), (err) => {
+            if((typeof f == 'object') ? !f.isDirectory() : !fs.lstatSync( path_.join(loc, f)).isDirectory() ) {
+                return load_skill_ndx_1(loc, files, ndx+1)
+            } else load_skill_info_1( path_.join(loc, (typeof f =='string') ? f : f.name), (err) => {
                 if(err) console.error(err)
                 load_skill_ndx_1(loc, files, ndx+1)
             })
