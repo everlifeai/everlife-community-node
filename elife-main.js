@@ -56,7 +56,20 @@ function embeddedSetup(args) {
     setupEnvironmentVariables(args)
     setupHomeFolders()
     setupUserConfig()
+    setupLogFolder()
+    setupSkillsFolder()
     showInfo()
+}
+
+function setupLogFolder(){
+    u.ensureExists(u.logsLoc(), (err) => {
+        if(err) u.showErr(err)
+    })
+}
+function setupSkillsFolder(){
+    u.ensureExists(u.skillLoc(), (err) =>{
+        if(err) u.showErr(err)
+    })
 }
 
 /*      outcome/
