@@ -51,6 +51,7 @@ exports.needs = nest({
   'progress.html.peer': 'first',
 
   'wallet.sheet.getPW': 'first',
+  'wallet.handler.fetch.obsAccId': 'first',
   'wallet.handler.fetch.obsAccBal': 'first',
   'wallet.handler.setup.onNoPw': 'first',
   'wallet.handler.setup.onNewPayments': 'first',
@@ -97,7 +98,7 @@ exports.create = function (api) {
     var localPeers = api.sbot.obs.localPeers()
     var connectedPubs = computed([connectedPeers, localPeers], (c, l) => c.filter(x => !l.includes(x)))
     var contact = api.profile.obs.contact(id)
-
+    let accid = api.wallet.handler.fetch.obsAccId()
     let accbal = api.wallet.handler.fetch.obsAccBal()
     api.wallet.handler.setup.onNoPw(() => {
       api.wallet.sheet.getPW(api.wallet.handler.setup.reload)
@@ -108,7 +109,7 @@ exports.create = function (api) {
         let memo = payments[i].memo
         if(!memo || memo == 'memoNone') memo = ''
         if(p.asset && p.asset.alphaNum4 && p.asset.alphaNum4.assetCode == 'EVER') {
-          sendNotification(`Yipee! We got paid ${p.amount.value} EVER ${memo}`)
+          if(p.destination === accid.val()) sendNotification(`Yipee! We got paid ${p.amount.value} EVER ${memo}`)
         }
       }
     })
