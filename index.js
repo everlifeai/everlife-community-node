@@ -16,7 +16,7 @@ var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
 
 var elife = require('./elife-main')
-
+var pm2 = require('@elife/pm2')
 var windows = {
   dialogs: new Set()
 }
@@ -32,6 +32,7 @@ var before_quitting = false
  */
 function quitIfAlreadyRunning () {
   if (!electron.app.requestSingleInstanceLock()) {
+    pm2.stopAll()
     return electron.app.quit()
   }
   electron.app.on('second-instance', (event, commandLine, workingDirectory) => {
@@ -134,6 +135,7 @@ electron.app.on('ready', () => {
       elife.stopChildProcesses(() => {
         before_quitting = true;
         quitting = true
+        pm2.stopAll()
         electron.app.quit()
       })
       ev.preventDefault()
@@ -176,7 +178,10 @@ function openMainWindow () {
     })
     windows.main.on('closed', function () {
       windows.main = null
-      if (process.platform !== 'darwin') electron.app.quit()
+      if (process.platform !== 'darwin') {
+        pm2.stopAll()
+        electron.app.quit()
+      }
     })
   }
   return windows.main
