@@ -300,7 +300,7 @@ function saveFileAsBlob(req, cb){
     try {
         pull(
             toPull.source(fs.createReadStream(req.filePath)),
-            sbot.blobs.add(null, cb)
+            sbot.blobs.add(cb)
         )
     } catch(e) {
         cb(e)
@@ -319,7 +319,7 @@ function saveArrayAsBlob(req, cb){
     try {
         pull(
             pull.once(Buffer.from(req.bytes)),
-            sbot.blobs.add(null, cb)
+            sbot.blobs.add(cb)
         )
     } catch(e) {
         cb(e)
