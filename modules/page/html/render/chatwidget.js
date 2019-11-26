@@ -59,7 +59,7 @@ function loadConfig() {
     if(process.env.QWERT_PORT) {
         cfg.PORT = process.env.QWERT_PORT
     } else {
-        cfg.PORT = 7766
+        cfg.PORT = 8193
     }
 
     if(process.env.QWERT_DATA_DIR) {
