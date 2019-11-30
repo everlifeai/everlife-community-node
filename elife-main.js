@@ -264,6 +264,9 @@ function setupUserConfig() {
 # For Telegram Channel
 TELEGRAM_TOKEN=
 
+# For Facebook messenger Channel
+FACEBOOK_PAGE_ACCESS_TOKEN=
+
 # For what-wine skill
 MASHAPE_KEY=
 
