@@ -566,7 +566,9 @@ function startCoreProcesses(cfg) {
             start_processes_1((err) => {
                 if(err) {
                     u.showErr(err)
-                    process.exit(2)
+                    pm2.stopAll((err) => {
+                        process.exit(2)
+                    })
                 }
             })
         }
