@@ -4,6 +4,7 @@ const cote = require('cote') ({statusLogsEnabled:false})
 var { Value, h, computed, when } = require('mutant')
 const path = require('path')
 const fs = require('fs')
+const u = require('@elife/utils')
 exports.gives = nest('kb.kbeditor')
 
 exports.needs = nest({
