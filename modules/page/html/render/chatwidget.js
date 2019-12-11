@@ -252,13 +252,18 @@ exports.getChatWidget = function(i18n) {
             })]),
             h('div',{id:'chatwidget',
                 style:{
-                    height:"98%",
-                    display:"None"
+                    height:"100%",
+                    display:"None",
+                    overflow: "hidden",
+                    position: "relative",
+                    width: "100%"
                 }
             },[
             h('div',{
                 style:{
-                    height:'95%'
+                    height:"95%",
+                    position: "absolute",
+                    width: "100%"
                 }
             },[
                 h('h2',{
@@ -269,10 +274,13 @@ exports.getChatWidget = function(i18n) {
 
                 },i18n('Everlife Avatar Chat')),
                 h('hr'),
-                h('div',{id:'chat-output',classList:['chat-output']})]),
+                h('div.chat-output',{id:'chat-output',classList:['chat-output']})]),
             h('div',{
                 style:{
-                    height:'5%'
+                    height:'5%',
+                    position: "absolute",
+                    width: "100%",
+                    bottom: '14px'
                 }
             },
                 h('input',{
