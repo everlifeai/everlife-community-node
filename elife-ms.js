@@ -405,5 +405,5 @@ function handlePvtPostMsg(req, cb) {
     content = ssbkeys.box(content, content.recps.map(e => {
         return ref.isFeed(e) ? e : e.link
     }))
-    sbot.publish(content, msg)
+    sbot.publish(content, cb)
 }
