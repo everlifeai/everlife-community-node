@@ -31,7 +31,7 @@ exports.create = function (api) {
         }
       },h('div', [
         h('br'),
-        h('div',{
+        h('div.WalletMeta',{
           style:{
             'width':'100%'
           }
@@ -45,33 +45,13 @@ exports.create = function (api) {
               'vertical-align': 'middle',
             }
           },[
-            h('a', {
+            h('a.buy-ever', {
               'href': 'https://stellarport.io/exchange/alphanum4/EVER/GDRCJ5OJTTIL4VUQZ52PCZYAUINEH2CUSP5NC2R6D6WQ47JBLG6DF5TE/native/XLM/Stellar',
-              style:{
-                'background-color': '#959ea9',
-                'text-size':'20px!important',
-                'color': 'white',
-                'padding': '14px 25px',
-                'text-align': 'center',
-                'text-decoration': 'none',
-                'display': 'inline-block',
-                'width':'80%'
-              }
+              
 
           }, h('span',{style:{'font-weight': 'bold','font-size':'18px'}},i18n('+ Buy EVER'))),h('br'),
-          h('a', {
-            style:{
-              'background-color': '#959ea9',
-              'text-size':'20px!important',
-              'color': 'white',
-              'padding': '14px 25px',
-              'text-align': 'center',
-              'text-decoration': 'none',
-              'display': 'inline-block',
-              'margin-top':'5px',
-              'cursor':'pointer',
-              'width':'80%'
-            },
+          h('a.import-wallet', {
+            
             'ev-click': importNewWallet,
           }, h('span',{style:{'font-weight': 'bold','font-size':'18px'}},i18n('Import Wallet'))),
           ]),
@@ -116,16 +96,10 @@ exports.create = function (api) {
           ]),
         ]),
         h('br'),
-        h('div',[
-          h('div',{
+        h('div.WalletKey',[
+          h('div.key',{
             style:{
-              'text-align': 'center',
-              'background-color': 'rgb(149, 158, 169)',
-              'color': 'white',
-              'text-size':'16px',
-              'padding':'10px',
-              'cursor': 'pointer',
-              'font-weight':'bold'
+              
             },
             'ev-click': () => {
               if(!accid.valid()) return
@@ -136,35 +110,12 @@ exports.create = function (api) {
             }
           }, accid.val)
         ]),
-        h('section', [
-          h('table',{
-            style:{
-              'font-family': 'arial, sans-serif',
-              'width': '100%',
-              'border-collapse': 'collapse',
-              'background-color':'white',
-              'box-shadow': 'rgba(0, 0, 0, 0.2) 0px 4px 8px 0px',
-              'transition': 'all 0.3s ease 0s',
-              'margin-top':'2%'
-            }
-
-          },[
+        h('section.Wallet', [
+          h('table',[
             h('tr',
               [
-                h('th',{
-                  style:{
-                    'border': '1px solid #dddddd',
-                    'text-align': 'left',
-                    'padding': '8px'
-                  }
-                },i18n('Date')),
-                h('th',{
-                  style:{
-                    'border': '1px solid #dddddd',
-                    'text-align': 'left',
-                    'padding': '8px'
-                  }
-                },i18n('Details'))
+                h('th', i18n('Date')),
+                h('th', i18n('Details'))
               ]),
             map(acctxns.val,to_list_1)
           ])
