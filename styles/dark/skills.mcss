@@ -1,0 +1,38 @@
+Skills {
+  div.card {
+    width: 300px;
+    height: 128px;
+    border-radius: 8px;
+    padding: 0.5em 2em 2em 2em;
+    margin: 2em;
+    float: left;
+    box-shadow: 1px 1px 1px 1px rgb(0, 0, 0);
+    background: linear-gradient(#393939, #292929);
+
+    h2 {
+      img {
+        max-width: 64px;
+        max-height: 64px;
+        float: right;
+        padding: 8px;
+        margin-left: 4px;
+        border-radius: 50%;
+        border: 1px solid #bdbdbd;
+        box-shadow: inset 1px 1px 1px 0px #e0dfdf;
+      }
+    }
+
+    div.desc {
+      font-style: italic;
+      margin: 1em 0;
+    }
+
+    div.version {
+      span.number {
+        text-decoration: underline;
+        text-decoration-color: #c7c7c7;
+      }
+    }
+
+  }
+}
