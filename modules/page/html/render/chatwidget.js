@@ -263,7 +263,8 @@ exports.getChatWidget = function(i18n) {
                 style:{
                     height:"95%",
                     position: "absolute",
-                    width: "100%"
+                    width: "100%",
+                    'margin-bottom':'1%'
                 }
             },[
                 h('h2',{
@@ -340,7 +341,10 @@ function check_connection_1(cb) {
 
 function showPage() {
   document.getElementById("loader").style.display = "none";
-  document.getElementById("chatwidget").style.display = "block";
+  let chatWidgetElement = document.getElementById("chatwidget")
+  chatWidgetElement.style.display = "block";
+  adjustChatWindowSize(chatWidgetElement)
+  window.addEventListener('resize', (event) => adjustChatWindowSize(chatWidgetElement))
 }
     setTimeout(()=>{
         enable_when_ready()
@@ -348,4 +352,10 @@ function showPage() {
     },2000)
     return chatWidget
 
+}
+
+function adjustChatWindowSize( chatWidgetElement ){
+    const topBarSize = document.getElementsByClassName('top')[0].getClientRects()[0].height
+    const windowSize = window.innerHeight
+    chatWidgetElement.style.height = `${windowSize - 40 - topBarSize}px`
 }
