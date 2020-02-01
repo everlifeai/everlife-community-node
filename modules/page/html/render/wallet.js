@@ -16,6 +16,8 @@ exports.needs = nest({
 exports.gives = nest('page.html.render')
 
 exports.create = function (api) {
+  let backingup = Value(false)
+
   return nest('page.html.render', function channel (path) {
     if (path !== '/wallet') return
     const i18n = api.intl.sync.i18n
@@ -50,10 +52,13 @@ exports.create = function (api) {
               
 
           }, h('span',{style:{'font-weight': 'bold','font-size':'18px'}},i18n('+ Buy EVER'))),h('br'),
-          h('a.import-wallet', {
-            
+          h('a.btn', {
             'ev-click': importNewWallet,
-          }, h('span',{style:{'font-weight': 'bold','font-size':'18px'}},i18n('Import Wallet'))),
+          }, h('span',i18n('Import Wallet'))),
+          h('a.btn', {
+            'ev-click': backup,
+            'disabled': backingup
+          }, h('span',i18n('Backup'))),
           ]),
 
           h('section',{
@@ -125,6 +130,33 @@ exports.create = function (api) {
 
     function importNewWallet() {
       api.wallet.sheet.getSecret(api.wallet.handler.setup.reload)
+    }
+
+    function backup() {
+      if(backingup()) return
+      backingup.set(true)
+
+      var electron = require('electron')
+      var elife = require('../../../../elife-main')
+
+      var desktop = electron.remote.app.getPath('desktop')
+
+      elife.backup(desktop, (err, loc) => {
+        backingup.set(false)
+        if(err) show_1(i18n('Error during backup'), err + '')
+        else show_1(i18n('Backup saved to Desktop'),
+          i18n('Please keep the backup safe and secure (it contains your secret keys!)'))
+      })
+
+      function show_1(msg, det) {
+        electron.remote.dialog.showMessageBox(electron.remote.getCurrentWindow(), {
+          type: 'info',
+          title: i18n('Backup'),
+          buttons: [i18n('OK')],
+          message: msg,
+          detail: det,
+        })
+      }
     }
 
     function to_list_1(txn) {

@@ -130,5 +130,10 @@
 	"Describe yourself (if you want)": "Describe yourself (if you want)",
 	"Publish": "Publish",
 	"Enter Your Wallet Password": "Enter Your Wallet Password",
-	"Enter your twitter credientials": "Enter your twitter credientials"
+	"Enter your twitter credientials": "Enter your twitter credientials",
+	"Backup": "Backup",
+	"Browse Channels": "Browse Channels",
+	"Backup saved to Desktop": "Backup saved to Desktop",
+	"Please keep the backup safe and secure (it contains your secret keys!)": "Please keep the backup safe and secure (it contains your secret keys!)",
+	"OK": "OK"
 }
