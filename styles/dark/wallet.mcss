@@ -56,7 +56,6 @@ Wallet {
       }
     }
   }
-  
 }
 WalletPw {
   div.main {
@@ -100,16 +99,17 @@ WalletMeta {
       display: inline-block;
       width: 80%;
     }
-    a.import-wallet {
+    a.btn {
       background-color: #2d2c2c;
       color: white;
-      padding: 14px 25px;
+      padding: 12px;
       text-align: center;
       text-decoration: none;
       display: inline-block;
       margin-top: 5px;
+      margin-right: 2%;
       cursor: pointer;
-      width: 80%;
+      width: 39%;
     }    
   }
 
