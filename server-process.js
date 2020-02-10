@@ -58,7 +58,8 @@ module.exports = function (ssbConfig) {
   electron.ipcRenderer.send('server-started', ssbConfig)
 
   msSbot.start(context.sbot)
-
+  msSbot.pollForFeedUpdates()
+  
   // start dht invite support
   // context.sbot.dhtInvite.start()
 

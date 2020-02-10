@@ -18,6 +18,7 @@ let sbot
 module.exports = {
     start: start,
     sendToFeedHandlers: sendToFeedHandlers,
+    pollForFeedUpdates: pollForFeedUpdates,
 }
 
 
@@ -406,4 +407,18 @@ function handlePvtPostMsg(req, cb) {
         return ref.isFeed(e) ? e : e.link
     }))
     sbot.publish(content, cb)
+}
+
+/*      understand/
+ * Setting `live:true` keeps the channel open and new messages
+ * continually pouring in.
+ *
+ *      outcome/
+ * Send any feed update messages to registered feed handlers
+ */
+function pollForFeedUpdates() {
+    pull(
+        sbot.createFeedStream({live:true,old:false}),
+        pull.drain(sendToFeedHandlers)
+    )
 }

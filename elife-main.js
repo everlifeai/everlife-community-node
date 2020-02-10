@@ -474,7 +474,8 @@ function startSSB(cb) {
   fs.writeFileSync(Path.join(ssbConfig.path, 'manifest.json'), JSON.stringify(ssbConfig.manifest))
 
   msSbot.start(context.sbot)
-
+  msSbot.pollForFeedUpdates()
+  
   // start dht invite support
   // context.sbot.dhtInvite.start()
 
