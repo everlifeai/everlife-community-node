@@ -11,7 +11,7 @@
     "check-locales": "node scripts/check-locales.js",
     "postinstall": "npm run rebuild && node fixAppKey.js",
     "rebuild": "electron-builder install-app-deps",
-    "dist": "electron-builder",
+    "dist": "node check-structure.js && electron-builder",
     "version": "changelog-version && git add CHANGELOG.md"
   },
   "author": "Everlife.AI",
