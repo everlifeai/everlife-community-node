@@ -202,12 +202,20 @@ function simplifyTxn(acc, txn) {
     r.id = txn.id
     r.on = txn.created_at
 
-    let data = txn.envelope_xdr.tx
+    let version = txn.envelope_xdr.TransactionEnvelope.type.replace('envelopeTypeTx','').toLowerCase()
+    if(!(version.length > 0)) version = 'v1'
+    let data = txn.envelope_xdr.TransactionEnvelope[version].tx
 
     if(data.sourceAccount) {
       let sa = squash(data.sourceAccount)
       if(sa != acc) r.sourceAccount = sa
     }
+
+    if(data.sourceAccountEd25519) {
+      let sa = data.sourceAccountEd25519.value
+      if(sa != acc) r.sourceAccount = sa
+    }
+
 
     if(txn.memo) r.memo = txn.memo
 
@@ -244,7 +252,7 @@ function simplifyTxn(acc, txn) {
     function squash(v) {
         if(typeof v == "string") return v
         if(v.type == "amount") return v.value
-        if(v.type == "publicKeyTypeEd25519") return v.ed25519.value
+        if(v.type == "keyTypeEd25519") return v.ed25519.value
         if(v.type == "assetTypeCreditAlphanum4" && v.alphaNum4) return squash(v.alphaNum4)
         let r = {}
         for(let k in v) {
@@ -291,7 +299,7 @@ function getTxnDetails(acc, txn){
   }
 
   function changeTrust_details_1(op) {
-      return `New trustline limit of ${op.limit} for asset ${op.line.assetCode} issued by ${op.line.issuer} `
+      return `New trustline limit of ${op.limit} for asset ${op.line.assetCode} issued by ${op.line.issuer.ed25519.value} `
   }
 
   function createAccount_details_1(op) {
