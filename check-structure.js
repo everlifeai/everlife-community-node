@@ -2,7 +2,6 @@
 const path = require('path')
 const fs = require('fs')
 const shell = require('shelljs')
-const u = require('@elife/utils')
 
 const core_skills = ['eskill-about',
   'eskill-ai-artist',
@@ -23,6 +22,11 @@ if (!shell.which('git')) {
   shell.exit(1)
 }
 
+if(!fs.existsSync(skill_base_path)){
+  shell.echo('Sorry, skills directory is missing')
+  shell.exit(1)
+}
+
 /**
  * Remove non-core skills
  */
@@ -32,9 +36,8 @@ const available_skills = fs.readdirSync(skill_base_path)
 for (let i = 0; i < available_skills.length; i++) {
   const skill = available_skills[i]
   if (!core_skills.includes(skill) ) {
-    u.rmdir(path.join(skill_base_path, skill), (err) => {
-      if (err) console.log(err)
-    })
+    let code = shell.rm('-rf', path.join(skill_base_path, skill)).code
+    if(code) shell.exit(1)
   }
 }
 
@@ -44,6 +47,7 @@ for (let i = 0; i < available_skills.length; i++) {
 shell.cd(skill_base_path)
 core_skills.forEach((skill)=>{
   if(!available_skills.includes(skill)){
-    shell.exec(`git clone https://www.github.com/everlifeai/${skill}.git`)
+    let code = shell.exec(`git clone https://www.github.com/everlifeai/${skill}.git`).code
+    if(code) shell.exit(1)
   }
 })
