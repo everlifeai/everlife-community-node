@@ -7,6 +7,10 @@ var electron = require('electron')
 var openWindow = require('./lib/window')
 
 var os = require('os')
+const fs =require('fs')
+const BrowserWindow = require('electron').BrowserWindow;
+const u = require('@elife/utils')
+
 
 var Path = require('path')
 var defaultMenu = require('electron-default-menu')
@@ -55,6 +59,31 @@ let icon = Path.join(__dirname, 'assets/icon.png')
 if(os.platform == 'darwin') electron.app.dock.setIcon(icon)
 
 electron.app.on('ready', () => {
+  
+  checkAndCreateMnenonicKeys(err => {
+    if(err) throw err
+    else startMainWindow()
+  })
+})
+
+
+
+function checkAndCreateMnenonicKeys(cb) {
+  
+  const secretFile= Path.join(u.dataLoc(), '__ssb','secret')
+  if(fs.existsSync(secretFile)) {
+    return cb()
+  }else{
+    openewUserWindow() 
+    electron.ipcMain.on('main-window',  (ev, winData) => {
+      startMainWindow()
+  })
+      
+  }
+
+  }
+  
+function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
@@ -147,7 +176,41 @@ electron.app.on('ready', () => {
       windows.background.webContents.openDevTools({ mode: 'detach' })
     }
   })
-})
+
+}
+function openewUserWindow() {
+  const userWindow = new BrowserWindow({
+   width: 2000,
+   height: 1100,
+   webPreferences: {
+    nodeIntegration: true
+  },
+   title: 'Everlife Explorer',
+    show: true,
+    titleBarStyle: 'hiddenInset',
+    autoHideMenuBar: true,
+    backgroundColor: '#EEE',
+    icon: icon 
+    });
+    userWindow.loadURL(
+    'file://' + Path.join(__dirname, '.', 'newuser','1.html')
+  );
+  //userWindow.webContents.openDevTools()
+  userWindow.on('close', function (e) {
+    if (!quitting && process.platform === 'darwin') {
+      e.preventDefault()
+      userWindow.hide()
+    }
+  })
+  userWindow.on('closed', function () {
+    if (process.platform !== 'darwin') {
+      userWindow =null
+      pm2.stopAll()
+      electron.app.quit()
+    }
+  })
+  return userWindow;
+ }
 
 function openMainWindow () {
   if (!windows.main) {
