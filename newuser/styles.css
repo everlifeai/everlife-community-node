@@ -330,6 +330,7 @@ button {
 .bfsfLR {
   padding-left: 1.55rem;
 }.fkCSEE {
+  margin-top: 120px;
   display: flex;
   flex-direction: column;
   -webkit-box-pack: center;
@@ -565,7 +566,7 @@ button {
   max-width: 24.5rem;
   width: 100%;
 }
-#confirm {
+#confirm-btn {
   width: 12.375rem;
   display: block;
   margin: 0px auto;
@@ -591,7 +592,6 @@ button {
   padding: 0.7rem 1.75rem;
 }
 .phrase{
-   
       border: 1px solid rgb(57, 30, 218);
       border-radius: 1rem;
       color: rgb(57, 30, 218);
@@ -907,9 +907,14 @@ writing-mode: horizontal-tb ;
  appearance: none;
  transition: all 0.15s ease-in-out 0s;
  white-space: nowrap;
+ margin-top: 10px;
 }.exOFdF {
  position: relative;
  padding: 0.2rem 0px;
  max-width: 24.5rem;
  width: 100%;
 }
+#generate{
+  width: 600px;
+}
+

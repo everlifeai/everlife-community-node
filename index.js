@@ -75,8 +75,8 @@ function checkAndCreateMnenonicKeys(cb) {
     return cb()
   }else{
     openewUserWindow() 
-    electron.ipcMain.on('main-window',  (ev, winData) => {
-      startMainWindow()
+    electron.ipcMain.on('main-window',  () => {
+    return cb()
   })
       
   }
@@ -192,10 +192,10 @@ function openewUserWindow() {
     backgroundColor: '#EEE',
     icon: icon 
     });
-    userWindow.loadURL(
-    'file://' + Path.join(__dirname, '.', 'newuser','1.html')
+    userWindow.loadURL(Path.join(__dirname, 'newuser/step-1.html')
+    
   );
-  //userWindow.webContents.openDevTools()
+  userWindow.webContents.openDevTools()
   userWindow.on('close', function (e) {
     if (!quitting && process.platform === 'darwin') {
       e.preventDefault()

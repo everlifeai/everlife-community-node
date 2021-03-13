@@ -26,7 +26,7 @@
             <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 162.69 159.8'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%234023de;%7D.cls-2%7Bfill:%2388a2f5;%7D.cls-3%7Bfill:%2360dbd9;%7D.cls-4%7Bfill:%23fff;%7D.cls-5%7Bfill:%23ffc900;%7D.cls-6%7Bfill:%23ff8978;%7D.cls-7%7Bfill:%2364c3ff;%7D%3C/style%3E%3C/defs%3E%3Cg id='Layer_2' data-name='Layer 2'%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Crect class='cls-1' x='11.22' y='0.08' width='114.02' height='140.2' transform='translate(-0.1 0.1) rotate(-0.08)'/%3E%3Crect y='67.93' width='2.53' height='57.63'/%3E%3Ccircle class='cls-2' cx='66.26' cy='30.84' r='8.82'/%3E%3Crect class='cls-3' x='28.54' y='27.27' width='18.4' height='7.15'/%3E%3Crect class='cls-4' x='55.34' y='56.03' width='22.14' height='2.38' transform='translate(-21.01 63.72) rotate(-45)'/%3E%3Crect class='cls-4' x='65.22' y='46.15' width='2.38' height='22.14' transform='translate(-21.01 63.72) rotate(-45)'/%3E%3Cpolyline class='cls-5' points='107.64 23 107.64 38.9 81.3 38.9'/%3E%3Cpath class='cls-3' d='M106.87,52.65a11.29,11.29,0,0,1-22.58,0'/%3E%3Cpolygon class='cls-6' points='38.5 48.98 27.36 65.58 49.61 65.58 38.5 48.98'/%3E%3Ccircle class='cls-5' cx='68.75' cy='83.99' r='8.82'/%3E%3Crect class='cls-4' x='88.06' y='80.42' width='18.4' height='7.14'/%3E%3Crect class='cls-3' x='67.4' y='100.61' width='2.38' height='22.14' transform='translate(-58.87 81.21) rotate(-45)'/%3E%3Crect class='cls-3' x='57.53' y='110.48' width='22.14' height='2.38' transform='translate(-58.88 81.25) rotate(-45.02)'/%3E%3Cpolyline class='cls-2' points='27.36 76.14 27.36 92.05 53.7 92.05'/%3E%3Cpath class='cls-4' d='M28.13,107.11a11.3,11.3,0,0,0,22.59,0'/%3E%3Cpath class='cls-7' d='M161.13,107.39h-7.91l0-16.28a27.67,27.67,0,0,0-27.6-27.57h0A27.67,27.67,0,0,0,98,91.2l0,16.28H90.47l.07,52.31,70.67-.1ZM107.39,91.18A18.27,18.27,0,0,1,125.56,73h0a18.28,18.28,0,0,1,18.2,18.18l0,16.29-36.41,0Z'/%3E%3Crect x='98.78' y='150.07' width='24.37' height='2.19' transform='translate(-0.27 0.2) rotate(-0.1)'/%3E%3Cpath d='M160.16,86.54a26.52,26.52,0,0,0-6.47-17.23,22.17,22.17,0,0,0-6.15-5L148.63,62c.56.26,13.53,6.69,14.06,24.44Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E" alt="Import wallet" class="sc-dkQUut fKLEUn">
         </div>
         <h1 class="sc-ArjOu cIlxaw">Confirm your backup phrase</h1>
-        <h2 class="sc-khIgXV eZiEu">Type your third word to confirm you got them right</h2>
+        <h2 id="err-txt" class="sc-khIgXV eZiEu">Type your third word to confirm you got them right</h2>
     </div>
     
         <section class="sc-gSYCTC sc-dFRpvv fkCSEE kMrhLB">
@@ -38,9 +38,14 @@
 
             </div>
             <div class="sc-cTJmaU exOFdF">
-                <button id="confirm"  onclick="submitPhrases()" 
+                <button id="confirm-btn"  onclick="submitPhrases()" 
                  class="sc-iCoHVE sc-fujyUd knnrxv eejAfV">Confirm</button>
                 </div></section></section>
 <script src="newuser.js"></script>
+<script>
+   generatekeys()
+  
+    
+</script>
 </body>
 </html>
