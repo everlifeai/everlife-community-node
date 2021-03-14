@@ -195,8 +195,7 @@ function openewUserWindow() {
     userWindow.loadURL(Path.join(__dirname, 'newuser/step-1.html')
     
   );
-  userWindow.webContents.openDevTools()
-  userWindow.on('close', function (e) {
+    userWindow.on('close', function (e) {
     if (!quitting && process.platform === 'darwin') {
       e.preventDefault()
       userWindow.hide()
