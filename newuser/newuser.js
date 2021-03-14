@@ -195,7 +195,13 @@ function generatekeys(){
     mnemonic = param[1].split("^^")[0];
     pharseParam2 = param[1].split("^^")[1];
   }
-  phraseArry = mnemonic.split(" ");
+  
+  //To shuffle the array
+  const shuffle = arr =>   [...arr].reduceRight((res,_,__,s) => 
+  (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[]);
+
+  phraseArry = shuffle(mnemonic.split(" "));
+
   //construct mnemonic word selection  and write to DOM
   var mnemonicHTML = "";
   for (var i = 0; i < phraseArry.length; i++) {
