@@ -2,29 +2,30 @@ process.on('uncaughtException', function (err) {
   console.log(err)
   process.exit()
 })
+var ssbConfig =null;
 
+const fs =require('fs')
 var electron = require('electron')
 var openWindow = require('./lib/window')
+const BrowserWindow = require('electron').BrowserWindow;
 
 var os = require('os')
-const fs =require('fs')
-const BrowserWindow = require('electron').BrowserWindow;
 const u = require('@elife/utils')
-
-
 var Path = require('path')
 var defaultMenu = require('electron-default-menu')
 var WindowState = require('electron-window-state')
 var Menu = electron.Menu
 var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
+const path = require('path')
+
 
 var elife = require('./elife-main')
 var pm2 = require('@elife/pm2')
 var windows = {
   dialogs: new Set()
 }
-var ssbConfig = null
+
 var quitting = false
 var before_quitting = false
 
@@ -59,7 +60,6 @@ let icon = Path.join(__dirname, 'assets/icon.png')
 if(os.platform == 'darwin') electron.app.dock.setIcon(icon)
 
 electron.app.on('ready', () => {
-  
   checkAndCreateMnenonicKeys(err => {
     if(err) throw err
     else startMainWindow()
@@ -70,18 +70,23 @@ electron.app.on('ready', () => {
 
 function checkAndCreateMnenonicKeys(cb) {
   elife.embeddedSetup()
-  const secretFile= Path.join(u.dataLoc(), '__ssb','secret')
+ 
+  fs.mkdirSync(path.join(u.dataLoc(), "__ssb"), (err) => {
+    if (err) {
+        throw err;
+    }
+  });
+  const secretFile= Path.join(u.dataLoc(), '__ssb','secret') 
   if(fs.existsSync(secretFile)) {
     return cb()
   }else{
     openewUserWindow() 
-    electron.ipcMain.on('main-window',  () => {
+    electron.ipcMain.on('main-window', () => {
     return cb()
   })
       
   }
-
-  }
+}
   
 function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
@@ -176,7 +181,6 @@ function startMainWindow() {
       windows.background.webContents.openDevTools({ mode: 'detach' })
     }
   })
-
 }
 function openewUserWindow() {
   const userWindow = new BrowserWindow({
@@ -193,9 +197,8 @@ function openewUserWindow() {
     icon: icon 
     });
     userWindow.loadURL(Path.join(__dirname, 'newuser/step-1.html')
-    
   );
-    userWindow.on('close', function (e) {
+  userWindow.on('close', function (e) {
     if (!quitting && process.platform === 'darwin') {
       e.preventDefault()
       userWindow.hide()
