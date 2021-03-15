@@ -266,15 +266,6 @@ function goBack() {
 }
 
 
-
-
-
-
-
-
-
-
-
 function copyPhrases(){
     copytoClipBroad()
 }

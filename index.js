@@ -11,6 +11,8 @@ const BrowserWindow = require('electron').BrowserWindow;
 
 var os = require('os')
 const u = require('@elife/utils')
+
+
 var Path = require('path')
 var defaultMenu = require('electron-default-menu')
 var WindowState = require('electron-window-state')
@@ -60,6 +62,7 @@ let icon = Path.join(__dirname, 'assets/icon.png')
 if(os.platform == 'darwin') electron.app.dock.setIcon(icon)
 
 electron.app.on('ready', () => {
+  
   checkAndCreateMnenonicKeys(err => {
     if(err) throw err
     else startMainWindow()
@@ -76,16 +79,18 @@ function checkAndCreateMnenonicKeys(cb) {
         throw err;
     }
   });
+
   const secretFile= Path.join(u.dataLoc(), '__ssb','secret') 
   if(fs.existsSync(secretFile)) {
     return cb()
   }else{
     openewUserWindow() 
-    electron.ipcMain.on('main-window', () => {
+    electron.ipcMain.on('main-window',  () => {
     return cb()
-  })
+    })
       
   }
+
 }
   
 function startMainWindow() {
@@ -182,6 +187,7 @@ function startMainWindow() {
     }
   })
 }
+
 function openewUserWindow() {
   const userWindow = new BrowserWindow({
    width: 2000,
