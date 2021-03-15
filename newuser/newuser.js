@@ -271,33 +271,6 @@ function copyPhrases(){
 }
 
 
-
-
-
-
-
-if (document.URL.split('?')[0].includes('step-5.html')){
-  
-   fs.readFile(path.join(u.dataLoc(), "__ssb/secret"), 'utf8' , (err, data) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-    secureKeys = JSON.parse('{' + data.split('{')[1].split('}')[0]+ '}') 
-    document.getElementById('everlifekeys').innerHTML = secureKeys.id;
-
-  })
-
-    const keys = new URLSearchParams(window.location.search)
-    for (const key of keys) {
-        pubkey=key[1].split('~~')[0]
-        seckey=key[1].split('~~')[1]
-        elifeKeys =key[1].split('~~')[2]
-      }    
-
-    document.getElementById('pubkey').innerHTML = pubkey;
-    document.getElementById('seckey').innerHTML = seckey;
-}
 function openElifeDashboard(){
   let winData = 'Go to main Window'
        ipcRenderer.send('main-window', winData )
