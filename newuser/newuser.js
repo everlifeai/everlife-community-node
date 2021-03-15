@@ -251,7 +251,7 @@ function generate(inp) {
 
 //check selected phrase is 3rd index on submit
 function submitPhrases(inp){
-  if(phraseArry[2] == selectrdPhraseArr ){
+  if(mnemonic.split(' ')[2] == selectrdPhraseArr ){
       window.location.href='step-5.html?phrase='+ pharseParam2 + '~~'+secureKeys;
   }  
   else{// clearing from the selected array and making the text red on wrong selection
@@ -277,4 +277,26 @@ function openElifeDashboard(){
         var window = remote.getCurrentWindow()
         window.close()
   
+}
+
+function displayKeys(){
+  fs.readFile(path.join(u.dataLoc(), "__ssb/secret"), 'utf8' , (err, data) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+    secureKeys = JSON.parse('{' + data.split('{')[1].split('}')[0]+ '}') 
+    document.getElementById('everlifekeys').innerHTML = secureKeys.id;
+ 
+  })
+ 
+    const keys = new URLSearchParams(window.location.search)
+    for (const key of keys) {
+        pubkey=key[1].split('~~')[0]
+        seckey=key[1].split('~~')[1]
+        elifeKeys =key[1].split('~~')[2]
+      }    
+ 
+    document.getElementById('pubkey').innerHTML = pubkey;
+    document.getElementById('seckey').innerHTML = seckey;
 }
