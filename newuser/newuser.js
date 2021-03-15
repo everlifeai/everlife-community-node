@@ -300,3 +300,10 @@ function displayKeys(){
     document.getElementById('pubkey').innerHTML = pubkey;
     document.getElementById('seckey').innerHTML = seckey;
 }
+
+function termsAndConditions(){
+  require("electron").shell.openExternal('https://stellar.org/terms-of-service');
+}
+function privaryPolicyStellar(){
+  require("electron").shell.openExternal('https://stellar.org/privacy-policy');
+}
