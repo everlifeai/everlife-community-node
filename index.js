@@ -196,10 +196,9 @@ function openewUserWindow() {
     titleBarStyle: 'hiddenInset',
     autoHideMenuBar: true,
     backgroundColor: '#EEE',
-    icon: icon 
-    });
-    userWindow.loadURL(Path.join(__dirname, 'newuser/step-1.html')
-  );
+    icon: icon
+  });
+  userWindow.loadURL("file://" + Path.join(__dirname, 'newuser/step-1.html'))
   userWindow.on('close', function (e) {
     if (!quitting && process.platform === 'darwin') {
       e.preventDefault()
@@ -214,7 +213,7 @@ function openewUserWindow() {
     }
   })
   return userWindow;
- }
+}
 
 function openMainWindow () {
   if (!windows.main) {
