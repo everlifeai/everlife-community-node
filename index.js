@@ -62,7 +62,7 @@ let icon = Path.join(__dirname, 'assets/icon.png')
 if(os.platform == 'darwin') electron.app.dock.setIcon(icon)
 
 electron.app.on('ready', () => {
-  
+
   checkAndCreateMnenonicKeys(err => {
     if(err) throw err
     else startMainWindow()
@@ -73,26 +73,22 @@ electron.app.on('ready', () => {
 
 function checkAndCreateMnenonicKeys(cb) {
   elife.embeddedSetup()
- 
-  fs.mkdirSync(path.join(u.dataLoc(), "__ssb"), (err) => {
-    if (err) {
-        throw err;
-    }
-  });
 
-  const secretFile= Path.join(u.dataLoc(), '__ssb','secret') 
-  if(fs.existsSync(secretFile)) {
+  const loc = Path.join(u.dataLoc(), "__ssb")
+  u.ensureExists(loc, err => {
+    if(err) throw err
+  })
+
+  const secretFile= Path.join(loc, 'secret')
+  if(fs.existsSync(secretFile)) return cb()
+
+  openewUserWindow()
+  electron.ipcMain.on('main-window',  () => {
     return cb()
-  }else{
-    openewUserWindow() 
-    electron.ipcMain.on('main-window',  () => {
-    return cb()
-    })
-      
-  }
+  })
 
 }
-  
+
 function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
@@ -200,10 +196,9 @@ function openewUserWindow() {
     titleBarStyle: 'hiddenInset',
     autoHideMenuBar: true,
     backgroundColor: '#EEE',
-    icon: icon 
-    });
-    userWindow.loadURL(Path.join(__dirname, 'newuser/step-1.html')
-  );
+    icon: icon
+  });
+  userWindow.loadURL("file://" + Path.join(__dirname, 'newuser/step-1.html'))
   userWindow.on('close', function (e) {
     if (!quitting && process.platform === 'darwin') {
       e.preventDefault()
@@ -218,7 +213,7 @@ function openewUserWindow() {
     }
   })
   return userWindow;
- }
+}
 
 function openMainWindow () {
   if (!windows.main) {
