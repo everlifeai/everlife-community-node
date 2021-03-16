@@ -73,12 +73,13 @@ electron.app.on('ready', () => {
 
 function checkAndCreateMnenonicKeys(cb) {
   elife.embeddedSetup()
- 
-  fs.mkdirSync(path.join(u.dataLoc(), "__ssb"), (err) => {
-    if (err) {
-        throw err;
-    }
-  });
+  if(!fs.existsSync(path.join(u.dataLoc(), "__ssb"))) {
+    fs.mkdirSync(path.join(u.dataLoc(), "__ssb"), (err) => {
+      if (err) {
+          throw err;
+      }
+    });
+  }
 
   const secretFile= Path.join(u.dataLoc(), '__ssb','secret') 
   if(fs.existsSync(secretFile)) {
