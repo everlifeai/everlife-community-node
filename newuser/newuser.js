@@ -186,7 +186,7 @@ function submitBtn(){
     window.location.href='step-4.html?phrase='+ copiedPhrase +'^^'+ publickey +'~~'+ secretkey+'~~'+secureKeys ;
   }else{
     alert('Click showbackup phrase button to proceed')
-  }    
+  }
 }
 
 function generatekeys(){
@@ -195,10 +195,10 @@ function generatekeys(){
     mnemonic = param[1].split("^^")[0];
     pharseParam2 = param[1].split("^^")[1];
   }
-  
+
   //To shuffle the array
-  const shuffle = arr =>   [...arr].reduceRight((res,_,__,s) => 
-  (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[]);
+  const shuffle = arr =>   [...arr].reduceRight((res,_,__,s) =>
+    (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[]);
 
   phraseArry = shuffle(mnemonic.split(" "));
 
@@ -219,8 +219,8 @@ function selectedPhrase(inp) {
   if(selectrdPhraseArr.length==0){
     if (!selectrdPhraseArr.includes(inp)) {
       selectrdPhraseArr.push(inp);
-  
-        generate(inp);
+
+      generate(inp);
       var imgs = document.createElement("img");
       imgs.setAttribute("class", "phraseimg");
       imgs.setAttribute("width", "15px");
@@ -252,10 +252,10 @@ function generate(inp) {
 //check selected phrase is 3rd index on submit
 function submitPhrases(inp){
   if(mnemonic.split(' ')[2] == selectrdPhraseArr ){
-      window.location.href='step-5.html?phrase='+ pharseParam2 + '~~'+secureKeys;
-  }  
+    window.location.href='step-5.html?phrase='+ pharseParam2 + '~~'+secureKeys;
+  }
   else{// clearing from the selected array and making the text red on wrong selection
-    selectrdPhraseArr.pop();      
+    selectrdPhraseArr.pop();
     document.getElementById('err-txt').style.color='red'
     document.getElementById('pharsetext').innerHTML=''
   }
@@ -267,16 +267,16 @@ function goBack() {
 
 
 function copyPhrases(){
-    copytoClipBroad()
+  copytoClipBroad()
 }
 
 
 function openElifeDashboard(){
   let winData = 'Go to main Window'
-       ipcRenderer.send('main-window', winData )
-        var window = remote.getCurrentWindow()
-        window.close()
-  
+  ipcRenderer.send('main-window', winData )
+  var window = remote.getCurrentWindow()
+  window.close()
+
 }
 
 function displayKeys(){
@@ -285,20 +285,20 @@ function displayKeys(){
       console.error(err)
       return
     }
-    secureKeys = JSON.parse('{' + data.split('{')[1].split('}')[0]+ '}') 
+    secureKeys = JSON.parse('{' + data.split('{')[1].split('}')[0]+ '}')
     document.getElementById('everlifekeys').innerHTML = secureKeys.id;
- 
+
   })
- 
-    const keys = new URLSearchParams(window.location.search)
-    for (const key of keys) {
-        pubkey=key[1].split('~~')[0]
-        seckey=key[1].split('~~')[1]
-        elifeKeys =key[1].split('~~')[2]
-      }    
- 
-    document.getElementById('pubkey').innerHTML = pubkey;
-    document.getElementById('seckey').innerHTML = seckey;
+
+  const keys = new URLSearchParams(window.location.search)
+  for (const key of keys) {
+    pubkey=key[1].split('~~')[0]
+    seckey=key[1].split('~~')[1]
+    elifeKeys =key[1].split('~~')[2]
+  }
+
+  document.getElementById('pubkey').innerHTML = pubkey;
+  document.getElementById('seckey').innerHTML = seckey;
 }
 
 function termsAndConditions(){
