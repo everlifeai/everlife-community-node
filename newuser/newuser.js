@@ -195,7 +195,13 @@ function generatekeys(){
     mnemonic = param[1].split("^^")[0];
     pharseParam2 = param[1].split("^^")[1];
   }
-  phraseArry = mnemonic.split(" ");
+  
+  //To shuffle the array
+  const shuffle = arr =>   [...arr].reduceRight((res,_,__,s) => 
+  (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[]);
+
+  phraseArry = shuffle(mnemonic.split(" "));
+
   //construct mnemonic word selection  and write to DOM
   var mnemonicHTML = "";
   for (var i = 0; i < phraseArry.length; i++) {
@@ -245,7 +251,7 @@ function generate(inp) {
 
 //check selected phrase is 3rd index on submit
 function submitPhrases(inp){
-  if(phraseArry[2] == selectrdPhraseArr ){
+  if(mnemonic.split(' ')[2] == selectrdPhraseArr ){
       window.location.href='step-5.html?phrase='+ pharseParam2 + '~~'+secureKeys;
   }  
   else{// clearing from the selected array and making the text red on wrong selection
@@ -260,51 +266,44 @@ function goBack() {
 }
 
 
-
-
-
-
-
-
-
-
-
 function copyPhrases(){
     copytoClipBroad()
 }
 
 
-
-
-
-
-
-if (document.URL.split('?')[0].includes('step-5.html')){
-  
-   fs.readFile(path.join(u.dataLoc(), "__ssb/secret"), 'utf8' , (err, data) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-    secureKeys = JSON.parse('{' + data.split('{')[1].split('}')[0]+ '}') 
-    document.getElementById('everlifekeys').innerHTML = secureKeys.id;
-
-  })
-
-    const keys = new URLSearchParams(window.location.search)
-    for (const key of keys) {
-        pubkey=key[1].split('~~')[0]
-        seckey=key[1].split('~~')[1]
-        elifeKeys =key[1].split('~~')[2]
-      }    
-
-    document.getElementById('pubkey').innerHTML = pubkey;
-    document.getElementById('seckey').innerHTML = seckey;
-}
 function openElifeDashboard(){
   let winData = 'Go to main Window'
        ipcRenderer.send('main-window', winData )
         var window = remote.getCurrentWindow()
         window.close()
   
+}
+
+function displayKeys(){
+  fs.readFile(path.join(u.dataLoc(), "__ssb/secret"), 'utf8' , (err, data) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+    secureKeys = JSON.parse('{' + data.split('{')[1].split('}')[0]+ '}') 
+    document.getElementById('everlifekeys').innerHTML = secureKeys.id;
+ 
+  })
+ 
+    const keys = new URLSearchParams(window.location.search)
+    for (const key of keys) {
+        pubkey=key[1].split('~~')[0]
+        seckey=key[1].split('~~')[1]
+        elifeKeys =key[1].split('~~')[2]
+      }    
+ 
+    document.getElementById('pubkey').innerHTML = pubkey;
+    document.getElementById('seckey').innerHTML = seckey;
+}
+
+function termsAndConditions(){
+  require("electron").shell.openExternal('https://stellar.org/terms-of-service');
+}
+function privaryPolicyStellar(){
+  require("electron").shell.openExternal('https://stellar.org/privacy-policy');
 }
