@@ -7,12 +7,11 @@ var ssbConfig =null;
 const fs =require('fs')
 var electron = require('electron')
 var openWindow = require('./lib/window')
-const BrowserWindow = require('electron').BrowserWindow;
 
 var os = require('os')
 const u = require('@elife/utils')
 
-
+var newUser=require('./setup-new-user')
 var Path = require('path')
 var defaultMenu = require('electron-default-menu')
 var WindowState = require('electron-window-state')
@@ -81,8 +80,7 @@ function checkAndCreateMnenonicKeys(cb) {
 
   const secretFile= Path.join(loc, 'secret')
   if(fs.existsSync(secretFile)) return cb()
-
-  openewUserWindow()
+    newUser.openNewUserWindow()
   electron.ipcMain.on('main-window',  () => {
     return cb()
   })
@@ -184,36 +182,7 @@ function startMainWindow() {
   })
 }
 
-function openewUserWindow() {
-  const userWindow = new BrowserWindow({
-   width: 2000,
-   height: 1100,
-   webPreferences: {
-    nodeIntegration: true
-  },
-   title: 'Everlife Explorer',
-    show: true,
-    titleBarStyle: 'hiddenInset',
-    autoHideMenuBar: true,
-    backgroundColor: '#EEE',
-    icon: icon
-  });
-  userWindow.loadURL("file://" + Path.join(__dirname, 'newuser/step-1.html'))
-  userWindow.on('close', function (e) {
-    if (!quitting && process.platform === 'darwin') {
-      e.preventDefault()
-      userWindow.hide()
-    }
-  })
-  userWindow.on('closed', function () {
-    if (process.platform !== 'darwin') {
-      userWindow =null
-      pm2.stopAll()
-      electron.app.quit()
-    }
-  })
-  return userWindow;
-}
+
 
 function openMainWindow () {
   if (!windows.main) {

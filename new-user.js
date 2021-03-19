@@ -6,13 +6,12 @@ const { ipcRenderer } = require("electron");
 const { remote } = require("electron");
 
 const Path = require("path");
+const { words } = require("lodash");
 
 var pharseParam = "";
 var pharseParam2 = "";
 var phraseArry = [];
 var selectrdPhraseArr = [];
-var pubkey;
-var seckey;
 var publickey;
 var secretkey;
 var elifeKeys;
@@ -22,7 +21,7 @@ var mnemonic;
 var checkboxValue = false;
 var copiedPhrase = "";
 
-
+let img = '../../assets/img/close_icon.png'
 
 //Password Validation goes here
 function CheckPassword(inputtxt, passfld) {
@@ -117,9 +116,9 @@ function showPhrases() {
   const secretFile = Path.join(u.dataLoc(), "__ssb", "secret");
   const keys = { ...elifeKeys };
   secureKeys = keys;
-  keys.words = mnemonic;
-  keys.secretkey = secretkey;
-  keys.publickey = publickey;
+  keys.mnemonic = mnemonic;
+  keys.stellar_publickey = secretkey;
+  keys.stellar_secretkey = publickey;
   const lines = [
     "# this is your SECRET name.",
     "# this name gives you magical powers.",
@@ -183,10 +182,10 @@ function copytoClipBroad() {
 //on submit parse keys from step-3.html to step-4.html
 function submitBtn(){
   if(copiedPhrase.length>0){
-    window.location.href='step-4.html?phrase='+ copiedPhrase +'^^'+ publickey +'~~'+ secretkey+'~~'+secureKeys ;
+    window.location.href='step-4.html?phrase='+ copiedPhrase;
   }else{
     alert('Click showbackup phrase button to proceed')
-  }
+  }    
 }
 
 function generatekeys(){
@@ -196,12 +195,12 @@ function generatekeys(){
     pharseParam2 = param[1].split("^^")[1];
   }
 
-  //To shuffle the array
-  const shuffle = arr =>   [...arr].reduceRight((res,_,__,s) =>
+  //this  will shffle the array
+  const shuffle = arr => 
+  [...arr].reduceRight((res,_,__,s) => 
     (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[]);
 
   phraseArry = shuffle(mnemonic.split(" "));
-
   //construct mnemonic word selection  and write to DOM
   var mnemonicHTML = "";
   for (var i = 0; i < phraseArry.length; i++) {
@@ -219,12 +218,12 @@ function selectedPhrase(inp) {
   if(selectrdPhraseArr.length==0){
     if (!selectrdPhraseArr.includes(inp)) {
       selectrdPhraseArr.push(inp);
-
-      generate(inp);
+  
+        generate(inp);
       var imgs = document.createElement("img");
       imgs.setAttribute("class", "phraseimg");
       imgs.setAttribute("width", "15px");
-      imgs.setAttribute("src", "./images/close_icon.png");
+      imgs.setAttribute("src", img);
       imgs.setAttribute("onclick", "imgClose('" + inp + "')");
       document.getElementById(inp).appendChild(imgs);
     }
@@ -252,10 +251,10 @@ function generate(inp) {
 //check selected phrase is 3rd index on submit
 function submitPhrases(inp){
   if(mnemonic.split(' ')[2] == selectrdPhraseArr ){
-    window.location.href='step-5.html?phrase='+ pharseParam2 + '~~'+secureKeys;
-  }
+      window.location.href='step-5.html'
+  }  
   else{// clearing from the selected array and making the text red on wrong selection
-    selectrdPhraseArr.pop();
+    selectrdPhraseArr.pop();      
     document.getElementById('err-txt').style.color='red'
     document.getElementById('pharsetext').innerHTML=''
   }
@@ -265,45 +264,23 @@ function goBack() {
   window.history.back();
 }
 
-
 function copyPhrases(){
-  copytoClipBroad()
+    copytoClipBroad()
 }
 
 
 function openElifeDashboard(){
   let winData = 'Go to main Window'
-  ipcRenderer.send('main-window', winData )
-  var window = remote.getCurrentWindow()
-  window.close()
-
-}
-
-function displayKeys(){
-  fs.readFile(path.join(u.dataLoc(), "__ssb/secret"), 'utf8' , (err, data) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-    secureKeys = JSON.parse('{' + data.split('{')[1].split('}')[0]+ '}')
-    document.getElementById('everlifekeys').innerHTML = secureKeys.id;
-
-  })
-
-  const keys = new URLSearchParams(window.location.search)
-  for (const key of keys) {
-    pubkey=key[1].split('~~')[0]
-    seckey=key[1].split('~~')[1]
-    elifeKeys =key[1].split('~~')[2]
-  }
-
-  document.getElementById('pubkey').innerHTML = pubkey;
-  document.getElementById('seckey').innerHTML = seckey;
+       ipcRenderer.send('main-window', winData )
+        var window = remote.getCurrentWindow()
+        window.close()
+  
 }
 
 function termsAndConditions(){
   require("electron").shell.openExternal('https://stellar.org/terms-of-service');
 }
-function privaryPolicyStellar(){
+function privacyPolicyStellar(){
   require("electron").shell.openExternal('https://stellar.org/privacy-policy');
 }
+
