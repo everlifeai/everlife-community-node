@@ -10,12 +10,14 @@ margin: 0px;
 
 .center {
   padding: 40px 0;
-  background-color: #3d37da;
+  background-color:#d64cA8;
 }
-.ev-header {max-width: 1600px;
+.ev-header {
+  max-width: 1600px;
   min-width: 500px;
   height: 80px;
-  background-color: #3d37da;}
+  background-color:#d64cA8;
+}
 /* #mainnav{
   width:100%;
   overflow:hidden;
@@ -29,7 +31,8 @@ margin: 0px;
   /*overflow: scroll;*/
 }
 .jMhaxE {
-  background: linear-gradient(rgb(75, 66, 227) 0%, rgb(48, 44, 209) 100%);
+  /* background: linear-gradient(rgb(75, 66, 227) 0%, rgb(48, 44, 209) 100%); */
+  background: #d64cA8;
   font-family: Muli;
   display: flex;
   -webkit-box-pack: justify;
@@ -69,9 +72,11 @@ margin: 0px;
   -webkit-box-pack: center;
   justify-content: center;
   padding: 0px;
+ 
 }
 .kZkIrK {
-  background: linear-gradient(rgb(75, 66, 227) 0%, rgb(48, 44, 209) 100%);
+ 
+  background:#d64cA8;
   color: rgb(255, 255, 255);
 }
 .jjPYEX {
@@ -101,7 +106,7 @@ margin: 0px;
   border-radius: 1.875rem;
   color: rgb(255, 255, 255);
 }.LYoKA {
-  border: 1px solid rgb(57, 30, 218);
+  border: 1px solid #d64cA8;
   color: rgb(57, 30, 218);
 }
 p {
@@ -126,17 +131,6 @@ p {
   position: absolute;
   width: 100%;
   z-index: -1;
-}.jMhaxE {
-  background: linear-gradient(rgb(75, 66, 227) 0%, rgb(48, 44, 209) 100%);
-  font-family: Muli;
-  display: flex;
-  -webkit-box-pack: justify;
-  justify-content: space-between;
-  -webkit-box-align: center;
-  align-items: center;
-  padding: 2.25rem 2rem;
-  text-align: left;
-  height: 119px;
 }
 .cuIYFB {
   align-items: flex-end;
@@ -166,14 +160,7 @@ p {
   width: 11rem;
 }
 /* 4 html */
-.jHEhAp {
-   background: rgb(57, 30, 218); 
-  display: flex;
-  flex-direction: column;
-  -webkit-box-flex: 1;
-  flex-grow: 1;
-  height: 100%;
-}
+
 .gtjlvQ {
   display: flex;
   flex-direction: column;
@@ -193,6 +180,8 @@ p {
   height: 7.5rem;
 }.hwCNyq {
   font-weight: 200;
+  margin-top: 5px;
+  margin-bottom: 5px;
   font-size: 2.6rem;
   line-height: 2.75rem;
   margin: 2.5rem 0px 3rem;
@@ -201,7 +190,7 @@ p {
   max-width: 24.375rem;
 }.kCWYTI {
   border-radius: 1.25rem;
-  background-color: rgb(86, 59, 241);
+  background-color:#d64cA8;
   padding: 1.75rem 1.5rem;
   text-align: left;
   font-size: 0.93rem;
@@ -233,20 +222,6 @@ ul {
 }.lkiIWD {
   background: rgb(101, 76, 247);
   margin: 2.5rem auto 0px;
-}.eejAfV {
-  width: 12.375rem;
-  display: block;
-  margin: 0px auto;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 1.45rem;
-  border-radius: 1.25rem;
-  background: linear-gradient(rgb(75, 66, 227) 0%, rgb(48, 44, 209) 100%);
-  color: rgb(255, 255, 255);
-  border: none;
-  appearance: none;
-  transition: all 0.15s ease-in-out 0s;
-  white-space: nowrap;
 }
 /* style for 2nd html */
 .dryRrI img {
@@ -431,7 +406,8 @@ button {
 }
 /*3.html*/
 .gtBwZZ {
-  background: linear-gradient(rgb(75, 66, 227) 0%, rgb(48, 44, 209) 100%);
+  /* background: linear-gradient(rgb(75, 66, 227) 0%, rgb(48, 44, 209) 100%); */
+  background: #d64cA8;
   border-radius: 30px;
   /* color: transparent; */
   font-size: 1.125rem;
@@ -664,7 +640,7 @@ button {
 
 /* 3 html */
 .jHEhAp {
-  background: rgb(57, 30, 218); 
+  /* background:#d64cA8;  */
  display: flex;
  flex-direction: column;
  -webkit-box-flex: 1;
@@ -690,19 +666,19 @@ button {
  height: 7.5rem;
 }.hwCNyq {
  font-weight: 200;
+ margin-top: 5px;
+ margin-bottom: 5px;
+ color: #000;
  font-size: 2.6rem;
  line-height: 2.75rem;
  margin: 2.5rem 0px 3rem;
 }.lgVGIS {
  margin: auto;
+ color: #000;
+ margin-top: 5px;
+ margin-bottom: 5px;
  max-width: 24.375rem;
-}.kCWYTI {
- border-radius: 1.25rem;
- background-color: rgb(86, 59, 241);
- padding: 1.75rem 1.5rem;
- text-align: left;
- font-size: 0.93rem;
- margin: 1.25rem 0px 0px;
+
 }.czwUhv {
  display: inline-block;
  margin-top: -0.4rem;
@@ -734,7 +710,7 @@ ul {
  width: 12.375rem;
  display: block;
  margin: 0px auto;
- font-size: 0.8rem;
+ font-size: large;
  font-weight: 600;
  padding: 1.45rem;
  border-radius: 1.25rem;
@@ -897,7 +873,7 @@ writing-mode: horizontal-tb ;
  width: 12.375rem;
  display: block;
  margin: 0px auto;
- font-size: 0.8rem;
+ font-size: large;
  font-weight: 600;
  padding: 1.45rem;
  border-radius: 1.25rem;
