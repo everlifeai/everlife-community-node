@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
   <id>ai.everlife.Explorer</id>
-  <name>Everlife Explorer</name>
+  <name>EverlifeExplorer</name>
   <project_license>AGPL-3.0</project_license>
   <developer_name>Everlife.AI</developer_name>
   <summary>The Community Node Edition of the Everlife Network</summary>
