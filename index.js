@@ -130,7 +130,7 @@ electron.app.on('ready', () => {
     help.submenu = [
       {
         label: 'Learn More',
-        click () { require('electron').shell.openExternal('https://scuttlebutt.nz') }
+        click () { require('electron').shell.openExternal('https://everlife.ai') }
       }
     ]
     if (process.platform === 'darwin') {

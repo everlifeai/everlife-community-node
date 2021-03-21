@@ -32,7 +32,7 @@ dmg:
   icon: build/dmg/icon.icns
 
 win:
-  publisherName: Secure Scuttlebutt Consortium
+  publisherName: Everlife.AI
   target:
     - target: nsis
       arch:
