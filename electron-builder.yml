@@ -1,7 +1,7 @@
 directories:
   output: dist
   buildResources: build
-appId: ai.everlife.explorer
+appId: ai.everlife.Explorer
 
 linux:
   category: Network
