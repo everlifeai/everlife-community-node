@@ -4,7 +4,7 @@
 	"ki": "Kashmiri",
 	"pt-BR": "Portugiesisch (Br)",
 	"en": "Englisch",
-	"Patchwork": "Patchwork",
+	"Everlife Explorer": "Everlife Explorer",
 	"Public": "Öffentlich",
 	"Private": "Privat",
 	"Write a public message": "Schreibe eine öffentliche Nachricht",
@@ -181,7 +181,7 @@
 	},
 	"(you)": "(du)",
 	"Information": "Information",
-	"By default, Patchwork will only see other users that are on the same local area network as you.": "Patchwork wird dir zu Anfang nur Nutzer*innen anzeigen die im selben lokalen Netzwerk sind wie du.",
+	"By default, Everlife Explorer will only see other users that are on the same local area network as you.": "Everlife Explorer wird dir zu Anfang nur Nutzer*innen anzeigen die im selben lokalen Netzwerk sind wie du.",
 	"In order to share with users on the internet, you need to be invited to a pub server.": "Um mit Nutzer*innen aus dem Internet zu tauschen, brauchst du eine Einladung für einen PubServer.",
 	" from your extended network": " aus deinem erweiterten Netzwerk"
 }

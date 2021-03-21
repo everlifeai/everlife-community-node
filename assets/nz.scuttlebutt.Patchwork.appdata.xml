@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>nz.scuttlebutt.Patchwork</id>
-  <name>Patchwork</name>
+  <id>ai.everlife.Explorer</id>
+  <name>Everlife Explorer</name>
   <project_license>AGPL-3.0</project_license>
-  <developer_name>Secure Scuttlebutt Consortium</developer_name>
-  <summary>A decentralized messaging and sharing app</summary>
+  <developer_name>Everlife.AI</developer_name>
+  <summary>The Community Node Edition of the Everlife Network</summary>
   <metadata_license>CC0-1.0</metadata_license>
-  <url type="homepage">https://www.scuttlebutt.nz/</url>
-  <url type="bugtracker">https://github.com/ssbc/patchwork/issues</url>
-  <launchable type="desktop-id">nz.scuttlebutt.Patchwork.desktop</launchable>
+  <url type="homepage">https://everlife.ai/</url>
+  <url type="bugtracker">https://github.com/everlifeai/everlife-community-node/issues</url>
+  <launchable type="desktop-id">ai.everlife.Explorer.desktop</launchable>
   <description>
     <p>
-      A decentralized messaging and sharing app built on top of Secure
-      Scuttlebutt (SSB).
+      The community node edition of an everlife avatar participating in the Everlife.AI Network
     </p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <image type="source">https://raw.githubusercontent.com/ssbc/patchwork/master/screenshot.jpg</image>
+      <image type="source">https://raw.githubusercontent.com/everlifeai/everlife-community-node/master/screenshot.jpg</image>
     </screenshot>
   </screenshots>
   <categories>
@@ -26,7 +25,7 @@
     <category>Feed</category>
   </categories>
   <icon type="remote" height="512" width="512">
-    https://raw.githubusercontent.com/ssbc/patchwork/master/assets/icon.png
+    https://raw.githubusercontent.com/everlifeai/everlife-community-node/master/assets/icon.png
   </icon>
   <content_rating type="oars-1.1">
     <content_attribute id="violence-cartoon">none</content_attribute>

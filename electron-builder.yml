@@ -1,7 +1,7 @@
 directories:
   output: dist
   buildResources: build
-appId: org.ssbc.patchwork
+appId: ai.everlife.explorer
 
 linux:
   category: Network
@@ -24,7 +24,7 @@ linux:
 deb:
   packageCategory: net
   priority: optional
-  maintainer: Daan Wynen <patchwork@muchmuch.coffee>
+  maintainer: Charles L <charles.lobo@gmail.com>
 snap:
   publish: github
 
