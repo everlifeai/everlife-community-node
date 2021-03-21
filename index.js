@@ -2,46 +2,36 @@ process.on('uncaughtException', function (err) {
   console.log(err)
   process.exit()
 })
-var ssbConfig =null;
 
-const fs =require('fs')
-var electron = require('electron')
-var openWindow = require('./lib/window')
+const electron = require('electron')
+const openWindow = require('./lib/window')
 
-var os = require('os')
-const u = require('@elife/utils')
+const Path = require('path')
+const defaultMenu = require('electron-default-menu')
+const WindowState = require('electron-window-state')
+const Menu = electron.Menu
+const extend = require('xtend')
+const ssbKeys = require('ssb-keys')
 
-var newUser=require('./setup-new-user')
-var Path = require('path')
-var defaultMenu = require('electron-default-menu')
-var WindowState = require('electron-window-state')
-var Menu = electron.Menu
-var extend = require('xtend')
-var ssbKeys = require('ssb-keys')
-const path = require('path')
-
-
-var elife = require('./elife-main')
-var pm2 = require('@elife/pm2')
-var windows = {
+const windows = {
   dialogs: new Set()
 }
-
-var quitting = false
-var before_quitting = false
+let ssbConfig = null
+let quitting = false
 
 /**
- * It's not possible to run two instances of the avatar as it would create two
- * ssb-server instances that conflict on the same port. Before opening * the node,
+ * It's not possible to run two instances of patchwork as it would create two
+ * ssb-server instances that conflict on the same port. Before opening patchwork,
  * we check if it's already running and if it is we focus the existing window
  * rather than opening a new instance.
  */
 function quitIfAlreadyRunning () {
   if (!electron.app.requestSingleInstanceLock()) {
-    pm2.stopAll()
+    console.log('Patchwork is already running!')
+    console.log('Please close the existing instance before starting a new one.')
     return electron.app.quit()
   }
-  electron.app.on('second-instance', (event, commandLine, workingDirectory) => {
+  electron.app.on('second-instance', () => {
     // Someone tried to run a second instance, we should focus our window.
     if (windows.main) {
       if (windows.main.isMinimized()) windows.main.restore()
@@ -50,49 +40,36 @@ function quitIfAlreadyRunning () {
   })
 }
 
-var config = {
+const config = {
   server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
 }
-config.customPath = true
+// a flag so we don't start git-ssb-web if a custom path is passed in
+if (process.argv.includes('--path')) {
+  config.customPath = true
+}
 
 quitIfAlreadyRunning()
 
-let icon = Path.join(__dirname, 'assets/icon.png')
-if(os.platform == 'darwin') electron.app.dock.setIcon(icon)
-
 electron.app.on('ready', () => {
-
-  checkAndCreateMnenonicKeys(err => {
-    if(err) throw err
-    else startMainWindow()
-  })
-})
-
-
-
-function checkAndCreateMnenonicKeys(cb) {
-  elife.embeddedSetup()
-
-  const loc = Path.join(u.dataLoc(), "__ssb")
-  u.ensureExists(loc, err => {
-    if(err) throw err
-  })
-
-  const secretFile= Path.join(loc, 'secret')
-  if(fs.existsSync(secretFile)) return cb()
-    newUser.openNewUserWindow()
-  electron.ipcMain.on('main-window',  () => {
-    return cb()
-  })
-
-}
-
-function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
-    var browserWindow = openMainWindow()
-    var menu = defaultMenu(electron.app, electron.shell)
+    const browserWindow = openMainWindow()
+
+    browserWindow.on('app-command', (e, cmd) => {
+      switch (cmd) {
+        case 'browser-backward': {
+          browserWindow.webContents.send('goBack')
+          break
+        }
+        case 'browser-forward': {
+          browserWindow.webContents.send('goForward')
+          break
+        }
+      }
+    })
+
+    const menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {
       label: 'Navigation',
@@ -117,11 +94,28 @@ function startMainWindow() {
           click: () => {
             browserWindow.webContents.send('goForward')
           }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Settings',
+          accelerator: 'CmdOrCtrl+,',
+          click: () => {
+            browserWindow.webContents.send('goToSettings')
+          }
+        },
+        {
+          label: 'Status',
+          accelerator: 'CmdOrCtrl+.',
+          click: () => {
+            browserWindow.webContents.send('goToStatus')
+          }
         }
       ]
     })
 
-    var view = menu.find(x => x.label === 'View')
+    const view = menu.find(x => x.label === 'View')
     view.submenu = [
       { role: 'reload' },
       { role: 'toggledevtools' },
@@ -132,19 +126,15 @@ function startMainWindow() {
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
-    var help = menu.find(x => x.label === 'Help')
+    const help = menu.find(x => x.label === 'Help')
     help.submenu = [
       {
-        label: 'Learn about Your Node',
-        click () { require('electron').shell.openExternal('https://everlifeai.github.io/') }
-      },
-      {
-        label: 'The Everlife Project',
-        click () { require('electron').shell.openExternal('http://everlife.ai') }
+        label: 'Learn More',
+        click () { require('electron').shell.openExternal('https://scuttlebutt.nz') }
       }
     ]
     if (process.platform === 'darwin') {
-      var win = menu.find(x => x.label === 'Window')
+      const win = menu.find(x => x.label === 'Window')
       win.submenu = [
         { role: 'minimize' },
         { role: 'zoom' },
@@ -157,40 +147,88 @@ function startMainWindow() {
     Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
   })
 
-  electron.app.on('activate', function (e) {
+  electron.app.on('activate', function () {
     if (windows.main) {
       windows.main.show()
     }
   })
 
-  electron.app.on('before-quit', function (ev) {
-    if(!before_quitting) {
-      elife.stopChildProcesses(() => {
-        before_quitting = true;
-        quitting = true
-        pm2.stopAll()
-        electron.app.quit()
-      })
-      ev.preventDefault()
-    }
+  electron.app.on('before-quit', function () {
+    quitting = true
   })
 
-  electron.ipcMain.on('open-background-devtools', function (ev, config) {
-    if (windows.background) {
-      windows.background.webContents.openDevTools({ mode: 'detach' })
-    }
+  electron.ipcMain.handle('navigation-menu-popup', (event, data) => {
+    const {items, x, y} = data
+    const window = event.sender
+    const factor = event.sender.zoomFactor
+    const menuItems = buildMenu(items, window)
+    const menu = electron.Menu.buildFromTemplate(menuItems);
+    menu.popup({
+      window,
+      x: Math.round(x * factor),
+      y: Math.round(y * factor) + 4,
+    });
   })
+
+  electron.ipcMain.handle('setSpellcheckLangs', (ev, params) => {
+    if (!windows.main) { return }
+    const { langs, enabled } = params
+    windows.main.webContents.session.setSpellCheckerLanguages(enabled ? langs : []);
+  })
+  electron.ipcMain.handle('consoleLog', (ev, o) => console.log(o))
+  electron.ipcMain.handle('consoleError', (ev, o) => console.error(o))
+  electron.ipcMain.handle('badgeCount', (ev, count) => {
+    electron.app.badgeCount = count;
+  });
+  electron.ipcMain.on('exit', (ev, code) => process.exit(code))
+
+})
+
+function openServerDevTools () {
+  if (windows.background) {
+    windows.background.webContents.openDevTools({ mode: 'detach' })
+  }
 }
 
+function buildMenu(items, window) {
+  const result = []
+  for (let item of items) {
+    switch (item.type) {
+      case 'separator':
+        result.push(item)
+        break
+      case 'submenu':
+        result.push({
+          ...item,
+          submenu: buildMenu(item.submenu, window),
+        })
+        break
+      case 'normal':
+        result.push({
+          ...item,
+          click: () => navigateTo(item.target)
+        })
+        break
+      default:
+        throw Error(`Unknown menu item of type "${item.type}": ${JSON.stringify(item, null, 2)}`);
+    }
+  }
+  return result
+}
 
+function navigateTo(target) {
+  if (windows?.main) {
+    windows.main.send('navigate-to', target)
+  }
+}
 
 function openMainWindow () {
   if (!windows.main) {
-    var windowState = WindowState({
+    const windowState = WindowState({
       defaultWidth: 1024,
       defaultHeight: 768
     })
-    windows.main = openWindow(ssbConfig, Path.join(__dirname, 'main-window.js'), {
+    windows.main = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'main-window.js'), {
       minWidth: 800,
       x: windowState.x,
       y: windowState.y,
@@ -198,11 +236,15 @@ function openMainWindow () {
       height: windowState.height,
       titleBarStyle: 'hiddenInset',
       autoHideMenuBar: true,
-      title: 'Everlife Explorer',
+      title: 'Patchwork',
       show: true,
       backgroundColor: '#EEE',
-      icon: icon,
-    })
+      icon: Path.join(__dirname, 'assets/icon.png'),
+    },
+    openServerDevTools,
+    navigateTo,
+    )
+
     windowState.manage(windows.main)
     windows.main.setSheetOffset(40)
     windows.main.on('close', function (e) {
@@ -213,17 +255,13 @@ function openMainWindow () {
     })
     windows.main.on('closed', function () {
       windows.main = null
-      if (process.platform !== 'darwin') {
-        pm2.stopAll()
-        electron.app.quit()
-      }
+      if (process.platform !== 'darwin') electron.app.quit()
     })
   }
   return windows.main
 }
 
 function setupContext (appName, opts, cb) {
-  elife.adjustSSBConfig(opts)
   ssbConfig = require('ssb-config/inject')(appName, extend({
     port: 8008,
     blobsPort: 8989, // matches ssb-ws
@@ -231,14 +269,6 @@ function setupContext (appName, opts, cb) {
       dunbar: 150,
       hops: 2 // down from 3
     }
-    // connections: { // to support DHT invites
-    //   incoming: {
-    //     dht: [{ scope: 'public', transform: 'shs', port: 8423 }]
-    //   },
-    //   outgoing: {
-    //     dht: [{ transform: 'shs' }]
-    //   }
-    // }
   }, opts))
 
   // disable gossip auto-population from {type: 'pub'} messages as we handle this manually in sbot/index.js
@@ -255,15 +285,20 @@ function setupContext (appName, opts, cb) {
     ssbConfig.remote = `net:127.0.0.1:${ssbConfig.port}~shs:${pubkey}`
   } else {
     const socketPath = Path.join(ssbConfig.path, 'socket')
-    ssbConfig.connections.incoming.unix = [{ 'scope': 'device', 'transform': 'noauth' }]
+    ssbConfig.connections.incoming.unix = [{ scope: 'device', transform: 'noauth' }]
     ssbConfig.remote = `unix:${socketPath}:~noauth:${pubkey}`
   }
+
+  // Support rooms
+  ssbConfig.connections.incoming.tunnel = [{ scope: 'public', transform: 'shs' }]
+  ssbConfig.connections.outgoing.tunnel = [{ transform: 'shs' }]
+
+  // Support DHT invites (only as a client, for now)
+  ssbConfig.connections.outgoing.dht = [{ transform: 'shs' }]
 
   const redactedConfig = JSON.parse(JSON.stringify(ssbConfig))
   redactedConfig.keys.private = null
   console.dir(redactedConfig, { depth: null })
-
-  elife.embeddedSetup()
 
   if (opts.server === false) {
     cb && cb()
@@ -271,11 +306,8 @@ function setupContext (appName, opts, cb) {
     electron.ipcMain.once('server-started', function (ev, config) {
       ssbConfig = config
       cb && cb()
-      setTimeout(() => {
-        elife.startAvatar()
-      }, 20 * 1000)
     })
-    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'server-process.js'), {
+    windows.background = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'server-process.js'), {
       connect: false,
       center: true,
       fullscreen: false,
@@ -286,7 +318,7 @@ function setupContext (appName, opts, cb) {
       resizable: false,
       show: false,
       skipTaskbar: true,
-      title: 'everlife-avatar-server',
+      title: 'patchwork-server',
       useContentSize: true,
       width: 150
     })
