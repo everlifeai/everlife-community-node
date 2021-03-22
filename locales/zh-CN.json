@@ -53,7 +53,7 @@
 	"Upgrading database": "升级数据库中",
 	"Downloading new messages": "下载新消息中",
 	"Indexing database": "数据库索引中",
-	"Scuttling...": "快速爬行中...",
+	"Connecting...": "Connecting...",
 	"word, @key, #channel": "关键字，@key，#频道",
 	"Profile": "个人信息",
 	"Mentions": "提及",

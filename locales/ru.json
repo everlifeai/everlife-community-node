@@ -56,7 +56,7 @@
 	"Upgrading database": "Обновление базы данных",
 	"Downloading new messages": "Загрузка новых сообщений",
 	"Indexing database": "Индексируем базу данных",
-	"Scuttling...": "Заполняем...",
+	"Connecting...": "Connecting...",
 	"word, @key, #channel": "слово, @ключ, #канал",
 	"Profile": "Профиль",
 	"Mentions": "Упоминания",

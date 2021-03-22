@@ -62,7 +62,7 @@
   "Upgrading database": "Mise à jour de la base de données",
   "Downloading new messages": "Téléchargement des nouveaux messages",
   "Indexing database": "Indexation de la base de données",
-  "Scuttling...": "On passe le mot…",
+  "Connecting...": "Connecting…",
   "word, @key, #channel": "mot, @clé, #salon",
   "Profile": "Profil",
   "Mentions": "Mentions",

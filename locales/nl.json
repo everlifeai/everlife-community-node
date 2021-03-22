@@ -57,7 +57,7 @@
 	"Upgrading database": "De database is aan het upgraden",
 	"Downloading new messages": "Nieuwe berichten worden gedownload",
 	"Indexing database": "De database is aan het indexeren",
-	"Scuttling...": "Scuttling...",
+	"Connecting...": "Connecting...",
 	"word, @key, #channel": "woord, @key, #channel",
 	"Profile": "Profiel",
 	"Mentions": "Vermeldingen",

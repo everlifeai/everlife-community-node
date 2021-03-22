@@ -53,7 +53,7 @@
 	"Upgrading database": "升級數據庫",
 	"Downloading new messages": "下載新消息中",
 	"Indexing database": "數據庫索引中",
-	"Scuttling...": "快速爬行中...",
+	"Connecting...": "Connecting",
 	"word, @key, #channel": "關鍵字，@驗證碼，#頻道",
 	"Profile": "個人信息",
 	"Mentions": "提到",

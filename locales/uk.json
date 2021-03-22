@@ -51,7 +51,7 @@
 	"Upgrading database": "Оновлення бази даних",
 	"Downloading new messages": "Завантаження нових повідомлень",
 	"Indexing database": "Індексуємо базу даних",
-	"Scuttling...": "Заповнюємо...",
+	"Connecting...": "Connecting...",
 	"word, @key, #channel": "слово, @ключ, #канал",
 	"Profile": "Профіль",
 	"Mentions": "Згадки",

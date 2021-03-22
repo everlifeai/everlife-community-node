@@ -57,7 +57,7 @@
 	"Upgrading database": "Nastavujem novú verziu databázy",
 	"Downloading new messages": "Sťahujem nové správy nové správy",
 	"Indexing database": "Indexujem databázu",
-	"Scuttling...": "SSB-čkujem...",
+	"Connecting...": "Connecting...",
 	"word, @key, #channel": "slovo, @meno, #kanál",
 	"Profile": "Profil",
 	"Mentions": "Zmienky",
