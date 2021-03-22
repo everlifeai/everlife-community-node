@@ -12,6 +12,7 @@ var os = require('os')
 const u = require('@elife/utils')
 
 var newUser=require('./setup-new-user')
+var loginWindow=require('./setup-face-recognition')
 var Path = require('path')
 var defaultMenu = require('electron-default-menu')
 var WindowState = require('electron-window-state')
@@ -19,6 +20,7 @@ var Menu = electron.Menu
 var extend = require('xtend')
 var ssbKeys = require('ssb-keys')
 const path = require('path')
+var isImageFolder =true;
 
 
 var elife = require('./elife-main')
@@ -87,11 +89,40 @@ function checkAndCreateMnenonicKeys(cb) {
 
 }
 
+
 function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
-    var browserWindow = openMainWindow()
+
+    var fs = require('extfs'); 
+    const password_loc = Path.join(u.dataLoc(), 'login_password.json')
+
+    
+    fs.isEmpty(u.faceimgLoc(), function (empty) {
+      if(empty){
+        isImageFolder = false   
+      }
+      if(fs.existsSync(password_loc) || isImageFolder ) {
+        loginWindow.openLoginWindow()       
+      }   
+      else{
+        openMainWindow()
+      }
+    });
+    electron.ipcMain.on('main-window', () => {
+      openMainWindow()
+    })
+    electron.ipcMain.on('login', () => {
+      loginWindow.openLoginWindow()
+    })
+    electron.ipcMain.on('login with Password', () => {
+      openMainWindow()
+    })
+    electron.ipcMain.on('Login Again', () => {
+      loginWindow.openLoginWindow()
+    })
+    //var browserWindow = openMainWindow()
     var menu = defaultMenu(electron.app, electron.shell)
 
     menu.splice(4, 0, {

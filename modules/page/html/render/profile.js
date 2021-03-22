@@ -25,6 +25,7 @@ exports.needs = nest({
   'keys.sync.id': 'first',
   'sheet.display': 'first',
   'profile.sheet.edit': 'first',
+  'profile.sheet.signin':'first',
   'app.navigate': 'first',
   'profile.obs.contact': 'first',
   'profile.obs.recentlyUpdated': 'first',
@@ -156,6 +157,12 @@ exports.create = function (api) {
                   'ev-click': backup,
                   'disabled': backingup
                 }, i18n('Backup Your Avatar')),
+              ]),
+              h('div', { style: { 'margin-top' : '10px' } }, [
+                h('button', {
+                  'ev-click': api.profile.sheet.signin
+              
+                }, i18n('Sign-in Options')),
               ]),
             ], api.contact.html.followToggle(id))
           ])

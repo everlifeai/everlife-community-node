@@ -184,6 +184,14 @@ function setupHomeFolders() {
             return false
         }
     }
+    try {
+        fs.mkdirSync(u.faceimgLoc(), { recursive: true })
+    } catch(e) {
+        if(e.code != 'EEXIST') {
+            console.log(e)
+            r = false
+        }
+    }
 }
 
 /*      outcome/

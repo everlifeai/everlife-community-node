@@ -43,6 +43,7 @@ module.exports = function (config) {
     'app.sync.externalHandler': 'first',
     'app.html.progressNotifier': 'first',
     'profile.sheet.edit': 'first',
+    'profile.sheet.signin': 'first',
     'profile.html.preview': 'first',
     'app.navigate': 'first',
     'app.linkPreview': 'first',
