@@ -19,6 +19,8 @@ const windows = {
 let ssbConfig = null
 let quitting = false
 
+const elife = require('./elife-main.js')
+
 /**
  * It's not possible to run two instances of the explorer as it would create two
  * ssb-server instances that conflict on the same port. Before opening explorer,
@@ -262,6 +264,7 @@ function openMainWindow () {
 }
 
 function setupContext (appName, opts, cb) {
+  elife.adjustSSBConfig(opts)
   ssbConfig = require('ssb-config/inject')(appName, extend({
     port: 8008,
     blobsPort: 8989, // matches ssb-ws
