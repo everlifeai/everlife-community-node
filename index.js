@@ -20,7 +20,7 @@ let ssbConfig = null
 let quitting = false
 
 const os = require('os')
-const elife = require('./elife-main.js')
+const elife = require('./elife/index.js')
 
 /**
  * It's not possible to run two instances of the explorer as it would create two
