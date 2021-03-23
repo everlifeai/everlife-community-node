@@ -44,11 +44,8 @@ function quitIfAlreadyRunning () {
 }
 
 const config = {
-  server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
-}
-// a flag so we don't start git-ssb-web if a custom path is passed in
-if (process.argv.includes('--path')) {
-  config.customPath = true
+  server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb')),
+  customPath: true,
 }
 
 quitIfAlreadyRunning()
