@@ -19,6 +19,7 @@ const windows = {
 let ssbConfig = null
 let quitting = false
 
+const os = require('os')
 const elife = require('./elife-main.js')
 
 /**
@@ -51,6 +52,10 @@ if (process.argv.includes('--path')) {
 }
 
 quitIfAlreadyRunning()
+
+if(os.platform == 'darwin') {
+  electron.app.dock.setIcon(Path.join(__dirname, 'assets/icon.png'))
+}
 
 electron.app.on('ready', () => {
   setupContext(process.env.ssb_appname || 'ssb', {
