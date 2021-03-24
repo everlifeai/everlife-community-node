@@ -257,7 +257,7 @@ function submitPhrases(inp){
   }  
   else{// clearing from the selected array and making the text red on wrong selection
     selectrdPhraseArr.pop();      
-    document.getElementById('err-txt').style.color='red'
+    document.getElementById('err-txt').classList.add("highlight")
     document.getElementById('pharsetext').innerHTML=''
   }
 }
