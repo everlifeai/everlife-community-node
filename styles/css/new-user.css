@@ -1,3 +1,6 @@
+body {
+  background: url('../../assets/img/bg.png');
+}
 * {
   box-sizing: border-box;
   margin: 0px;
@@ -10,7 +13,10 @@
 
 .center {
   padding: 40px 0;
-  background-color:#d64cA8;
+  -webkit-app-region: drag;
+  background: linear-gradient(transparent, #294dff);
+  background: linear-gradient(145deg, #001eb3, transparent);
+  border-bottom: 1px solid #6680ff;
 }
 .ev-header {
   max-width: 1600px;
@@ -51,6 +57,7 @@
 }
 .jCuKhl {
   color: rgb(6, 14, 26);
+  color: #fdfdfd;
   font-size: 2.4rem;
   font-weight: 200;
   line-height: 1.5;
@@ -66,8 +73,7 @@
 
 }
 .kZkIrK {
-
-  background:#d64cA8;
+  background: #0022cc;
   color: rgb(255, 255, 255);
 }
 .jjPYEX {
@@ -97,9 +103,9 @@
   border-radius: 1.875rem;
   color: rgb(255, 255, 255);
 }.LYoKA {
-  border: 1px solid #d64cA8;
+  border: 1px solid #0022cc;
   color: rgb(57, 30, 218);
-  background: #f5f5f5;
+  background: #e5f4ff;
 }
 p {
   display: block;
