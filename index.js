@@ -55,6 +55,13 @@ if(os.platform == 'darwin') {
 }
 
 electron.app.on('ready', () => {
+  elife.checkAndCreateMnemonicKeys(err => {
+    if(err) throw err
+    else startMainWindow()
+  })
+})
+
+function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
@@ -186,7 +193,7 @@ electron.app.on('ready', () => {
   });
   electron.ipcMain.on('exit', (ev, code) => process.exit(code))
 
-})
+}
 
 function openServerDevTools () {
   if (windows.background) {

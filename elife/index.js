@@ -1,7 +1,8 @@
 'use strict'
 
-const setups = require('./setup.js')
+const setup = require('./setup.js')
 const backup = require('./backup.js')
+const keymgt = require('./key-management.js')
 
 module.exports = {
     embeddedSetup: setup.embeddedSetup,
@@ -10,4 +11,6 @@ module.exports = {
     stopChildProcesses: setup.stopChildProcesses,
 
     backup: backup,
+
+    checkAndCreateMnemonicKeys : keymgt.checkAndCreateMnemonicKeys,
 }
