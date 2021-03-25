@@ -7,7 +7,7 @@ const { ipcRenderer } = require("electron")
 const Path = require("path")
 const { words } = require("lodash")
 
-var selectrdPhraseArr = []
+var selectedPhrase = ""
 var passMatch = false
 var mnemonic
 
@@ -176,74 +176,65 @@ function submitBtn(){
   }
 }
 
-function generatekeys(){
+function getMnemonic() {
   const params = new URLSearchParams(window.location.search)
-  for (const param of params) {
-    mnemonic = param[1].split("^^")[0]
-  }
+  return params.get('phrase')
+}
 
-  //this  will shffle the array
+function generatekeys(){
+  mnemonic = getMnemonic()
+
   const shuffle = arr =>
     [...arr].reduceRight((res,_,__,s) =>
       (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[])
 
   const phraseArry = shuffle(mnemonic.split(" "))
-  //construct mnemonic word selection  and write to DOM
-  var mnemonicHTML = ""
-  for (var i = 0; i < phraseArry.length; i++) {
-    mnemonicHTML +=
-      "<div onclick=selectedPhrase('" + phraseArry[i] +  "') class='phrase' id=phrase" + i + ">" +
-      phraseArry[i] +
-      "</div>"
-  }
 
-  document.getElementById("generate").innerHTML = mnemonicHTML
-}
+  const g = document.getElementById("generate")
+  g.innerHTML = ""
 
+  for(let i = 0;i < phraseArry.length;i++) {
+    const curr = phraseArry[i]
+    const e_ = document.createElement("div")
+    e_.classList.add("phrase")
+    e_.innerText = curr
+    e_.onclick = () => {
+      selectedPhrase = curr
 
-function selectedPhrase(inp) {
-  if(selectrdPhraseArr.length==0){
-    if (!selectrdPhraseArr.includes(inp)) {
-      selectrdPhraseArr.push(inp)
+      const sarea = document.getElementById("pharsetext")
+      sarea.innerHTML = ""
+      const divtest = document.createElement("div")
+      divtest.setAttribute("class", "phrasetag")
+      divtest.innerText = curr
 
-      generate(inp)
-      var imgs = document.createElement("img")
-      imgs.setAttribute("class", "phraseimg")
-      imgs.setAttribute("width", "15px")
-      imgs.setAttribute("src", "../../assets/img/close_icon.png")
-      imgs.setAttribute("onclick", "imgClose('" + inp + "')")
-      document.getElementById(inp).appendChild(imgs)
+      const close = document.createElement("img")
+      close.setAttribute("class", "phraseimg")
+      close.setAttribute("width", "15px")
+      close.setAttribute("src", "../../assets/img/close_icon.png")
+      close.onclick = () => {
+        sarea.innerHTML = ""
+        selectedPhrase = ""
+      }
+
+      divtest.appendChild(close)
+      sarea.appendChild(divtest)
+
     }
+
+    g.appendChild(e_)
   }
 }
 
-function imgClose(inp) {
-  var removeEle = document.getElementById(inp)
-  var value = removeEle.getAttribute("id")
-  selectrdPhraseArr = selectrdPhraseArr.filter(function (item) {
-    return item !== value
-  })
-  removeEle.parentNode.removeChild(removeEle)
-}
-
-function generate(inp) {
-  var objTo = document.getElementById("pharsetext")
-  var divtest = document.createElement("div")
-  divtest.setAttribute("class", "phrasetag")
-  divtest.setAttribute("id", inp)
-  divtest.innerHTML = inp
-  objTo.appendChild(divtest)
-}
 
 //check selected phrase is 3rd index on submit
 function submitPhrases(inp){
-  if(mnemonic.split(' ')[2] == selectrdPhraseArr ){
+  if(mnemonic.split(' ')[2] == selectedPhrase) {
     window.location.href='step-5.html'
   }
   else{// clearing from the selected array and making the text red on wrong selection
-    selectrdPhraseArr.pop()
+    selectedPhrase = ""
     document.getElementById('err-txt').classList.add("highlight")
-    document.getElementById('pharsetext').innerHTML=''
+    document.getElementById('pharsetext').innerHTML=""
   }
 }
 
