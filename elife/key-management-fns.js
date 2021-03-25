@@ -4,8 +4,8 @@ const path = require("path")
 const u = require("@elife/utils")
 const { ipcRenderer } = require("electron")
 
-const Path = require("path")
-const { words } = require("lodash")
+const StellarHDWallet = require("stellar-hd-wallet")
+const mnemonics = require("ssb-keys-mnemonic")
 
 var selectedPhrase = ""
 var passMatch = false
@@ -89,20 +89,18 @@ function savePassword() {
 }
 
 function showPhrases() {
-  const StellarHDWallet = require("stellar-hd-wallet")
   mnemonic = StellarHDWallet.generateMnemonic()
   const wallet = StellarHDWallet.fromMnemonic(mnemonic)
 
   const publickey = wallet.getPublicKey(0)
   const secretkey = wallet.getSecret(0)
   document.getElementById("showbackup").innerHTML = mnemonic
-  const mnemonics = require("ssb-keys-mnemonic")
 
   const words = mnemonic
 
   const elifeKeys = mnemonics.wordsToKeys(words)
   //Create secret file
-  const secretFile = Path.join(u.dataLoc(), "__ssb", "secret")
+  const secretFile = path.join(u.dataLoc(), "__ssb", "secret")
   const keys = { ...elifeKeys }
   keys.mnemonic = mnemonic
   keys.stellar_publickey = secretkey
