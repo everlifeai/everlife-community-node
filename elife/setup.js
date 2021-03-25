@@ -126,7 +126,7 @@ function partitionParam() {
 }
 
 /*      outcome/
- * Create the data and skill folders
+ * Create the data, skill, and face folders
  */
 function setupHomeFolders() {
     let r = true
@@ -140,6 +140,15 @@ function setupHomeFolders() {
     }
     try {
         fs.mkdirSync(u.skillLoc(), { recursive: true })
+        return r
+    } catch(e) {
+        if(e.code != 'EEXIST') {
+            console.log(e)
+            return false
+        }
+    }
+    try {
+        fs.mkdirSync(u.faceImgLoc(), { recursive: true })
         return r
     } catch(e) {
         if(e.code != 'EEXIST') {
