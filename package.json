@@ -33,6 +33,7 @@
     "electron-default-menu": "~1.0.1",
     "electron-window-state": "^5.0.3",
     "escape-string-regexp": "^4.0.0",
+    "face-api.js": "^0.22.2",
     "fix-path": "^3.0.0",
     "flat": "^5.0.0",
     "flatpickr": "4.5.2",
@@ -109,6 +110,7 @@
     "stellar-hd-wallet": "^0.0.10",
     "suggest-box": "github:mmckegg/suggest-box#scroll-selection-into-view",
     "text-node-searcher": "^1.1.1",
+    "webcamjs": "^1.0.26",
     "xtend": "^4.0.2"
   },
   "devDependencies": {
