@@ -42,11 +42,9 @@ function CheckPassword(inputtxt, passfld) {
     document.getElementById("pass1msg").innerText = ""
   }
   if (passfld == 2) {
-    if (
-      document.getElementById("newpass").value !=
-      document.getElementById("confirmpass").value
-    ) {
+    if (document.getElementById("newpass").value != document.getElementById("confirmpass").value) {
       document.getElementById("pass2msg").innerText = "Check your password"
+      passMatch = false
     } else {
       document.getElementById("pass2msg").innerText = ""
       passMatch = true
