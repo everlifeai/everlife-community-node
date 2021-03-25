@@ -66,8 +66,6 @@ function checkBoxcheck(a) {
 }
 
 function savePassword() {
-  window.location.href = "./step-3.html"
-  return
   if (passMatch) {
     var CryptoJS = require("crypto-js")
     const pass = document.getElementById("confirmpass")
