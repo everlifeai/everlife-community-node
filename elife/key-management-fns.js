@@ -187,7 +187,7 @@ function submitBtn(){
     window.location.href='step-4.html?phrase='+ copiedPhrase;
   }else{
     alert('Click showbackup phrase button to proceed')
-  }    
+  }
 }
 
 function generatekeys(){
@@ -198,9 +198,9 @@ function generatekeys(){
   }
 
   //this  will shffle the array
-  const shuffle = arr => 
-  [...arr].reduceRight((res,_,__,s) => 
-    (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[]);
+  const shuffle = arr =>
+    [...arr].reduceRight((res,_,__,s) =>
+      (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[]);
 
   phraseArry = shuffle(mnemonic.split(" "));
   //construct mnemonic word selection  and write to DOM
@@ -220,8 +220,8 @@ function selectedPhrase(inp) {
   if(selectrdPhraseArr.length==0){
     if (!selectrdPhraseArr.includes(inp)) {
       selectrdPhraseArr.push(inp);
-  
-        generate(inp);
+
+      generate(inp);
       var imgs = document.createElement("img");
       imgs.setAttribute("class", "phraseimg");
       imgs.setAttribute("width", "15px");
@@ -253,10 +253,10 @@ function generate(inp) {
 //check selected phrase is 3rd index on submit
 function submitPhrases(inp){
   if(mnemonic.split(' ')[2] == selectrdPhraseArr ){
-      window.location.href='step-5.html'
-  }  
+    window.location.href='step-5.html'
+  }
   else{// clearing from the selected array and making the text red on wrong selection
-    selectrdPhraseArr.pop();      
+    selectrdPhraseArr.pop();
     document.getElementById('err-txt').classList.add("highlight")
     document.getElementById('pharsetext').innerHTML=''
   }
@@ -267,16 +267,15 @@ function goBack() {
 }
 
 function copyPhrases(){
-    copytoClipBroad()
+  copytoClipBroad()
 }
 
 
 function openElifeDashboard(){
   let winData = 'Go to main Window'
-       ipcRenderer.send('main-window', winData )
-        var window = remote.getCurrentWindow()
-        window.close()
-  
+  ipcRenderer.send('main-window', winData )
+  var window = remote.getCurrentWindow()
+  window.close()
 }
 
 function termsAndConditions(){
