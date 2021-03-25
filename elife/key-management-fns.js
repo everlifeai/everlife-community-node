@@ -7,20 +7,9 @@ const { ipcRenderer } = require("electron")
 const Path = require("path")
 const { words } = require("lodash")
 
-var pharseParam = ""
-var pharseParam2 = ""
-var phraseArry = []
 var selectrdPhraseArr = []
-var publickey
-var secretkey
-var elifeKeys
-var secureKeys = ""
 var passMatch = false
 var mnemonic
-var checkboxValue = false
-var copiedPhrase = ""
-
-let img = '../../assets/img/close_icon.png'
 
 //Password Validation goes here
 function CheckPassword(inputtxt, passfld) {
@@ -104,19 +93,17 @@ function showPhrases() {
   mnemonic = StellarHDWallet.generateMnemonic()
   const wallet = StellarHDWallet.fromMnemonic(mnemonic)
 
-  publickey = wallet.getPublicKey(0)
-  secretkey = wallet.getSecret(0)
+  const publickey = wallet.getPublicKey(0)
+  const secretkey = wallet.getSecret(0)
   document.getElementById("showbackup").innerHTML = mnemonic
-  copiedPhrase = mnemonic
   const mnemonics = require("ssb-keys-mnemonic")
 
   const words = mnemonic
 
-  elifeKeys = mnemonics.wordsToKeys(words)
+  const elifeKeys = mnemonics.wordsToKeys(words)
   //Create secret file
   const secretFile = Path.join(u.dataLoc(), "__ssb", "secret")
   const keys = { ...elifeKeys }
-  secureKeys = keys
   keys.mnemonic = mnemonic
   keys.stellar_publickey = secretkey
   keys.stellar_secretkey = publickey
@@ -182,8 +169,8 @@ function copytoClipBroad() {
 
 //on submit parse keys from step-3.html to step-4.html
 function submitBtn(){
-  if(copiedPhrase.length>0){
-    window.location.href='step-4.html?phrase='+ copiedPhrase
+  if(mnemonic.length>0){
+    window.location.href='step-4.html?phrase='+ mnemonic
   }else{
     alert('Click showbackup phrase button to proceed')
   }
@@ -193,7 +180,6 @@ function generatekeys(){
   const params = new URLSearchParams(window.location.search)
   for (const param of params) {
     mnemonic = param[1].split("^^")[0]
-    pharseParam2 = param[1].split("^^")[1]
   }
 
   //this  will shffle the array
@@ -201,7 +187,7 @@ function generatekeys(){
     [...arr].reduceRight((res,_,__,s) =>
       (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[])
 
-  phraseArry = shuffle(mnemonic.split(" "))
+  const phraseArry = shuffle(mnemonic.split(" "))
   //construct mnemonic word selection  and write to DOM
   var mnemonicHTML = ""
   for (var i = 0; i < phraseArry.length; i++) {
@@ -224,7 +210,7 @@ function selectedPhrase(inp) {
       var imgs = document.createElement("img")
       imgs.setAttribute("class", "phraseimg")
       imgs.setAttribute("width", "15px")
-      imgs.setAttribute("src", img)
+      imgs.setAttribute("src", "../../assets/img/close_icon.png")
       imgs.setAttribute("onclick", "imgClose('" + inp + "')")
       document.getElementById(inp).appendChild(imgs)
     }
