@@ -3,7 +3,7 @@ const path = require('path')
 
 const BrowserWindow = require('electron').BrowserWindow;
 
-const windows {
+const windows = {
     loginWin: null,
 }
 function openLoginWindow() {
