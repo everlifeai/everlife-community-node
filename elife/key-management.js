@@ -11,10 +11,13 @@ function checkAndCreateMnemonicKeys(cb) {
     const secretFile = path.join(u.ssbLoc(), 'secret')
     //if(fs.existsSync(secretFile)) return cb()
 
-    u.ensureExists(u.ssbLoc(), err => { if(err) throw err })
-
-    openWindow()
-    electron.ipcMain.on('mnemonic-keys-done', cb)
+    u.ensureExists(u.ssbLoc(), err => {
+      if(err) cb(err)
+      else {
+        openWindow()
+        electron.ipcMain.on('mnemonic-keys-done', (e, err) => cb(err))
+      }
+    })
 }
 
 const windows = {

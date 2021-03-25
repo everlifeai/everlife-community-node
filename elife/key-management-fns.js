@@ -3,7 +3,6 @@ const fs = require("fs")
 const path = require("path")
 const u = require("@elife/utils")
 const { ipcRenderer } = require("electron")
-const { remote } = require("electron")
 
 const Path = require("path")
 const { words } = require("lodash")
@@ -272,10 +271,8 @@ function copyPhrases(){
 
 
 function openElifeDashboard(){
-  let winData = 'Go to main Window'
-  ipcRenderer.send('main-window', winData )
-  var window = remote.getCurrentWindow()
-  window.close()
+  ipcRenderer.send('mnemonic-keys-done')
+  setTimeout(() => window.close(), 1000)
 }
 
 function termsAndConditions(){
