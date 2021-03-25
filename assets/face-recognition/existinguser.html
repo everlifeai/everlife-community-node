@@ -2,13 +2,13 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" type="text/css" href="../../styles/css/face-recognition.css">    
+<link rel="stylesheet" type="text/css" href="../../styles/css/face-recognition.css">
 </head>
 <body>
   <div class="bg-image">
 
   </div>
-  
+
   <div class="bg-text">
       <h1>Login with Face ID</h1>
     <p>your face is now your password
@@ -16,31 +16,31 @@
     </p>
 
     <label for="image-click">
-  
+
       <video id="video" width="200" height="200" autoplay muted></video>
       <!-- <p id="scan" style="text-align: letf;"></p> -->
 
       <img src="../../assets/img/faceId.png" alt="" />
 
-  
+
       </label>
-      <button id="image-click"  onclick="openWebcam()" class="visuallyhidden"></button>  
+      <button id="image-click"  onclick="openWebcam()" class="visuallyhidden"></button>
       <div id="overlay" onclick="off()">
         <div id="text"> </div>
       </div>
-      <script type="text/javascript" src="../../face-recognition.js"></script>
+      <script type="text/javascript" src="../../elife/face-recognition.js"></script>
 
 
     <p>OR Login with</p>
-    
+
       <input type="password" class="pswrd" value ="" placeholder="Password" >
       <input type="submit"  Value=Login onclick="pass()">
       <div id="overlay" onclick="off()">
         <div id="text"> </div>
       </div>
-      <script type="text/javascript" src="../../login-password.js"></script>
+      <script type="text/javascript" src="../../elife/login-password.js"></script>
   </div>
-  
-  
+
+
 </body>
 </html>
