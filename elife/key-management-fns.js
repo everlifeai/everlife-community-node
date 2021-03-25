@@ -5,7 +5,7 @@ const u = require("@elife/utils")
 const { ipcRenderer } = require("electron")
 
 const StellarHDWallet = require("stellar-hd-wallet")
-const mnemonics = require("ssb-keys-mnemonic")
+const SSBMnemonics = require("ssb-keys-mnemonic")
 
 var selectedPhrase = ""
 var passMatch = false
@@ -90,21 +90,20 @@ function savePassword() {
 
 function showPhrases() {
   mnemonic = StellarHDWallet.generateMnemonic()
-  const wallet = StellarHDWallet.fromMnemonic(mnemonic)
-
-  const publickey = wallet.getPublicKey(0)
-  const secretkey = wallet.getSecret(0)
   document.getElementById("showbackup").innerHTML = mnemonic
+}
 
-  const words = mnemonic
+function saveSecret(cb) {
+  const secretFile = path.join(u.ssbLoc(), 'secret')
 
-  const elifeKeys = mnemonics.wordsToKeys(words)
-  //Create secret file
-  const secretFile = path.join(u.dataLoc(), "__ssb", "secret")
-  const keys = { ...elifeKeys }
+  const wallet = StellarHDWallet.fromMnemonic(mnemonic)
+  const stellar = {
+    publickey: wallet.getPublicKey(0),
+    secretkey:  wallet.getSecret(0),
+  }
+  const keys = SSBMnemonics.wordsToKeys(mnemonic)
   keys.mnemonic = mnemonic
-  keys.stellar_publickey = secretkey
-  keys.stellar_secretkey = publickey
+  keys.stellar = stellar
   const lines = [
     "# this is your SECRET name.",
     "# this name gives you magical powers.",
@@ -120,12 +119,7 @@ function showPhrases() {
     "# instead, share your public name",
     "# your public name: " + keys.id,
   ].join("\n")
-  fs.writeFile(secretFile, lines, (err) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-  })
+  fs.writeFile(secretFile, lines, cb)
 }
 
 //Downloading the mnemonic phrase into a textfile
@@ -225,9 +219,12 @@ function generatekeys(){
 
 
 //check selected phrase is 3rd index on submit
-function submitPhrases(inp){
+function submitPhrases() {
   if(mnemonic.split(' ')[2] == selectedPhrase) {
-    window.location.href='step-5.html'
+    saveSecret(err => {
+      if(err) alert(err)
+      else window.location.href='step-5.html'
+    })
   }
   else{// clearing from the selected array and making the text red on wrong selection
     selectedPhrase = ""
