@@ -33,6 +33,7 @@
     "electron-default-menu": "~1.0.1",
     "electron-window-state": "^5.0.3",
     "escape-string-regexp": "^4.0.0",
+    "ethers": "^5.0.32",
     "face-api.js": "^0.22.2",
     "fix-path": "^3.0.0",
     "flat": "^5.0.0",

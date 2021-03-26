@@ -6,6 +6,7 @@ const { ipcRenderer } = require("electron")
 
 const StellarHDWallet = require("stellar-hd-wallet")
 const SSBMnemonics = require("ssb-keys-mnemonic")
+const ethers = require("ethers")
 
 var selectedPhrase = ""
 var passMatch = false
@@ -92,14 +93,21 @@ function showPhrases() {
 function saveSecret(cb) {
   const secretFile = path.join(u.ssbLoc(), 'secret')
 
-  const wallet = StellarHDWallet.fromMnemonic(mnemonic)
+  const swallet = StellarHDWallet.fromMnemonic(mnemonic)
   const stellar = {
-    publickey: wallet.getPublicKey(0),
-    secretkey:  wallet.getSecret(0),
+    publicKey: swallet.getPublicKey(0),
+    secretKey: swallet.getSecret(0),
+  }
+  const ewallet = ethers.Wallet.fromMnemonic(mnemonic)
+  const eth = {
+    address: ewallet.address,
+    publicKey: ewallet.publicKey,
+    privateKey: ewallet.privateKey,
   }
   const keys = SSBMnemonics.wordsToKeys(mnemonic)
   keys.mnemonic = mnemonic
   keys.stellar = stellar
+  keys.eth = eth
   const lines = [
     "# this is your SECRET name.",
     "# this name gives you magical powers.",
