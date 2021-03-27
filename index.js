@@ -18,6 +18,7 @@ const windows = {
 }
 let ssbConfig = null
 let quitting = false
+let avatar_killed = false
 
 const os = require('os')
 const elife = require('./elife/index.js')
@@ -164,9 +165,17 @@ function startMainWindow() {
     }
   })
 
-  electron.app.on('before-quit', function () {
-    quitting = true
+  electron.app.on('before-quit', function (ev) {
+    if(!avatar_killed) {
+      elife.stopChildProcesses(() => {
+        avatar_killed = true;
+        quitting = true
+        electron.app.quit()
+      })
+      ev.preventDefault()
+    }
   })
+
 
   electron.ipcMain.handle('navigation-menu-popup', (event, data) => {
     const {items, x, y} = data
@@ -317,9 +326,7 @@ function setupContext (appName, opts, cb) {
   } else {
     electron.ipcMain.once('server-started', function (ev, config) {
       ssbConfig = config
-      setTimeout(() => {
-        elife.startAvatar()
-      }, 20 * 1000)
+      elife.startAvatar()
       cb && cb()
     })
     windows.background = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'server-process.js'), {
