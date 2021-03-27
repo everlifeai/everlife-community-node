@@ -91,8 +91,6 @@ function showPhrases() {
 }
 
 function saveSecret(cb) {
-  const secretFile = path.join(u.ssbLoc(), 'secret')
-
   const swallet = StellarHDWallet.fromMnemonic(mnemonic)
   const stellar = {
     publicKey: swallet.getPublicKey(0),
@@ -123,7 +121,7 @@ function saveSecret(cb) {
     "# instead, share your public name",
     "# your public name: " + keys.id,
   ].join("\n")
-  fs.writeFile(secretFile, lines, cb)
+  fs.writeFile(u.secretFile(), lines, cb)
 }
 
 //Downloading the mnemonic phrase into a textfile

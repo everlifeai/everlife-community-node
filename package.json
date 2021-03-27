@@ -18,9 +18,9 @@
   "author": "charles.lobo@gmail.com",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@elife/pkg-mgr": "^5.0.0",
+    "@elife/pkg-mgr": "^5.3.0",
     "@elife/pm2": "^3.2.0",
-    "@elife/utils": "^3.1.0",
+    "@elife/utils": "^4.0.0",
     "app-root-path": "^3.0.0",
     "archiver": "^5.3.0",
     "async": "^3.2.0",

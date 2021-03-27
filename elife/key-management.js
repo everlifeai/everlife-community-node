@@ -8,8 +8,7 @@ const electron = require('electron')
 const BrowserWindow = electron.BrowserWindow
 
 function checkAndCreateMnemonicKeys(cb) {
-    const secretFile = path.join(u.ssbLoc(), 'secret')
-    if(fs.existsSync(secretFile)) return cb()
+    if(fs.existsSync(u.secretFile())) return cb()
 
     u.ensureExists(u.ssbLoc(), err => {
       if(err) cb(err)
