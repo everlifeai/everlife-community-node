@@ -317,6 +317,9 @@ function setupContext (appName, opts, cb) {
   } else {
     electron.ipcMain.once('server-started', function (ev, config) {
       ssbConfig = config
+      setTimeout(() => {
+        elife.startAvatar()
+      }, 20 * 1000)
       cb && cb()
     })
     windows.background = openWindow(ssbConfig, Path.join(__dirname, 'lib', 'server-process.js'), {
