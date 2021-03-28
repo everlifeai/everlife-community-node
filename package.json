@@ -113,6 +113,7 @@
     "ssb-ws": "^6.2.3",
     "stellar-hd-wallet": "^0.0.10",
     "suggest-box": "github:mmckegg/suggest-box#scroll-selection-into-view",
+    "telegraf": "^4.3.0",
     "text-node-searcher": "^1.1.1",
     "webcamjs": "^1.0.26",
     "xtend": "^4.0.2"
