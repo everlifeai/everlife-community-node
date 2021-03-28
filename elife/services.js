@@ -107,9 +107,10 @@ function startCoreProcesses(cfg) {
 
     function start_procs_1(ndx, cb) {
         if(core_procs.length <= ndx) cb()
-        else startProcess(cfg, core_procs[ndx].loc, (err) => {
-            if(err) cb(err)
-            else start_procs_1(ndx+1, cb)
+        else startProcess(cfg, core_procs[ndx].loc, (err, pi) => {
+            if(err) return cb(err)
+            u.showMsg(`Started ${pi.name} (pid: ${pi.child.pid})`)
+            start_procs_1(ndx+1, cb)
         })
     }
 }
@@ -163,28 +164,10 @@ function setupNodeModules() {
     }
 }
 
-/*      problem/
- * We spawn a variety of sub-processes using PM2. When stopping the
- * main process, it turns out that almost all processes stop except
- * for the python AIML server. This prevents future restarts.
- *
- *      way/
- * We look for all spawned processes and try to kill them ourselves.
- */
-let STOPPED
-function stopChildProcesses(cb) {
-    if(STOPPED) return cb()
-    STOPPED = true
-    psTree(process.pid, (err, children) => {
-        if(err) {
-            u.showErr(err)
-            pm2.stopAll()
-            cb()
-        } else {
-            children.map(c => process.kill(c.PID))
-            pm2.stopAll()
-            setTimeout(cb, 1000)
-        }
+function stopChildProcesses() {
+    pm2.forEach(pi => {
+      u.showMsg(`Stopping ${pi.name} (pid: ${pi.child.pid})`)
+      pm2.stop(pi)
     })
 }
 

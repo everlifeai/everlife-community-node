@@ -18,7 +18,6 @@ const windows = {
 }
 let ssbConfig = null
 let quitting = false
-let avatar_killed = false
 
 const os = require('os')
 const elife = require('./elife/index.js')
@@ -166,14 +165,8 @@ function startMainWindow() {
   })
 
   electron.app.on('before-quit', function (ev) {
-    if(!avatar_killed) {
-      elife.stopChildProcesses(() => {
-        avatar_killed = true;
-        quitting = true
-        electron.app.quit()
-      })
-      ev.preventDefault()
-    }
+    quitting = true
+    elife.stopAvatar()
   })
 
 
