@@ -166,6 +166,7 @@ function startMainWindow() {
 
   electron.app.on('before-quit', function (ev) {
     if(!quitting) {
+      if(windows.main) windows.main.hide()
       elife.stopAvatar()
       ev.preventDefault()
       setTimeout(() => {
