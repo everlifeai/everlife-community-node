@@ -165,8 +165,14 @@ function startMainWindow() {
   })
 
   electron.app.on('before-quit', function (ev) {
-    quitting = true
-    elife.stopAvatar()
+    if(!quitting) {
+      elife.stopAvatar()
+      ev.preventDefault()
+      setTimeout(() => {
+        quitting = true
+        electron.app.quit()
+      }, 500)
+    }
   })
 
 
