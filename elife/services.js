@@ -166,7 +166,7 @@ function setupNodeModules() {
 
 function stopChildProcesses() {
     pm2.forEach(pi => {
-      u.showMsg(`Stopping ${pi.name} (pid: ${pi.child.pid})`)
+      if(pi.name) u.showMsg(`Stopping ${pi.name} (pid: ${pi.child.pid})`)
       pm2.stop(pi)
     })
 }
