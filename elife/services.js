@@ -5,7 +5,6 @@ const u = require('@elife/utils')
 
 const pm2 = require('@elife/pm2')
 const pkgmgr = require('@elife/pkg-mgr')
-const psTree = require('ps-tree')
 
 const setup = require('./setup.js')
 
