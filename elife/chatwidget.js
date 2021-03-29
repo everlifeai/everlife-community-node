@@ -167,7 +167,7 @@ function showMsg(msg, from, addl, isLocalStoreMsg) {
 
 function setAvatarIcon(msgDiv, from){
     if(!from || from =='err') return
-    let user_icon = '..//..//..//../assets/user.jpg'
+    let user_icon = '..//..//..//../assets/img/user.jpg'
     let avatar_icon = '..//..//..//../assets/icon.png'
 
     let avatarImg = document.createElement('img')
@@ -245,7 +245,7 @@ exports.getChatWidget = function(i18n) {
                 }
                 }, 'Connecting to avatar...'),
                 h('img',{
-                src:"..//..//..//../assets/loading-gif-transparent-25.gif",
+                src:"..//..//..//../assets/img/loading-gif-transparent-25.gif",
                 style:{
                     'margin-top':'70%',
                     'width':'100%'
