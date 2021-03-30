@@ -255,3 +255,86 @@ function termsAndConditions(){
 function privacyPolicyStellar(){
   require("electron").shell.openExternal('https://stellar.org/privacy-policy');
 }
+
+function importBackup(){
+  var userinputedMnemonic = document.getElementById('importphrase').value;
+  if(userinputedMnemonic){
+    const swallet = StellarHDWallet.fromMnemonic(userinputedMnemonic)
+    const stellar = {
+      publicKey: swallet.getPublicKey(0),
+      secretKey: swallet.getSecret(0),
+    }
+    const ewallet = ethers.Wallet.fromMnemonic(userinputedMnemonic)
+    const eth = {
+      address: ewallet.address,
+      publicKey: ewallet.publicKey,
+      privateKey: ewallet.privateKey,
+    }
+    const keys = SSBMnemonics.wordsToKeys(userinputedMnemonic)
+    keys.mnemonic = userinputedMnemonic
+    keys.stellar = stellar
+    keys.eth = eth
+    const lines = [
+      "# this is your SECRET name.",
+      "# this name gives you magical powers.",
+      "# with it you can mark your messages so that your friends can verify",
+      "# that they really did come from you.",
+      "#",
+      "# if any one learns this name, they can use it to destroy your identity",
+      "# NEVER show this to anyone!!!",
+      "",
+      JSON.stringify(keys, null, 2),
+      "",
+      "# WARNING! It's vital that you DO NOT edit OR share your secret name",
+      "# instead, share your public name",
+      "# your public name: " + keys.id,
+    ].join("\n")
+    fs.writeFile(u.secretFile(), lines, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    });
+    openElifeDashboard()
+  }else{
+    const keys={}
+    const stellar = {
+      secretKey: document.getElementById('stellarID').value,
+    }
+    const eth={
+      address: document.getElementById('EthereumAddress').value,
+      publicKey: document.getElementById('EthereumPublickey').value,
+      privateKey: document.getElementById('EthereumPrivateKey').value,
+    }
+    keys.public = document.getElementById('publicKey').value,
+    keys.private = document.getElementById('privateID').value,
+    keys.id = document.getElementById('avatarID').value,
+    keys.stellar = stellar;
+    keys.eth =eth;
+    const lines = [
+      "# this is your SECRET name.",
+      "# this name gives you magical powers.",
+      "# with it you can mark your messages so that your friends can verify",
+      "# that they really did come from you.",
+      "#",
+      "# if any one learns this name, they can use it to destroy your identity",
+      "# NEVER show this to anyone!!!",
+      "",
+      JSON.stringify(keys, null, 2),
+      "",
+      "# WARNING! It's vital that you DO NOT edit OR share your secret name",
+      "# instead, share your public name",
+      "# your public name: " + keys.id,
+    ].join("\n")
+    fs.writeFile(u.secretFile(), lines, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+  });
+  openElifeDashboard()
+  
+}
+  
+
+}
