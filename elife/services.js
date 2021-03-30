@@ -13,7 +13,6 @@ const setup = require('./setup.js')
  * configured environment
  */
 function startAvatar() {
-    setup.avatar()
     startCoreProcesses(loadConfig())
 }
 

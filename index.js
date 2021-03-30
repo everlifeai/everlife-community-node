@@ -324,6 +324,7 @@ function setupContext (appName, opts, cb) {
   if (opts.server === false) {
     cb && cb()
   } else {
+    elife.setupAvatar()
     electron.ipcMain.once('server-started', function (ev, config) {
       ssbConfig = config
       elife.startAvatar()

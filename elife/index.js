@@ -8,6 +8,8 @@ const face = require('./setup-face-recognition.js')
 
 module.exports = {
     adjustSSBConfig: setup.adjustSSBConfig,
+    setupAvatar: setup.avatar,
+
     startAvatar: services.start,
     stopAvatar: services.stop,
 
