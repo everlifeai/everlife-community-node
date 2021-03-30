@@ -7,6 +7,7 @@ const { ipcRenderer } = require("electron")
 const StellarHDWallet = require("stellar-hd-wallet")
 const SSBMnemonics = require("ssb-keys-mnemonic")
 const ethers = require("ethers")
+const StellarSdk = require('stellar-sdk')
 
 var selectedPhrase = ""
 var passMatch = false
@@ -298,17 +299,21 @@ function importBackup(){
     openElifeDashboard()
   }else{
     const keys={}
+    const sourceSecretKey = document.getElementById('stellarID').value
+    const sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
+    const sourcePublicKey = sourceKeypair.publicKey();
     const stellar = {
-      secretKey: document.getElementById('stellarID').value,
+        publicKey: sourcePublicKey,
+        secretKey: sourceSecretKey
     }
     const eth={
       address: document.getElementById('EthereumAddress').value,
       publicKey: document.getElementById('EthereumPublickey').value,
       privateKey: document.getElementById('EthereumPrivateKey').value,
     }
-    keys.public = document.getElementById('publicKey').value,
+    keys.public = document.getElementById('avatarID').value,
     keys.private = document.getElementById('privateID').value,
-    keys.id = document.getElementById('avatarID').value,
+    keys.id = '@'+document.getElementById('avatarID').value,
     keys.stellar = stellar;
     keys.eth =eth;
     const lines = [
