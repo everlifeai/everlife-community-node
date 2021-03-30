@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../styles/css/key-management.css">
+    <title>Everlife</title>
+</head>
+<body>
+    <div id="root">
+        <div class="sc-fyFmx rJYJh">
+              <div class="center">
+    <img class="logo" alt="logo" src="../../assets/img/logo-full-white.png">
+  </div>
+
+        </div>
+
+
+
+</div>
+<button class="sc-iCoHVE sc-pNWxx knnrxv dryRrI" id='backbtn' onclick="goBack()">
+  <img src="../../assets/img/btn-arrow.svg" alt="chevron icon">
+</button>
+<section class="sc-jgPznn eEthnu">
+    <div class="sc-laZMyp kiRdWm">
+       
+       
+    </div>
+
+        <section class="sc-gSYCTC sc-dFRpvv fkCSEE kMrhLB">
+          <h1 class="sc-ArjOu cIlxaw">Import avatar from backup phrase</h1>
+          <textarea name="mnemonicPhrase" id="importphrase" placeholder="Enter your 24 word phrase to restore your wallet" class="import"></textarea>           
+           <div style="margin-top: 5px; text-align: center; color: blue; font-size: 1rem; font-family: Muli;">
+              <span>OR</span>
+          </div>
+          <div style=" margin-top: 10px; margin-bottom: 10px; color: blue; font-size: 1rem; font-family: Muli;">
+              <span>Provide your existing keys</span>
+          </div>
+          <input name="avatarID" autocomplete="off" id="avatarID" placeholder="Avatar ID" class="import"  value="">
+          <input name="publicID" autocomplete="off" id="publicKey" placeholder="Public Key" class="import"  value="">
+
+          <input name="privateID" autocomplete="off" id="privateID" placeholder="Private ID" class="import"  value="">
+          <input name="stellar ID" autocomplete="off" id="stellarID" placeholder="Stellar Secret Key" class="import"  value="">
+          <input name="Ethereum Address" autocomplete="off" id="EthereumAddress" placeholder="Ethereum Address" class="import"  value="">
+          <input name="Ethereum Address" autocomplete="off" id="EthereumPublickey" placeholder="Ethereum Public Key" class="import"  value="">
+          <input name="Ethereum Address" autocomplete="off" id="EthereumPrivateKey" placeholder="Ethereum Private Key" class="import"  value="">
+
+          <div class="sc-cTJmaU exOFdF" style="margin-left:auto">
+              <button type="submit" id="nextbtn" class="sc-iCoHVE sc-fujyUd knnrxv eejAfV" onclick="importBackup()" style="margin-top: 20px;">Import</button>
+          </div>
+
+<script src="../../elife/key-management-fns.js"></script>
+
+</body>
+</html>
