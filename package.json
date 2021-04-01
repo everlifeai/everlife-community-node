@@ -132,5 +132,35 @@
     "electron-builder": "^22.9.1",
     "electron-notarize": "^1.0.0",
     "standard": "^16.0.3"
-  }
+  },
+  "build": {
+    "appId": "ai.everlife.avatar",
+    "asar": true,
+    "asarUnpack": "services/elife-ai/brains/ebrain-aiml/aiml",
+    "afterSign": "scripts/afterSign.js",
+    "mac": {
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "linux": {
+      "category": "Network",
+      "target": [
+        "AppImage",
+        "snap",
+        "deb"
+      ]
+    },
+    "deb": {
+      "packageCategory": "net",
+      "priority": "optional",
+      "maintainer": "charles.lobo@gmail.com"
+    },
+    "dmg": {
+      "icon": "build/dmg/icon.icns"
+    },
+    "win": {
+      "publisherName": "Everlife.AI"
+    }
 }
