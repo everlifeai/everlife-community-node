@@ -3,12 +3,11 @@ const video = document.getElementById('video')
 const faceapi = require("face-api.js");
 const path = require("path");
 const { ipcRenderer } = require('electron');
-const {remote} = require('electron');
+const remote = require('electron').remote
 var Path = require('path');
 const { electron } = require('process');
 const u = require('@elife/utils');
 let loginUserName;
-
 // load the models
 function openWebcam(){
 Promise.all([
@@ -64,17 +63,22 @@ Promise.all([
       if(loginUserName =='unknown'){
       let data="enter password"
       ipcRenderer.send('login',data)
-      var window = remote.getCurrentWindow()
-      window.close()
+       var window = remote.getCurrentWindow()
+       window.close()
+      
+      
     }else{ 
-      on(loginUserName)
+      let winData = 'Go to main Window'
+      ipcRenderer.send('main-window', winData )
+      var window = remote.getCurrentWindow()
+       window.close()
     }
   })
   })
-  const directoryPath = u.faceimgLoc()
+  const directoryPath = u.faceImgLoc()
 
   const files = fs.readdirSync(directoryPath)
-  const imageFiles=fs.readdirSync(directoryPath+'/'+files[0])
+  const imageFiles=fs.readdirSync(directoryPath+'/')
 
   function loadEverProfiles() {
   
@@ -83,7 +87,7 @@ Promise.all([
       labels.map(async label => {
         const descriptions = []
         for (let i = 0; i <files.length; i++) {
-          const img = await faceapi.fetchImage(directoryPath +'/'+ label+"/"+imageFiles[i])
+          const img = await faceapi.fetchImage(directoryPath +'/'+imageFiles[i])
           const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
           descriptions.push(detections.descriptor)
         }
@@ -95,16 +99,5 @@ Promise.all([
   
 }
 
-function on(loginUserName) {
-  document.getElementById("text").innerText='Welcome '+loginUserName;
-  document.getElementById("overlay").style.display = "block";
-}
 
-function off() {
-  document.getElementById("overlay").style.display = "none";
-       let winData = 'Go to main Window'
-       ipcRenderer.send('main-window', winData )
-        var window = remote.getCurrentWindow()
-        window.close()
-}
 

@@ -12,6 +12,8 @@ const WindowState = require('electron-window-state')
 const Menu = electron.Menu
 const extend = require('xtend')
 const ssbKeys = require('ssb-keys')
+const u = require("@elife/utils")
+var isImageFolder = true;
 
 const windows = {
   dialogs: new Set()
@@ -21,6 +23,7 @@ let quitting = false
 
 const os = require('os')
 const elife = require('./elife/index.js')
+const { openLoginWindow } = require('./elife/setup-face-recognition')
 
 /**
  * It's not possible to run two instances of the explorer as it would create two
@@ -57,15 +60,50 @@ if(os.platform == 'darwin') {
 electron.app.on('ready', () => {
   elife.checkAndCreateMnemonicKeys(err => {
     if(err) throw err
-    else startMainWindow()
+    else checkLoginWindowNeeded()
+    
   })
 })
+
+function checkLoginWindowNeeded(){
+  var fs = require('extfs'); 
+  const password_loc = Path.join(u.dataLoc(), 'login_password.json')
+
+  
+  fs.isEmpty(u.faceImgLoc(), function (empty) {
+    if(empty){
+      isImageFolder = false   
+    }
+    if(fs.existsSync(password_loc) || isImageFolder ) {
+      elife.openLoginWindow()
+    }   
+    else{
+      startMainWindow()
+    }
+  });
+  electron.ipcMain.on('main-window', () => {
+    startMainWindow() 
+   })
+  electron.ipcMain.on('login', () => {
+    elife.openLoginWindow()
+  })
+  electron.ipcMain.on('login with Password', () => {
+    startMainWindow()
+  })
+  electron.ipcMain.on('Login Again', () => {
+    elife.openLoginWindow()  
+  })
+
+}
+
+
+
 
 function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
     server: !(process.argv.includes('-g') || process.argv.includes('--use-global-ssb'))
   }, () => {
-    const browserWindow = openMainWindow()
+      const browserWindow = openMainWindow()
 
     browserWindow.on('app-command', (e, cmd) => {
       switch (cmd) {

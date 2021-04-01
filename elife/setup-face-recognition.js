@@ -11,7 +11,8 @@ function openLoginWindow() {
         width: 1024,
         height: 768,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true,
         },
         title: 'Everlife Explorer',
         show: true,
@@ -19,9 +20,9 @@ function openLoginWindow() {
         autoHideMenuBar: true,
         backgroundColor: '#EEE',
     });
-    loginWindow.loadURL("file://" + path.join(__dirname, '..', 'assets', 'face-recognition', 'existinguser.html'))
+    windows.loginWin.loadURL("file://" + path.join(__dirname, '..', 'assets', 'face-recognition', 'existinguser.html'))
 
-    loginWindow.on('closed', () => windows.loginWin = null)
+    windows.loginWin.on('closed', () => windows.loginWin = null)
 }
 
 module.exports = {

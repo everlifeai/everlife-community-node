@@ -233,6 +233,11 @@ function submitPhrases() {
     selectedPhrase = ""
     document.getElementById('err-txt').classList.add("highlight")
     document.getElementById('pharsetext').innerHTML=""
+    let errSelection = document.getElementById('err-selection');
+    errSelection.innerHTML=`Incorrect Selection.Please select your third word`;
+    errSelection.style.color ='#f0932b';
+    errSelection.style.padding = '5px'
+
   }
 }
 
