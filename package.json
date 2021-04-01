@@ -2,7 +2,7 @@
   "name": "everlife-explorer",
   "productName": "EverlifeExplorer",
   "repository": "git@github.com:everlifeai/everlife-community-node.git",
-  "version": "2.0.0",
+  "version": "2.0.0-rc1",
   "description": "The Everlife Community Node Edition",
   "main": "index.js",
   "scripts": {
