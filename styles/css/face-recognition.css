@@ -1,12 +1,14 @@
 body, html {
   height: 100%;
   margin: 0;
+  background-image: url("../../assets/img/bg.png");
+  background-repeat: none;
+  background-size: cover;
 }
 
 * {
   box-sizing: border-box;
 }
-
 
 .bg-text {
   background-color: rgb(0,0,0);
@@ -78,16 +80,21 @@ input::placeholder {
   text-align: center;
 }
 
+img {
+  box-shadow: 0px 0px 1px 1px white;
+}
+
 .bg-text input[type=submit]{
-  height: 30px;
-    color: #fff;
-    font-size: 15px;
-    background:lightblue;
-    cursor: pointer;
-    border-radius: 25px;
-    border: none;
-    outline: none;
-    margin-top: 15px;
+  height: 2em;
+  padding: 0 2em;
+  color: #fff;
+  font-size: 15px;
+  background:lightblue;
+  cursor: pointer;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  margin-top: 15px;
 }
 #overlay {
   position: fixed;
