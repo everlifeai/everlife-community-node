@@ -7,13 +7,13 @@ const electron = require('electron')
 const openWindow = require('./lib/window')
 
 const Path = require('path')
+const fs = require('fs')
 const defaultMenu = require('electron-default-menu')
 const WindowState = require('electron-window-state')
 const Menu = electron.Menu
 const extend = require('xtend')
 const ssbKeys = require('ssb-keys')
 const u = require("@elife/utils")
-var isImageFolder = true;
 
 const windows = {
   dialogs: new Set()
@@ -60,44 +60,24 @@ if(os.platform == 'darwin') {
 electron.app.on('ready', () => {
   elife.checkAndCreateMnemonicKeys(err => {
     if(err) throw err
-    else checkLoginWindowNeeded()
-    
+    else loginIfNeeded()
   })
 })
 
-function checkLoginWindowNeeded(){
-  var fs = require('extfs'); 
+function loginIfNeeded(){
   const password_loc = Path.join(u.dataLoc(), 'login_password.json')
 
-  
-  fs.isEmpty(u.faceImgLoc(), function (empty) {
-    if(empty){
-      isImageFolder = false   
-    }
-    if(fs.existsSync(password_loc) || isImageFolder ) {
-      elife.openLoginWindow()
-    }   
-    else{
-      startMainWindow()
-    }
-  });
-  electron.ipcMain.on('main-window', () => {
-    startMainWindow() 
-   })
-  electron.ipcMain.on('login', () => {
-    elife.openLoginWindow()
-  })
-  electron.ipcMain.on('login with Password', () => {
-    startMainWindow()
-  })
-  electron.ipcMain.on('Login Again', () => {
-    elife.openLoginWindow()  
+  fs.readdir(u.faceImgLoc(), (err, items) => {
+    const notempty = !(err || !items || !items.length)
+    if(notempty || fs.existsSync(password_loc)) elife.openLoginWindow()
+    else startMainWindow()
   })
 
+  electron.ipcMain.on('main-window', () => startMainWindow())
+  electron.ipcMain.on('login', () => elife.openLoginWindow())
+  electron.ipcMain.on('login with Password', () => startMainWindow())
+  electron.ipcMain.on('Login Again', () => elife.openLoginWindow())
 }
-
-
-
 
 function startMainWindow() {
   setupContext(process.env.ssb_appname || 'ssb', {
