@@ -23,7 +23,6 @@ let quitting = false
 
 const os = require('os')
 const elife = require('./elife/index.js')
-const { openLoginWindow } = require('./elife/setup-face-recognition')
 
 /**
  * It's not possible to run two instances of the explorer as it would create two
@@ -62,6 +61,7 @@ electron.app.on('ready', () => {
     if(err) throw err
     else loginIfNeeded()
   })
+  electron.ipcMain.on('openBuyEverWindow', () => elife.openBuyEverWindow())
 })
 
 function loginIfNeeded(){
