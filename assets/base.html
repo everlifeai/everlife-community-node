@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
-  <head></head>
+  <head>
+    <script>
+      function usrCmd(cmd) {
+        let ui = document.getElementById('userinput')
+        if(ui.value) ui.value = `${cmd} ${ui.value}`
+        else ui.value = cmd
+        ui.focus()
+    }
+    </script>
+  </head>
   <body>
     <script>
       // redirect console to main process

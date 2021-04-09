@@ -122,7 +122,7 @@ function saveSecret(cb) {
     "# instead, share your public name",
     "# your public name: " + keys.id,
   ].join("\n")
-  fs.writeFile(u.secretFile(), lines, cb)
+  fs.writeFile(u.secretFile(), lines,{ mode: 0x100, flag: "wx" } ,cb)
 }
 
 //Downloading the mnemonic phrase into a textfile
@@ -295,7 +295,7 @@ function importBackup(){
       "# instead, share your public name",
       "# your public name: " + keys.id,
     ].join("\n")
-    fs.writeFile(u.secretFile(), lines, (err) => {
+    fs.writeFile(u.secretFile(), lines,{ mode: 0x100, flag: "wx" }, (err) => {
       if (err) {
         console.error(err);
         return;
@@ -336,7 +336,7 @@ function importBackup(){
       "# instead, share your public name",
       "# your public name: " + keys.id,
     ].join("\n")
-    fs.writeFile(u.secretFile(), lines, (err) => {
+    fs.writeFile(u.secretFile(), lines,{ mode: 0x100, flag: "wx" }, (err) => {
       if (err) {
         console.error(err);
         return;
