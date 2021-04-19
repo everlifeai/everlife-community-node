@@ -136,7 +136,10 @@
   "build": {
     "appId": "ai.everlife.avatar",
     "asar": true,
-    "asarUnpack": ["services/elife-ai/brains/ebrain-aiml/aiml","assets/models"],
+    "asarUnpack": [
+      "services/elife-ai/brains/ebrain-aiml/aiml",
+      "assets/models"
+    ],
     "afterSign": "scripts/afterSign.js",
     "mac": {
       "hardenedRuntime": true,
