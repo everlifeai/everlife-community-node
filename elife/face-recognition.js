@@ -11,10 +11,10 @@ let loginUserName;
 // load the models
 function openWebcam(){
 Promise.all([
-  faceapi.nets.tinyFaceDetector.loadFromDisk('./assets/models'),
-  faceapi.nets.faceLandmark68Net.loadFromDisk('./assets/models'),
-  faceapi.nets.faceRecognitionNet.loadFromDisk('./assets/models'),
-  faceapi.nets.ssdMobilenetv1.loadFromDisk('./assets/models')
+  faceapi.nets.tinyFaceDetector.loadFromDisk('./resources/app.asar.unpacked/assets/models'),
+  faceapi.nets.faceLandmark68Net.loadFromDisk('./resources/app.asar.unpacked/assets/models'),
+  faceapi.nets.faceRecognitionNet.loadFromDisk('./resources/app.asar.unpacked/assets/models'),
+  faceapi.nets.ssdMobilenetv1.loadFromDisk('./resources/app.asar.unpacked/assets/models')
   ]).then(startVideo)
   // document.getElementById('scan').innerHTML='Everlife is scaning your face'
 
