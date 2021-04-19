@@ -102,12 +102,11 @@ Promise.all([
 }
 
 function unpackedAsarPath() {
-  let packedPath =path.join(__dirname,'..','./models' );
-  let unpackedAsarPath = './resources/app.asar.unpacked/assets/models' ; 
+  let unpackedAsarPath =path.join(__dirname,'..','./models' );
   if (unpackedAsarPath.includes('/app.asar/') || 
       unpackedAsarPath.includes('\\app.asar\\')) {
-        packedPath = unpackedAsarPath.replace('app.asar','app.asar.unpacked')
+        unpackedAsarPath = unpackedAsarPath.replace('app.asar','app.asar.unpacked')
   }
-  return packedPath;
+  return unpackedAsarPath;
 }
 
