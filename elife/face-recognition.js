@@ -8,13 +8,15 @@ var Path = require('path');
 const { electron } = require('process');
 const u = require('@elife/utils');
 let loginUserName;
+
 // load the models
 function openWebcam(){
+  let resourcePath=unpackedAsarPath()
 Promise.all([
-  faceapi.nets.tinyFaceDetector.loadFromDisk('./resources/app.asar.unpacked/assets/models'),
-  faceapi.nets.faceLandmark68Net.loadFromDisk('./resources/app.asar.unpacked/assets/models'),
-  faceapi.nets.faceRecognitionNet.loadFromDisk('./resources/app.asar.unpacked/assets/models'),
-  faceapi.nets.ssdMobilenetv1.loadFromDisk('./resources/app.asar.unpacked/assets/models')
+  faceapi.nets.tinyFaceDetector.loadFromDisk(resourcePath),
+  faceapi.nets.faceLandmark68Net.loadFromDisk(resourcePath),
+  faceapi.nets.faceRecognitionNet.loadFromDisk(resourcePath),
+  faceapi.nets.ssdMobilenetv1.loadFromDisk(resourcePath)
   ]).then(startVideo)
   // document.getElementById('scan').innerHTML='Everlife is scaning your face'
 
@@ -99,5 +101,13 @@ Promise.all([
   
 }
 
-
+function unpackedAsarPath() {
+  let packedPath =path.join(__dirname,'..','./models' );
+  let unpackedAsarPath = './resources/app.asar.unpacked/assets/models' ; 
+  if (unpackedAsarPath.includes('/app.asar/') || 
+      unpackedAsarPath.includes('\\app.asar\\')) {
+        packedPath = unpackedAsarPath.replace('app.asar','app.asar.unpacked')
+  }
+  return packedPath;
+}
 
