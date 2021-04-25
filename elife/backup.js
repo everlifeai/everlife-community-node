@@ -54,17 +54,17 @@ function backup(loc, cb) {
      * only the wallet and the ssb
      */
     function backupForWindows(bk){
-      let haspath=false
+      let has_path=false
         const secretFilePath = path.join(u.dataLoc() , "__ssb/secret")
         const luminatepw = path.join(u.dataLoc(), ".luminate-pw")
         if (fs.existsSync(luminatepw))  {
             bk.append(fs.createReadStream(secretFilePath), { name: 'secret' })
             bk.append(fs.createReadStream(luminatepw), { name: '.luminate-pw' })
             bk.directory(path.join(u.dataLoc(), 'stellar'), false)
-            haspath=true
+            has_path=true
         }
 
-        return haspath
+        return has_path
      
     }
     
