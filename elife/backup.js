@@ -25,12 +25,9 @@ function backup(loc, cb) {
     })
 
     bk.pipe(o)
-    if(os.platform()=='win32') {
-        if(backupForWindows(bk)) bk.finalize()
-       
-    }
-    else  bk.directory(u.dataLoc(), false)
-    
+    if(os.platform()=='win32') backupForWindows(bk)
+    else bk.directory(u.dataLoc(), false)
+    bk.finalize()
 
     function date_now_1() {
         let dt = new Date()
@@ -54,20 +51,12 @@ function backup(loc, cb) {
      * only the wallet and the ssb
      */
     function backupForWindows(bk){
-      let has_path=false
         const secretFilePath = path.join(u.dataLoc() , "__ssb/secret")
         const luminatepw = path.join(u.dataLoc(), ".luminate-pw")
-        if (fs.existsSync(luminatepw))  {
-            bk.append(fs.createReadStream(secretFilePath), { name: 'secret' })
-            bk.append(fs.createReadStream(luminatepw), { name: '.luminate-pw' })
-            bk.directory(path.join(u.dataLoc(), 'stellar'), false)
-            has_path=true
-        }
-
-        return has_path
-     
+        bk.append(fs.createReadStream(secretFilePath), { name: 'secret' })
+        bk.append(fs.createReadStream(luminatepw), { name: '.luminate-pw' })
+        bk.directory(path.join(u.dataLoc(), 'stellar'), false)
     }
-    
 
     function pad2(n) {
         if(n < 10) return '0' + n
