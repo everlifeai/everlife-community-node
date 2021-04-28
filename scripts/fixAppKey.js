@@ -18,7 +18,7 @@ function main() {
     function replace_file_ndx_1(filelist, ndx) {
         if(ndx >= filelist.length) return
         replaceAppKey(filelist[ndx], (err) => {
-            if(err) exitWithErr(err)
+            if(err && err.code !== 'ENOENT') exitWithErr(err)
             else replace_file_ndx_1(filelist, ndx+1)
         })
     }
