@@ -176,65 +176,21 @@ function getMnemonic() {
   return params.get('phrase')
 }
 
-function generatekeys(){
-  mnemonic = getMnemonic()
 
-  const shuffle = arr =>
-    [...arr].reduceRight((res,_,__,s) =>
-      (res.push(s.splice(0|Math.random()*s.length,1)[0]), res),[])
-
-  const phraseArry = shuffle(mnemonic.split(" "))
-
-  const g = document.getElementById("generate")
-  g.innerHTML = ""
-
-  for(let i = 0;i < phraseArry.length;i++) {
-    const curr = phraseArry[i]
-    const e_ = document.createElement("div")
-    e_.classList.add("phrase")
-    e_.innerText = curr
-    e_.onclick = () => {
-      selectedPhrase = curr
-
-      const sarea = document.getElementById("pharsetext")
-      sarea.innerHTML = ""
-      const divtest = document.createElement("div")
-      divtest.setAttribute("class", "phrasetag")
-      divtest.innerText = curr
-
-      const close = document.createElement("img")
-      close.setAttribute("class", "phraseimg")
-      close.setAttribute("width", "15px")
-      close.setAttribute("src", "../../assets/img/close_icon.png")
-      close.onclick = () => {
-        sarea.innerHTML = ""
-        selectedPhrase = ""
-      }
-
-      divtest.appendChild(close)
-      sarea.appendChild(divtest)
-
-    }
-
-    g.appendChild(e_)
-  }
-}
-
-
-//check selected phrase is 3rd index on submit
 function submitPhrases() {
-  if(mnemonic.split(' ')[2] == selectedPhrase) {
+  mnemonic = getMnemonic()
+  if(mnemonic == document.getElementById('pharsetext').value) {
     saveSecret(err => {
       if(err) alert(err)
       else window.location.href='step-5.html'
     })
   }
-  else{// clearing from the selected array and making the text red on wrong selection
-    selectedPhrase = ""
+  else{
+    document.getElementById('pharsetext').value = ""
     document.getElementById('err-txt').classList.add("highlight")
     document.getElementById('pharsetext').innerHTML=""
     let errSelection = document.getElementById('err-selection');
-    errSelection.innerHTML=`Incorrect Selection.Please select your third word`;
+    errSelection.innerHTML=`Backup phrase you have entered is not valid`;
     errSelection.style.color ='#f0932b';
     errSelection.style.padding = '5px'
 
