@@ -13,47 +13,6 @@ var selectedPhrase = ""
 var passMatch = false
 var mnemonic
 
-//Password Validation goes here
-function CheckPassword(inputtxt, passfld) {
-  if (!inputtxt.value) {
-    document.getElementById("pass1msg").innerText = "Password is required"
-    return false
-  }
-
-  if (!inputtxt.value.match("^.{6,20}$")) {
-    document.getElementById("pass1msg").innerText = "Min 10 characters"
-    return false
-  }
-
-  if (!inputtxt.value.match("(.*[a-z].*)")) {
-    document.getElementById("pass1msg").innerText =
-      "Atleast one lower character"
-    return false
-  }
-
-  if (!inputtxt.value.match("(.*[A-Z].*)")) {
-    document.getElementById("pass1msg").innerText =
-      "Atleast one upper character"
-    return false
-  }
-
-  if (!inputtxt.value.match("(.*[0-9].*)")) {
-    document.getElementById("pass1msg").innerText = "Atleast one number"
-    return false
-  } else {
-    document.getElementById("pass1msg").innerText = ""
-  }
-  if (passfld == 2) {
-    if (document.getElementById("newpass").value != document.getElementById("confirmpass").value) {
-      document.getElementById("pass2msg").innerText = "Check your password"
-      passMatch = false
-    } else {
-      document.getElementById("pass2msg").innerText = ""
-      passMatch = true
-    }
-  }
-}
-
 function checkBoxcheck(a) {
   var newVal = a.value == "false" ? true : false
   if (newVal == true)
