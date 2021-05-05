@@ -5,9 +5,7 @@ const u = require("@elife/utils")
 const { ipcRenderer } = require("electron")
 
 const StellarHDWallet = require("stellar-hd-wallet")
-const SSBMnemonics = require("ssb-keys-mnemonic")
-const ethers = require("ethers")
-const StellarSdk = require('stellar-sdk')
+const secret_ = require('@elife/secret')
 
 var selectedPhrase = ""
 var passMatch = false
@@ -29,38 +27,8 @@ function showPhrases() {
   document.getElementById("showbackup").innerHTML = mnemonic
 }
 
-function saveSecret(cb) {
-  const swallet = StellarHDWallet.fromMnemonic(mnemonic)
-  const stellar = {
-    publicKey: swallet.getPublicKey(0),
-    secretKey: swallet.getSecret(0),
-  }
-  const ewallet = ethers.Wallet.fromMnemonic(mnemonic)
-  const eth = {
-    address: ewallet.address,
-    publicKey: ewallet.publicKey,
-    privateKey: ewallet.privateKey,
-  }
-  const keys = SSBMnemonics.wordsToKeys(mnemonic)
-  keys.mnemonic = mnemonic
-  keys.stellar = stellar
-  keys.eth = eth
-  const lines = [
-    "# this is your SECRET name.",
-    "# this name gives you magical powers.",
-    "# with it you can mark your messages so that your friends can verify",
-    "# that they really did come from you.",
-    "#",
-    "# if any one learns this name, they can use it to destroy your identity",
-    "# NEVER show this to anyone!!!",
-    "",
-    JSON.stringify(keys, null, 2),
-    "",
-    "# WARNING! It's vital that you DO NOT edit OR share your secret name",
-    "# instead, share your public name",
-    "# your public name: " + keys.id,
-  ].join("\n")
-  fs.writeFile(u.secretFile(), lines,{ mode: 0x100, flag: "wx" } ,cb)
+function saveSecret(mnemonic, cb) {
+  secret_.fromMnemonic(mnemonic, cb)
 }
 
 //Downloading the mnemonic phrase into a textfile
@@ -102,10 +70,10 @@ function copytoClipBroad() {
 
 //on submit parse keys from step-3.html to step-4.html
 function submitBtn(){
-  if(mnemonic.length>0){
+  if(mnemonic && mnemonic.length>0){
     window.location.href='step-4.html?phrase='+ mnemonic
   }else{
-    alert('Click showbackup phrase button to proceed')
+    alert('Click the "Show Backup Phrase" button first')
   }
 }
 
@@ -118,10 +86,10 @@ function getMnemonic() {
 function submitPhrases() {
   const mnemonic = getMnemonic()
   const typed = document.getElementById('pharsetext').value
-  if(typed) typed = typed.trim()
+  if(!mnemonic || !typed) return
 
-  if(mnemonic == typed) {
-    saveSecret(err => {
+  if(mnemonic.trim() == typed.trim()) {
+    saveSecret(mnemonic, err => {
       if(err) alert(err)
       else window.location.href='step-5.html'
     })
@@ -158,89 +126,25 @@ function privacyPolicyStellar(){
   require("electron").shell.openExternal('https://stellar.org/privacy-policy');
 }
 
-function importBackup(){
-  var userinputedMnemonic = document.getElementById('importphrase').value;
-  if(userinputedMnemonic){
-    const swallet = StellarHDWallet.fromMnemonic(userinputedMnemonic)
-    const stellar = {
-      publicKey: swallet.getPublicKey(0),
-      secretKey: swallet.getSecret(0),
-    }
-    const ewallet = ethers.Wallet.fromMnemonic(userinputedMnemonic)
-    const eth = {
-      address: ewallet.address,
-      publicKey: ewallet.publicKey,
-      privateKey: ewallet.privateKey,
-    }
-    const keys = SSBMnemonics.wordsToKeys(userinputedMnemonic)
-    keys.mnemonic = userinputedMnemonic
-    keys.stellar = stellar
-    keys.eth = eth
-    const lines = [
-      "# this is your SECRET name.",
-      "# this name gives you magical powers.",
-      "# with it you can mark your messages so that your friends can verify",
-      "# that they really did come from you.",
-      "#",
-      "# if any one learns this name, they can use it to destroy your identity",
-      "# NEVER show this to anyone!!!",
-      "",
-      JSON.stringify(keys, null, 2),
-      "",
-      "# WARNING! It's vital that you DO NOT edit OR share your secret name",
-      "# instead, share your public name",
-      "# your public name: " + keys.id,
-    ].join("\n")
-    fs.writeFile(u.secretFile(), lines,{ mode: 0x100, flag: "wx" }, (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-    });
-    openElifeDashboard()
-  }else{
-    const keys={}
-    const sourceSecretKey = document.getElementById('stellarID').value
-    const sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
-    const sourcePublicKey = sourceKeypair.publicKey();
-    const stellar = {
-        publicKey: sourcePublicKey,
-        secretKey: sourceSecretKey
-    }
-    const eth={
-      address: document.getElementById('EthereumAddress').value,
-      publicKey: document.getElementById('EthereumPublickey').value,
-      privateKey: document.getElementById('EthereumPrivateKey').value,
-    }
-    keys.public = document.getElementById('avatarID').value,
-    keys.private = document.getElementById('privateID').value,
-    keys.id = '@'+document.getElementById('avatarID').value,
-    keys.stellar = stellar;
-    keys.eth =eth;
-    const lines = [
-      "# this is your SECRET name.",
-      "# this name gives you magical powers.",
-      "# with it you can mark your messages so that your friends can verify",
-      "# that they really did come from you.",
-      "#",
-      "# if any one learns this name, they can use it to destroy your identity",
-      "# NEVER show this to anyone!!!",
-      "",
-      JSON.stringify(keys, null, 2),
-      "",
-      "# WARNING! It's vital that you DO NOT edit OR share your secret name",
-      "# instead, share your public name",
-      "# your public name: " + keys.id,
-    ].join("\n")
-    fs.writeFile(u.secretFile(), lines,{ mode: 0x100, flag: "wx" }, (err) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-  });
-  openElifeDashboard()
-  
-}
-  
+function importBackup() {
+  const userinputedMnemonic = document.getElementById('importphrase').value;
+  const sourceSecretKey = document.getElementById('stellarID').value
 
+  if(userinputedMnemonic){
+    secret_.fromMnemonic(userinputedMnemonic, err => {
+      if(err) {
+        console.error(err)
+        return
+      }
+      openElifeDashboard()
+    })
+  } else if(sourceSecretKey) {
+    secret_.updateWalletKey(sourceSecretKey, err => {
+      if(err) {
+        console.error(err)
+        return
+      }
+      openElifeDashboard()
+    })
+  }
 }
