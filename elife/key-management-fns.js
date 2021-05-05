@@ -157,8 +157,11 @@ function getMnemonic() {
 
 
 function submitPhrases() {
-  mnemonic = getMnemonic()
-  if(mnemonic == document.getElementById('pharsetext').value) {
+  const mnemonic = getMnemonic()
+  const typed = document.getElementById('pharsetext').value
+  if(typed) typed = typed.trim()
+
+  if(mnemonic == typed) {
     saveSecret(err => {
       if(err) alert(err)
       else window.location.href='step-5.html'
@@ -172,7 +175,6 @@ function submitPhrases() {
     errSelection.innerHTML=`Backup phrase you have entered is not valid`;
     errSelection.style.color ='#f0932b';
     errSelection.style.padding = '5px'
-
   }
 }
 
