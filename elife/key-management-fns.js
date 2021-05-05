@@ -65,27 +65,6 @@ function checkBoxcheck(a) {
   document.getElementById("termsOfUse").value = newVal
 }
 
-function savePassword() {
-  if (passMatch) {
-    var CryptoJS = require("crypto-js")
-    const pass = document.getElementById("confirmpass")
-    const val = pass.value
-
-    var ciphertext = CryptoJS.AES.encrypt(val, "secret key 123").toString()
-    fs.writeFile(
-      path.join(u.dataLoc(), "stellarPassword.txt"),
-      JSON.stringify({ spw: ciphertext }),
-      function (err) {
-        if (err) throw err
-        window.location.href = "./step-3.html"
-      }
-    )
-  } else {
-    document.getElementById("pass2msg").innerText = "Check your password"
-    return false
-  }
-}
-
 function showPhrases() {
   mnemonic = StellarHDWallet.generateMnemonic()
   document.getElementById("showbackup").innerHTML = mnemonic
