@@ -71,12 +71,23 @@ div.usrmsgrw,div.botmsgrw{
   padding: 16px 0;
   display: flex;
   border-bottom: 1px solid rgb(236, 234, 234);
-
+  animation: slideInLeft 600ms ease-in-out;
 }
 div.usrmsgs,div.botmsgs{
   width:85%;
   padding-top: 15px;
   padding-left: 9px
 }
-
+@keyframes slideInLeft {
+  0%{
+    transform: skewX(70deg) translateX(-100px);
+    opacity: 0;
+  }
+  50%{
+    transform: skew(0deg);
+  }
+  100%{
+    transform: skew(0deg) translateX(0);
+  }
+}
 
