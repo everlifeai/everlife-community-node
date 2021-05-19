@@ -55,7 +55,7 @@ div.container {
   width:80%;
   margin:40px 100px;
   background: #444141;
-  
+  overflow-x: hidden;
 }
 
 input[type='text'] {
@@ -68,7 +68,7 @@ div.chat-row-input {
   display: flex;
 }
 div.usrmsgrw,div.botmsgrw{
-  padding: 16px 0;
+  padding: 7px 0;
   display: flex;
   border-bottom: 1px solid rgb(236, 234, 234);
   animation: slideInLeft 600ms ease-in-out;
